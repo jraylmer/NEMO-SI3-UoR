@@ -1,0 +1,196 @@
+\section{Compiling and Running the Standalone Surface Scheme}
+\label{sec:sas}
+
+As an alternative to running the full ocean model, NEMO-\SIcu{} provides a \textit{standalone surface scheme} (SAS) that enables surface processes (including sea ice) to be tested using ocean variables read from files.
+This scheme forms the basis for the mixed-layer ocean model that has been implemented locally and is the subject of Section~\ref{sec:mlm}.
+Experiments with the standard SAS have shown that it produces sea ice that is much too thick, a problem that is largely fixed by the mixed-layer ocean model.
+Nevertheless, this section describes how to compile and run the standard scheme as a prelude to running the mixed-layer model in Section~\ref{sec:mlm}.
+
+
+\subsection{Compiling}
+\label{sec:sas:subsec:compiling}
+
+The reference configuration for the SAS is \verb|ORCA2_SAS_ICE|.
+We shall compile a custom version of this called \verb|UOR_ORCA2_SAS_ICE|.
+Our custom configuration will incorporate the local modifications to the topographic melt pond scheme and the code for the mixed-layer model.
+By default, the mixed-layer model will be turned off, and thus the configuration will run as the standard SAS.
+
+Instead of proceeding as we did with \verb|UOR_ORCA2_ICE|, where we compiled the standard code and then recompiled with the local modifications, we shall proceed directly to compiling with the local modifications.
+This means that we have to start by creating the configuration directory and its \verb|MY_SRC| subdirectory.
+In the \verb|cfgs| subdirectory of the top-level source directory, give the following command:
+
+\begin{verbatim}
+  mkdir -p UOR_ORCA2_SAS_ICE/MY_SRC
+\end{verbatim}
+
+\noindent{}Now copy to the new \verb|MY_SRC| directory the four files under \verb|SI3RACC/Software/|\newline\verb|mods-trunk/src/ICE| and the single file under \verb|SI3RACC/Software/mods-trunk/|\newline\verb|src/SAS|.
+It is the latter file (\verb|sbcssm.F90|) that includes the mixed-layer model.
+
+Next, make sure that the \verb|gcc/6.4.0| and \verb|netcdf| modules are loaded as in Section~\ref{sec:tutorial:subsec:compiling}.
+Finally, compile the configuration by giving the following command in the top-level source directory:
+
+\begin{verbatim}
+  ./makenemo -r ORCA2_SAS_ICE -n UOR_ORCA2_SAS_ICE
+\end{verbatim}
+
+\noindent{}Since the \verb|ORCA2_SAS_ICE| configuration does not include the PISCES biogeochemical model, we do not need the extra arguments used to remove it in Section~\ref{sec:tutorial:subsec:no-pisces}.
+
+
+\subsection{Preparing a Template Run Directory}
+\label{sec:sas:subsec:run-directory}
+
+As with previous compilations, compilation of \verb|UOR_ORCA2_SAS_ICE| will result in several new subdirectories under \verb|cfgs/UOR_ORCA2_SAS_ICE| under the top-level source directory.
+One of these is again \verb|EXP00|, which we shall prepare as a template run directory.
+Change to this directory before proceeding.
+
+The first thing to do is to delete \verb|namelist_ref|, \verb|namelist_ice_ref|, and \verb|field_def_nemo-ice.xml| and replace them with copies of the versions under \verb|SI3RACC/Software/mods-trunk/cfgs/SHARED|.
+We made a similar replacement of the last two files for \verb|UOR_ORCA2_ICE| in Section \ref{sec:mods:subsec:run-directory}.
+The first file (\verb|namelist_ref|) now needs replacing too because it contains some new namelist variables that control the mixed-layer model.
+
+Now we need to add the forcing and other auxiliary files.
+As in Section~\ref{sec:tutorial:subsec:run-directory}, we require all the files from the package \verb|ORCA2_ICE_v4.2_RC_FULL.tar.gz| and one file from \verb|ORCA2_ICE_v4.2.0.tar.gz|.
+We also require all the files from the package \verb|SAS_v4.2_RC_FULL.tar.gz| (available from the same source as the other packages).
+This package contains sample sea surface forcing files for driving the SAS.
+As with the other packages, there is a pre-downloaded version in \verb|SI3RACC/Downloads/NEMO| and an unpacked version under \verb|SI3RACC/Downloads|\newline\verb|/NEMO/SAS_v4.2_RC_FULL|.
+Create symbolic links to all the required files by giving the following commands in the run directory:
+
+\begin{verbatim}
+ln -s /storage/silver/cpom/rk901985/SI3RACC/Downloads/NEMO/ORCA2_ICE_v4.2_RC_FULL/* .
+ln -s /storage/silver/cpom/rk901985/SI3RACC/Downloads/NEMO/ORCA2_ICE_v4.2.0/zdfiwm_*.nc .
+ln -s /storage/silver/cpom/rk901985/SI3RACC/Downloads/NEMO/SAS_v4.2_RC_FULL/* .
+\end{verbatim}
+
+\noindent{}Do not miss off the dots at the end.
+
+
+\subsection{Test Run}
+\label{sec:sas:subsec:test-run}
+
+We shall first make a test run of the SAS using the contents of \verb|EXP00| unchanged.
+Create the run directory by giving the following command in the directory \verb|cfgs/UOR_ORCA2_SAS_ICE| under the top-level source directory:
+
+\begin{verbatim}
+  cp -a EXP00 4
+\end{verbatim}
+
+\noindent{}Change to the run directory \verb|4| and copy the job script \verb|doit4| from \verb|SI3RACC/|\linebreak\verb|Experiments/4|.
+The test run specified by \verb|namelist_cfg| (inherited from the reference configuration \verb|ORCA2_SAS_ICE|) is very short, lasting only 6.25 days of simulation time.
+The job script \verb|doit4| has an accordingly reduced time limit of 30 minutes, which should be ample.
+If you would like to run a longer test, increase the value of the namelist variable \verb|nn_itend| in namelist group \verb|namrun| of \verb|namelist_cfg|.
+The units are timesteps of 90 minutes.
+A value of 5840 will give a one-year run.
+The time limit in \verb|doit4| should be increased too (in experiments 1 and 2 we used a time limit of 16 hours for a one-year run).
+
+When \verb|doit4| is ready (either the original or your modified version), submit it to the batch system with the command
+
+\begin{verbatim}
+  sbatch ./doit4
+\end{verbatim}
+
+\noindent{}There will be just two main output files:
+
+\begin{verbatim}
+  ORCA2_SAS_5d_00010101_00010107_icemod.nc
+  ORCA2_SAS_5d_00010101_00010107_grid_T.nc
+\end{verbatim}
+
+\noindent{}The first contains sea ice variables, the second ocean variables.
+Both contain five-day means.
+If you changed the run length, \verb|00010107| be be replaced by something different.
+For a one-year run it will be \verb|00011231| (these are dates assuming a start date of 0001-01-01).
+
+
+\subsection{Three-Year Run}
+\label{sec:sas:subsec:3y-run}
+
+We shall now run the SAS for three years with atmospheric forcing from the CORE CIAF data and sea surface forcing from the monthly mean output files from experiment 3.
+
+Start by changing to \verb|cfgs/UOR_ORCA2_SAS_ICE| under the top-level source directory and creating the run directory by copying the template run directory:
+
+\begin{verbatim}
+  cp -a EXP00 5
+\end{verbatim}
+
+\noindent{}Change to the run directory 5.
+
+As in the three-year run of \verb|UOR_ORCA2_ICE| (Section \ref{sec:forcings}), we need to remove the climatological atmospheric forcing files and replace them with CIAF files:
+
+\begin{verbatim}
+  rm *_fill.nc\newline
+  ln -s /storage/silver/cpom/rk901985/SI3RACC/Experiments/CIAF4NEMO/*_y200[0-2].nc .
+\end{verbatim}
+
+\noindent{}Do not miss off the dot at the end of the second command.
+
+We also need to replace the climatological sea surface forcing files with the files from experiment 3.
+The climatological files can be removed with the command
+
+\begin{verbatim}
+  rm sas_grid_?.nc
+\end{verbatim}
+
+\noindent{}Replacing them with the output files from experiment 3 is slightly less straightforward because the names of output files from NEMO-\SIcu{} are not in the format required for input files.
+We saw in Section \ref{sec:forcings} that input files must have names ending \verb|_yYYYY.nc| where \verb|YYYY| is the four-digit year.
+Output files, on the other hand, have names ending \verb|_YYYY-YYYY.nc|.
+(This is not as perverse as it seems at first because output files can cover more than one year, and so the two \verb|YYYY|'s in their names could be different.)
+The renaming necessary so that the output files can be used as input files is handled by the script \verb|ln-nemo| in \verb|SI3RACC/bin|.
+This script creates symbolic links in the current directory to the files given on the command line.
+If a given file has a name ending \verb|_YYYY-YYYY.nc|, the link name changes this to \verb|_yYYYY.nc|.
+Thus we can create links to the required monthly mean output files from experiment 3 with the following command:
+
+\begin{verbatim}
+/storage/silver/cpom/rk901985/SI3RACC/bin/ln-nemo ../../UOR_ORCA2_ICE/3/ORCA2_1m*grid*
+\end{verbatim}
+
+\noindent{}If you gave the configuration with the full ocean model a name other than \verb|UOR_ORCA2_ICE| or the experiment a name other than \verb|3|, you will have to make the appropriate substitutions in the above command.
+
+Now copy all the files under \verb|SI3RACC/Experiments/5| to the run directory.
+The following is a list of the files with their modifications relative to experiment 4 (which used the template run directory \verb|EXP00| unchanged):
+
+\begin{description}
+
+    \item[\texttt{namelist\_cfg}]
+        As in experiment 3 (Section \ref{sec:forcings}), namelist group \verb|namrun| specifies a three-year run starting on 2000-01-01, and namelist group \verb|namsbc_blk| specifies the CIAF atmospheric forcing files.
+    
+        In experiment 2 (Section \ref{sec:mods:subsec:running}), we reduced namelist variable \verb|nn_fsbc| in namelist group \verb|namsbc| from 4 to 1.
+        This is not necessary in the current experiment because \verb|nn_fsbc| was already 1 in experiment 4.
+    
+        In namelist group \verb|namsbc_sas|, the sea surface forcing files from experiment 3 are specified.
+        The variables involved represent sea surface velocity (\verb|sn_usp|, \verb|sn_vsp|), temperature (\verb|sn_tem|), salinity (\verb|sn_sal|), and height (\verb|sn_ssh|).
+        The other \verb|sn| variables in this group (\verb|sn_e3t| and \verb|sn_frq|) are not used in this experiment.
+
+    \item[\texttt{namelist\_ice\_cfg}]
+        As in experiment 2, namelist \verb|namthd_pnd| activates the topographic melt pond scheme and all its local modifications, and namelist group \verb|namalb| turns off the reduction of albedo for thin ice.
+
+    \item[\texttt{file\_def\_nemo-oce.xml}]
+        As in experiment 2, useful heat flux variables have been added.
+        As in experiment 3, the output files have been split into separate files for each simulation year.
+
+    \item[\texttt{file\_def\_nemo-ice.xml}]
+        As in experiment 2, a full set of melt pond variables, ice albedo, and useful heat and mass flux variables have been added.
+        As in experiment 3, the output files have been split into separate files for each simulation year.
+
+    \item[\texttt{doit5}]
+        This is the same as \verb|doit3| and retains the 48-hour time limit.
+        The SAS should run more quickly than the full ocean model, and indeed in the past runs of \SIcu{} with the SAS have taken less than half the time of runs with the full ocean model.
+        However, at the time of writing, run times on the RACC have been highly variable, even for experiments of similar type.
+        This variability has been swamping the systematic advantage of the SAS, although it still might exist on average.
+        It is for this reason that \verb|doit4| has the same time limit as \verb|doit3|.
+
+\end{description}
+
+Submit the job to the batch system using the usual command:
+
+\begin{verbatim}
+  sbatch ./doit5
+\end{verbatim}
+
+\noindent{}The main output files for 2000 will be the following:
+
+\begin{verbatim}
+  ORCA2_SAS_5d_20000101_20021231_icemod_2000-2000.nc
+  ORCA2_SAS_5d_20000101_20021231_grid_T_2000-2000.nc
+\end{verbatim}
+
+\noindent{}These correspond to the two files from experiment 4 listed in Section~\ref{sec:sas:subsec:test-run}.
+There will be similar files for 2001 and 2002.

@@ -1,0 +1,43 @@
+\documentclass[a4paper]{article}
+
+\usepackage[toc,page]{appendix}
+\usepackage[T1]{fontenc}
+\usepackage[round]{natbib}
+\usepackage[hidelinks]{hyperref}
+
+\input{macros}
+
+\title{Compiling and Running \texorpdfstring{\SIcu}{SI3} on the RACC}
+\author{David M. Livings}
+
+% Cheat to match original doc for now (don't want rcs package)
+\date{Revision 1.11, June 1, 2022}
+
+\makeatletter
+\hypersetup{pdfauthor={\@author}, pdftitle={\@title}}
+\makeatother
+
+\begin{document}
+
+    \maketitle
+
+    \tableofcontents
+
+    \input{sections/intro}
+    \input{sections/download}
+    \input{sections/tutor}
+    \input{sections/mods}
+    \input{sections/forcings}
+    \input{sections/sas}
+    \input{sections/mlm}
+    \input{sections/restarts}
+
+    \appendix
+    \input{sections/xios}
+    \input{sections/topo-nml}
+    \input{sections/outputs}
+
+    \bibliographystyle{plainnat}
+    \bibliography{refs}
+
+\end{document}

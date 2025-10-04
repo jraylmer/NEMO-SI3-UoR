@@ -1,0 +1,194 @@
+\section{Compiling and Running a First Experiment}
+\label{sec:tutorial}
+
+\subsection{Compiling the Reference Configuration \texorpdfstring{\texttt{ORCA2\_ICE\_PISCES}}{ORCA2 ICE PISCES}}
+\label{sec:tutorial:subsec:compiling}
+
+NEMO-\SIcu{} is compiled using the script \verb|makenemo| in the top-level source directory.
+Platform-specific compiler options are specified in a configuration file in the \verb|arch| subdirectory.
+A configuration file for compiling on the RACC has been created as \verb|arch-racc_gfortran.fcm| and can be found under \verb|SI3RACC/| \verb|Software/mods-trunk/arch|.
+\textit{Make a copy of this file under the arch subdirectory of the top-level source directory.}
+
+For best results, NEMO-\SIcu{} should be compiled to use the XIOS library for input and output.
+Whilst it is possible to compile and run without XIOS, this limits the available output options.
+The configuration file \verb|arch-racc_| \verb|gfortran.fcm| makes use of the pre-compiled XIOS library under \verb|SI3RACC/| \verb|Software/xios-trunk|.
+(Should it ever be necessary to recompile this library, refer to the instructions in Appendix \ref{sec:xios}.)
+If you really do want to compile without XIOS, you can use the alternative configuration file \verb|arch-racc_gfortran_| \verb|noxios.fcm|, but this has not been tested recently.
+
+NEMO-\SIcu{} can be compiled in several different configurations.
+A set of reference configurations is provided under the \verb|cfgs| subdirectory of the top-level source directory.
+We shall compile the \verb|ORCA2_ICE_PISCES| configuration.
+This includes the full NEMO ocean model on the ORCA2 global grid, the \SIcu{} sea ice model, and the PISCES biogeochemical model.
+We shall not run this configuration because PISCES turns out to be a resource hog and is not needed for most sea ice work.
+However, compiling this standard configuration will act as a check that the build machinery is working properly before we get on to custom configurations.
+
+Before running \verb|makenemo|, it is necessary to load the modules \verb|gcc/6.4.0|\footnote{
+    If using \texttt{arch-racc\_gfortran\_noxios.fcm} to compile without XIOS, the module \texttt{gcc/6.} \texttt{4.0} should not be loaded.
+    Instead, the default GCC on the RACC (4.8.5) should be used.
+    Furthermore, when compiling with XIOS, there is actually some juggling of compiler versions that goes on behind the scenes in \texttt{arch-racc\_gfortran.fcm}.
+    The interested reader is referred to the comments at the start of that file for details.
+}, \verb|netcdf/4.6.1|, \verb|hdf5/1.8.20|, and \verb|MPI/mpich/gcc/3.2.1| (loading \verb|netcdf/4.| \verb|6.1| will automatically load the last two).
+The necessary modules can be loaded with the command
+
+\begin{verbatim}
+  module load gcc/6.4.0 netcdf
+\end{verbatim}
+
+\noindent{}Give this command if the modules are not already loaded.
+
+NEMO-\SIcu{} can now be compiled by giving the following command in the top-level source directory:
+
+\begin{verbatim}
+  ./makenemo -m racc_gfortran -r ORCA2_ICE_PISCES
+\end{verbatim}
+
+\noindent{}Compilation will take a few minutes, during which time \verb|makenemo| gives a commentary on what it is doing.
+If all goes well, the final lines should be something like:
+
+\begin{verbatim}
+  fcm_internal load:F nemo nemo.o nemo.exe
+  ar: creating ...
+  mpif90 -o nemo.exe ...
+  ->Make: 446 seconds
+  ->TOTAL: 476 seconds
+  Build command finished on Wed May 25 19:53:38 2022.
+  /storage/silver/cpom/rk901985/tmp/nemo/cfgs
+\end{verbatim}
+
+\noindent{}where the \verb|...|'s will be long lists of files and arguments.
+
+
+\subsection{Compiling a Custom Configuration without PISCES}
+\label{sec:tutorial:subsec:no-pisces}
+
+As noted in Section \ref{sec:tutorial:subsec:compiling}, it is not recommended to run \SIcu{} with the PISCES biogeochemical model.
+It is possible to create custom configurations of NEMO-\SIcu{} based on the reference configurations, and we shall create one by omitting PISCES from \verb|ORCA2_ICE_PISCES|.
+We need a name for our configuration.
+An obvious choice is \verb|ORCA2_ICE|, but I like to prefix my configurations with my initials (\verb|DML_|) so that it is clear which configurations I have created myself and also to avoid a possible future name clash with a new reference configuration.
+You may like to adopt a similar policy.
+The following instructions will call the new configuration \verb|UOR_ORCA2_ICE|.
+
+To compile the custom configuration, first make sure that the necessary modules are loaded by repeating the \verb|module load| command from Section \ref{sec:tutorial:subsec:compiling} if necessary (which it will not be if this is part of the same login session).
+The compilation command is
+
+\begin{verbatim}
+  ./makenemo -r ORCA2_ICE_PISCES -n UOR_ORCA2_ICE -d OCE ICE NST ABL del_key key_top
+\end{verbatim}
+
+\noindent{}Give this command, and whilst it is running you can read the following explanation of what it means.
+
+The \verb|-r| option specifies the name of the reference configuration on which the new configuration is based.
+The \verb|-n| option specifies the name of the new configuration.
+
+Configurations are made up of sub-components that correspond to subdirectories of the \verb|src| subdirectory of the top-level source directory.
+The sub-components of the reference configurations are listed in the file \verb|cfgs/ref_cfgs.| \verb|txt|.
+For \verb|ORCA2_ICE_PISCES| they are \verb|OCE|, \verb|TOP|, \verb|ICE|, \verb|NST|, and \verb|ABL|.
+TOP stands for `Tracers in Ocean Paradigm' and is the part of NEMO containing PISCES.
+This is the sub-component that we wish to omit.
+The \verb|-d| option is used to specify the sub-components to be used in the new configuration.
+The command above specifies all the sub-components in \verb|ORCA2_ICE_PISCES| except for \verb|TOP|.
+
+Finer-grained control over which parts of NEMO-\SIcu{} are compiled is provided by a set of preprocessor keys, which control whether certain sections of individual source files are included or omitted.
+The keys for \verb|ORCA2_ICE_|\linebreak\verb|PISCES| are listed in the file \verb|cfgs/ORCA2_ICE_PISCES/cpp_ORCA2_ICE_PISCES.| \verb|fcm|.
+They include \verb|key_si3|, which includes the \SIcu{} code (we want to keep this), and \verb|key_top|, which includes the TOP code (we want to get rid of this).
+The arguments \verb|del_key key_top| to the above command delete \verb|key_top| when creating the keys for \verb|UOR_ORCA2_ICE| from those for \verb|ORCA2_ICE_PISCES|.
+
+The reader may have noticed that the option \verb|-m racc_gfortran|, used to specify the computing architecture in Section \ref{sec:tutorial:subsec:compiling}, is not included in the command above.
+This is because \verb|makenemo| remembers the last architecture configuration file used (in the file \verb|mk/arch.history|) and specifying the \verb|-m| option is unnecessary if the architecture is unchanged from last time.
+
+
+\subsection{Preparing a Template Run Directory}
+\label{sec:tutorial:subsec:run-directory}
+
+Compiling the custom configuration \verb|UOR_ORCA2_ICE| will result in a new directory \verb|cfgs/UOR_ORCA2_ICE| under the top-level source directory.
+This directory has various subdirectories, of which the most important is \verb|EXP00|.
+This contains a symbolic link called \verb|nemo| to the NEMO-\SIcu{} executable and various configuration files.
+The files with names beginning \verb|namelist_| are Fortran namelist files that specify run-time options.
+The namelist files with names ending \verb|_ref| contain the defaults and should not be edited.
+Instead, changes to the defaults should be made in the namelist files with names ending \verb|_cfg|.
+Settings in these files will override the defaults.
+The other configuration files all have names ending \verb|.xml|.
+These are XML files used to configure XIOS. In particular, the XML files with names beginning \verb|file_| can be edited to change what is included in the output files from NEMO-\SIcu{}.
+
+It would be possible to run NEMO-\SIcu{} in \verb|EXP00|, but since it is common to run the same executable multiple times with different configuration settings, it is better to keep \verb|EXP00| as a template from which run directories can be created as needed.
+Before our new \verb|EXP00| can be used in this manner, some further work is needed.
+The rest of this section assumes that the reader is working in \verb|cfgs/UOR_ORCA2_ICE/EXP00|, so change to this directory.
+
+Because \verb|UOR_ORCA2_ICE| was created from \verb|ORCA2_ICE_PISCES|, its \verb|EXP00| directory contains some redundant configuration files that are only relevant to PISCES.
+Deleting these will reduce clutter.
+The files to be deleted are the following:
+
+\begin{verbatim}
+  namelist_pisces_cfg
+  namelist_pisces_ref
+  namelist_top_cfg
+  namelist_top_ref
+  field_def_nemo-pisces.xml
+  file_def_nemo-pisces.xml
+\end{verbatim}
+
+\noindent{}The two lines referring to the last two files in \verb|context_nemo.xml| should also be deleted.
+You can either make the edit yourself or copy the pre-edited \verb|context_| \verb|nemo.xml| from under \verb|SI3RACC/Experiments/0|.
+
+Some NEMO-\SIcu{} configurations require extra input files to be downloaded from \verb|https://gws-access.jasmin.ac.uk/public/nemo/sette_inputs/|.
+These files contain things such as ocean climatological fields and atmospheric forcing data.
+To run \verb|UOR_ORCA2_ICE| for a full year, the required files are those in the package \verb|ORCA2_ICE_v4.2_RC_FULL.tar.gz| and one file from \verb|ORCA2_ICE_v4.2.| \verb|0.tar.gz|.
+You can either download these packages yourself (for the first package you will need to look under \verb|https://gws-access.jasmin.ac.uk/public/| \verb|nemo/sette_inputs/index_RC.html|) or make use of the pre-downloaded versions under \verb|SI3RACC/Downloads/NEMO|.
+More conveniently still, you can use the unpacked versions of the archives under the directories \verb|SI3RACC/Downloads/| \verb|NEMO/ORCA2_ICE_v4.2_RC_FULL| and \verb|SI3RACC/Downloads/NEMO/ORCA2_ICE_v4.| \verb|2.0|.
+You could copy the files under these directories to \verb|EXP00|, but that would waste disk space, particularly if the template is to be duplicated many times.
+It is better to just make symbolic links with the following commands:
+
+\begin{verbatim}
+ln -s /storage/silver/cpom/rk901985/SI3RACC/Downloads/NEMO/ORCA2_ICE_v4.2_RC_FULL/* .
+ln -s /storage/silver/cpom/rk901985/SI3RACC/Downloads/NEMO/ORCA2_ICE_v4.2.0/zdfiwm_*.nc .
+\end{verbatim}
+
+\noindent{}Do not miss off the dots at the end.
+
+
+\subsection{Running the Custom Configuration}
+\label{sec:tutorial:subsec:running-custom}
+
+The directory \verb|EXP00| can now be used as a template from which to create a directory in which to run NEMO-\SIcu{}.
+This run directory can be called whatever you like, but it must be located under \verb|cfgs/UOR_ORCA2_ICE| under the top-level source directory.
+
+I have a policy of numbering my experiments on a project sequentially starting from 1.
+If an experiment requires a directory to itself, I just use the experiment number as the directory name.
+Thus I would create my first run directory with the command:
+
+\begin{verbatim}
+  cp -a EXP00 1
+\end{verbatim}
+
+\noindent{}Give this command yourself, substituting something else for \verb|1| if you wish.
+Change into the new run directory.
+
+A job script suitable for running our custom configuration of NEMO-\SIcu{} under the batch system on the RACC can be found with the name \verb|doit1| in \verb|SI3RACC/Experiments/1|.
+The starting point for this script was the example of a distributed memory batch job at \verb|https://research.reading.ac.| \verb|uk/act/knowledgebase/academic-cluster-usage/|.
+The main additions are some lines to load the \verb|gcc| and \verb|netcdf| modules.
+The program is run on eight processors with the default memory allocation and a time limit of 16 hours.
+Copy \verb|doit1| to the run directory under whatever name you please.
+My convention would be to keep the name \verb|doit1|.
+The job can then be submitted to the batch system using the command
+
+\begin{verbatim}
+  sbatch ./doit1
+\end{verbatim}
+
+\noindent{}On a good day, a one-year simulation such as this runs in 30--60 minutes, but I have known jobs to take over 13 hours per simulation year.
+
+When the run has completed, there will be a number of output files.
+The log file from the batch system will be called \verb|doit-<N>.out| where \verb|<N>| is the job id.
+More informative is the log file from NEMO-\SIcu{}, which is called \verb|ocean.output|.
+Look through this for any errors (try searching for the string `E R R' with spaces between the letters).
+The principal output fields are five-day means in the following netCDF files:
+
+\begin{verbatim}
+  ORCA2_5d_00010101_00011231_icemod.nc
+  ORCA2_5d_00010101_00011231_grid_T.nc
+  ORCA2_5d_00010101_00011231_grid_U.nc
+  ORCA2_5d_00010101_00011231_grid_V.nc
+  ORCA2_5d_00010101_00011231_grid_W.nc
+\end{verbatim}
+
+\noindent{}The first of these contains sea ice variables, the others contain ocean variables.

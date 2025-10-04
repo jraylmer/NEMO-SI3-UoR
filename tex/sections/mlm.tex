@@ -1,0 +1,63 @@
+\section{Running the Mixed-Layer Ocean Model}
+\label{sec:mlm}
+
+This section describes how to run the mixed-layer ocean model that is part of the local modifications to NEMO-\SIcu{}.
+To give the reader practice in configuring their own experiments, the instructions are less detailed than hitherto, but still contain all the necessary information.
+
+
+\subsection{The Model, and Running It}
+\label{sec:mlm:subsec:running}
+
+A run with the standard SAS can be turned into a run with the mixed-layer model just by setting namelist variable \verb|ln_mlm| true in namelist group \verb|namsbc_sas| of \verb|namelist_cfg|.
+The sea surface forcing files listed under \verb|namelist_cfg| in Section~\ref{sec:sas:subsec:3y-run} must still be provided.
+This includes a file for sea surface temperature (SST), although the values in this file are only used to initialise the model's SST at the first timestep.
+Thereafter the SST is updated by assuming that the total surface heat flux heats a well-mixed layer of seawater of constant depth.
+This depth is specified by namelist variable \verb|rn_mld| in namelist group \verb|namsbc_sas|.
+The default depth is 20~m.
+
+Directory \verb|SI3RACC/Experiments/6| contains configuration files for a three-year run with the mixed-layer model.
+The configuration is identical to the three-year run with the SAS in Section~\ref{sec:sas:subsec:3y-run} except that \verb|ln_mlm| has been set true in namelist group \verb|namsbc_sas| of \verb|namelist_cfg|.
+The experiment must be set up in the same way as experiment 5 of Section~\ref{sec:sas:subsec:3y-run}.
+
+
+\subsection{Running with SST Restoring}
+\label{sec:mlm:subsec:sst-restoring}
+
+Although the mixed-layer model fixes the problem that the SAS has with sea ice that is too much thick, it has also been observed to produce sea ice with too large an extent in winter.
+This is an aspect of performance in which the SAS is superior to the mixed-layer model.
+The extent of the sea ice from the mixed-layer model can be reduced by turning on NEMO's SST restoring mechanism.
+
+The SST restoring mechanism is described in Section 6.13.3 of the NEMO manual.
+It works with a file of SST values like that used by the SAS, but instead to setting the model's SST to the value read from the file as in the SAS, it is merely nudges the model's SST towards this value.
+The nudging works by augmenting or diminishing the total surface heat flux by an amount that is proportional to the difference between the model's SST and the value read from the file.
+
+It is an exercise for the reader to run the mixed-layer model with SST restoring turned on.
+It will be necessary to edit the file \verb|namelist_cfg| used in experiment 6.
+In namelist group \verb|namsbc|, it will first be necessary to add the variable \verb|ln_ssr| and set it true.
+When adding items to \verb|namelist_cfg| like this, I usually start by copying the appropriate lines from \verb|namelist_ref| and then modifying the values as necessary (that way I get nice formatting and useful comments in \verb|namelist_cfg|).
+In the present case it is also necessary to add the namelist group \verb|namsbc_ssr|.
+It is not necessary to add all the variables in the group, just \verb|nn_sstr|, \verb|cn_dir|, and \verb|sn_sst| (\verb|cn_dir| is not strictly necessary, but I would include it because of its close connection with \verb|sn_sst|).
+The variable \verb|nn_sstr| should be set to 1 to turn on SST restoring.
+The variable \verb|sn_sst| should identify the file containing the SST values towards which to restore.
+A useful choice for this is the file of monthly means from experiment 3, in which case \verb|sn_sst| can be a copy of \verb|sn_tem| in namelist group \verb|namsbc_sas|.
+
+A second exercise for the reader is to experiment with the value of the SST restoring coefficient.
+This is the coefficient by which the temperature difference is multiplied to get the adjustment to the surface heat flux.
+The default value is $-40$\,W/m$^2$/K.
+The coefficient can be converted to a relaxation timescale by calculating
+
+\[
+    \frac{\left(\textrm{specific heat capacity of water}\right)\times{}\left(\textrm{density of water}\right)\times{}\left(\textrm{mixed-layer depth}\right)}{\left|\textrm{coefficient}\right|}
+\]
+
+\noindent{}For the values assumed by NEMO, this is approximately\nopagebreak
+
+\[
+    \frac{4.1\times{}10^6\times{}\left(\textrm{mixed-layer depth}\right)}{\left|\textrm{coefficient}\right|}
+\]
+
+\noindent{}where the mixed-layer depth is in m, the coefficient is in W/m$^2$/K, and the timescale is in s.
+For our default mixed-layer depth of 20\,m and the default value of the coefficient, the relaxation timescale is 24 days.
+The coefficient is represented by namelist variable \verb|rn_dqdt| in namelist group \verb|namsbc_ssr|.
+Increasing its absolute value will make the model's SST track the values in the file more closely, thus making the model more like the standard SAS.
+Decreasing the absolute value will make the model more like the mixed-layer model without SST restoring.

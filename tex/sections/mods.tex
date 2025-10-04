@@ -1,0 +1,125 @@
+\section{Compiling and Running with Local Modifications to the Source}
+\label{sec:mods}
+
+This section describes how to to compile and run a version of NEMO-\SIcu{} that incorporates my bug fixes and other modifications to the topographic melt pond scheme.
+
+\subsection{Management of Local Modifications}
+\label{sec:mods:subsec:management}
+
+There are two ways to manage local modifications to the NEMO-\SIcu{} source code.
+One way is to directly edit the files under the top-level source directory.
+This way has the disadvantage that it can create problems when you wish to update the downloaded source from the official repository.
+These problems are easier to solve with Git than with many other revision control systems because Git is by design a distributed system and has the ability to create local branches of the source code without requiring write access to the official repository.
+However, NEMO has only used Git since Mar 2022, and the local modifications to the topographic melt pond scheme predate that.
+
+The NEMO-\SIcu{} build process provides an alternative way to manage local modifications to the source code.
+A configuration directory such as \verb|cfgs/| \verb|UOR_ORCA2_ICE| contains a subdirectory called \verb|MY_SRC|.
+Any Fortran source files placed in this directory will be compiled when the configuration is compiled, and will take priority over any similarly named files in the official source.
+Local modifications can therefore be maintained outside of the top-level source directory using any revision control system or none.
+When the time comes to compile a configuration, copies of these files (or links to them) are placed in the configuration's \verb|MY_SRC| directory.
+This is the procedure used for the local modifications to the topographic melt pond scheme.
+
+The local modifications to NEMO-\SIcu{} and XIOS are maintained in the Subversion repository \verb|SI3RACC/Software/SVN|.
+Subversion was used because that is what NEMO used until Mar 2022.
+A copy of the NEMO-\SIcu{} modifications, checked out and ready for use, can be found under \verb|SI3RACC/Software/| \verb|mods-trunk|.
+
+If you do not wish to access the repository directly, you can skip this paragraph.
+If you would like to access the repository directly, you can do so using the URL \verb|file:///storage/silver/cpom/rk901985/SI3RACC/Software/SVN| in Subversion commands.
+For example, to check out your own copy of the modifications to NEMO-\SIcu{} (perhaps as a prelude to further changes), use the following command:
+
+\begin{verbatim}
+  svn co file:///storage/silver/cpom/rk901985/SI3RACC/Software/SVN/mods/trunk mods-trunk
+\end{verbatim}
+
+\noindent{}Warning: The repository is incompatible with the version of Subversion currently on the RACC, which is rather old (1.7.14).
+It works fine with the newer version on the NX servers (1.13.0).
+Thus, even though the checked-out modifications are compiled on the RACC, operations on the repository have to be carried out on one of the NX servers or another machine with an up-to-date Subversion.
+None of this matters if you are using the modifications that have already been checked out under \verb|SI3RACC/Software/mods-trunk|.
+
+
+\subsection{Compiling}
+\label{sec:mods:subsec:compiling}
+
+To recompile the \verb|UOR_ORCA2_ICE| configuration to include the melt pond modifications, copy the four files under \verb|SI3RACC/Software/mods-trunk/src/ICE| to \verb|cfgs/UOR_ORCA2_ICE/MY_SRC| under the top-level source directory.
+Next, make sure that the \verb|gcc/6.4.0| and \verb|netcdf| modules are loaded as in Section~\ref{sec:tutorial:subsec:compiling}.
+Finally, give the following command in the top-level source directory:
+
+\begin{verbatim}
+  ./makenemo -r UOR_ORCA2_ICE
+\end{verbatim}
+
+\noindent{}(The more complicated command of Section~\ref{sec:tutorial:subsec:no-pisces} is not needed now that the \verb|UOR_ORCA2_ICE| configuration has been first set up.)
+The above command does an intelligent recompilation that only recompiles those parts of NEMO-\SIcu{} that are contained in the new files or depend on the new files (although this happens to include a large part of the code because one of the modified files is \verb|ice.F90|, which defines many of the ice variables).
+
+
+\subsection{Updating the Template Run Directory}
+\label{sec:mods:subsec:run-directory}
+
+Before the new version of NEMO-\SIcu{} can be run, some changes must be made to the template run directory \verb|cfgs/UOR_ORCA2_ICE/EXP00|, so change to this directory.
+First, the new code defines some new namelist variables in \verb|namelist_ice_|\linebreak\verb|ref|, so remove the existing file of this name and replace it by a copy of \verb|SI3RACC/| \verb|Software/mods-trunk/cfgs/SHARED/namelist_ice_ref|.
+Next, the new code adds a field to the list of all possible ice output fields in \verb|field_def_nemo-ice.|\linebreak\verb|xml|, so remove the existing file and replace it by a copy of \verb|SI3RACC/Software/| \verb|mods-trunk/cfgs/SHARED/field_def_nemo-ice.xml|.
+This completes the updating of \verb|EXP00| as a template run directory.
+
+\subsection{Final Configuration and Running}
+\label{sec:mods:subsec:running}
+
+The template \verb|EXP00| can now be used to create a run directory for a second experiment:
+
+\begin{verbatim}
+  cp -a EXP00 2
+\end{verbatim}
+
+\noindent{}As before, you can use a name other that 2 if you wish.
+There is a job script suitable for running this experiment named \verb|doit2| in \verb|SI3RACC/Experiments/2| (in fact this script is identical to the previous \verb|doit1|).
+Copy this script to the run directory; again, you can change its name if you wish.
+
+It would be possible to run the experiment at this point, but the results would not be very different to the first experiment because the default values in the new \verb|namelist_ice_ref| leave the new melt pond features turned off.
+This is part of a general policy of having NEMO-\SIcu{} revert to its standard behaviour by default.
+There are further files in \verb|SI3RACC/Experiments/2| that should be copied to the run directory to give more interesting results. These files are as follows:
+
+\begin{description}
+
+    \item[\texttt{namelist\_cfg}]
+        This specifies the run-specific namelist variables for the ocean model.
+        In namelist group \verb|namsbc|, the namelist variable \verb|nn_fsbc| has been set to 1 instead of 4.
+        This variable controls the frequency with which the surface boundary condition module (which includes the sea ice processes) is called.
+        The ocean timestep of this experiment is 90\,min (set by namelist variable \verb|rn_Dt| in namelist group \verb|namdom|).
+        A value of 4 for \verb|nn_fsbc| means that the surface boundary condition timestep is four times this, or 6\,h, which is rather large.
+        Decreasing \verb|nn_fsbc| to 1 decreases the surface boundary condition timestep to 90\,min.
+        This value is recommended for all experiments.
+
+    \item[\texttt{namelist\_ice\_cfg}]
+        This specifies the run-specific namelist variables for \SIcu{}.
+        There are two sets of changes in this file.
+
+        In namelist group \verb|namthd_pnd|, the topographic melt pond scheme has been activated instead of the default level melt pond scheme.
+        All the local modifications to the topographic scheme have also been activated.
+        See Appendix \ref{sec:topo-nml:subsec:ice-ref} for a list of the namelist variables controlling these modifications.
+
+        In namelist group \verb|namalb|, the namelist variable \verb|rn_alb_hpiv| has been set to 0.06 instead of its default value of 1.
+        \SIcu{} reduces the albedo of all ice thinner than this value (in m).
+        This makes sense when melt ponds are not being explicitly modelled, but makes less sense when they are.
+        It is not possible to explicitly turn this feature off, but reducing the value of \verb|rn_alb_hpiv| reduces the area of ice affected.
+        Furthermore, \SIcu{} has a minimum sea ice thickness set by namelist variable \verb|rn_himin| in namelist group \verb|namitd|.
+        This has a default value of 0.1.
+        Setting \verb|rn_alb_hpiv| to a value below this (as here) has the effect of turning off the reduction of albedo for thin ice completely.
+        (The situation is slightly more complicated than this, but the complication only arises if \verb|rn_himin| has a value of 0.05 or less.)
+
+        The above changes to \verb|namelist_ice_cfg| are recommended for all work with the topographic melt pond scheme.
+
+    \item[\texttt{file\_def\_nemo-oce.xml}]
+        This specifies what is in the ocean output files (see Appendix \ref{sec:outputs}).
+        Some heat flux variables that have proved useful for diagnostic purposes have been added.
+
+    \item[\texttt{file\_def\_nemo-ice.xml}]
+        This specifies what is in the ice output files (see Appendix \ref{sec:outputs}).
+        A full set of melt pond variables has been added, as have ice albedo and some heat and mass flux variables that have proved useful for diagnostic purposes.
+
+\end{description}
+
+Copy the above files from \verb|SI3RACC/Experiments/2| to the run directory, allowing the files already there to be overwritten.
+The experiment can then be submitted to the batch system using the following command in the run directory:
+
+\begin{verbatim}
+  sbatch ./doit2
+\end{verbatim}

@@ -1,0 +1,67 @@
+\section{Configuring \texorpdfstring{NEMO-$\mathrm{SI}^3$}{NEMO-SI3} Output Files}
+\label{sec:outputs}
+
+It is possible to change the content and output frequency of the NEMO-\SIcu{} output files by editing the configuration files \verb|file_def_nemo-oce.xml| and \verb|file_|\linebreak\verb|def_nemo-ice.xml| in the run directory.
+The former controls ocean output, the latter sea ice output.
+The files are written in XML, which is similar to HTML.
+The full story is in Chapter 10 of the NEMO manual, but here is a quick introduction.
+
+I assume that you have got at least as far as running NEMO-\SIcu{} for the first time as in Section~\ref{sec:tutorial:subsec:running-custom}.
+Take a look at the file \verb|file_def_nemo-ice.|\linebreak\verb|xml| in the run directory.
+The main sea ice output file is the file \verb|ORCA2_5d_|\linebreak\verb|00010101_00011231_icemod.nc| of five-day means, which is defined in \verb|file_|\linebreak\verb|def_nemo-ice.xml| between a pair of lines that look like this:
+
+\begin{verbatim}
+  <file id="file21" name_suffix="_icemod" description="ice variables" enabled=".true." >
+  ...
+  </file>
+\end{verbatim}
+
+\noindent{}The variables in the file are defined by intervening lines that look like this:
+
+\begin{verbatim}
+  <field field_ref="icethic"          name="sithic" />
+\end{verbatim}
+
+\noindent{}You can add further variables by adding more lines of this form.
+All the possible output variables are listed in the file \verb|field_def_nemo-ice.xml| (or \verb|field_def_nemo-oce.xml| for the ocean).
+The \verb|field_ref| attribute in \verb|file_|\linebreak\verb|def_nemo-ice.xml| should be the same as the \verb|id| attribute in \verb|field_def_nemo_|\linebreak\verb|ice.xml|.
+The name attribute in \verb|file_def_nemo-ice.xml| is the name that the variable will have in the netCDF file (NEMO-\SIcu{} is fond of having multiple names for the same thing).
+
+To define a file with a different output frequency, first note that the \verb|<file ...>| \verb|...</file>| lines above are enclosed between a pair of lines that look like this:
+
+\begingroup\small\begin{verbatim}
+  <file_group id="5d" output_freq="5d"  output_level="10" enabled=".TRUE.">  <!-- 5d files -->
+  ...
+  </file_group>
+\end{verbatim}\endgroup
+
+\noindent{}(There can be multiple file definitions in a \verb|file_group|.
+The group above also contains a file with the suffix \verb|_SBC_scalar|, but this does not get output---I think because the variables in it are only output if certain namelist options are set.)
+
+If you wanted to output daily means instead of five-day means, you could just change all the \verb|5d|'s to \verb|1d|'s in the \verb|file_group| line above.
+If you wanted to output daily means as well as five-day means, you could add a new \verb|file_group| by copying the whole \verb|5d| \verb|file_group| (everything between \verb|<file_group ...>| and \verb|</file_group>|) and changing \verb|5d| to \verb|1d|.
+In this case you would also need new \verb|id| attributes for the new files.
+These attributes should have the form \verb|"fileN"| where \verb|N| is an integer between 1 and 999 and should be different for different files.
+For the standard five-day file, the \verb|id| is \verb|"file21"|.
+I just increment the number at the end for the files that I add, starting from the highest number currently in \verb|file_def_nemo-ice.xml|.
+
+If you wanted to output monthly means, there is already a suitable \verb|file_group| with a commented-out file definition.
+You could add your own \verb|file| definition here.
+
+There are also empty \verb|file_groups| for various periods between one timestep and ten years.
+To add \verb|file| definitions to these, you would have to change the \verb|/>| to \verb|>| and end the \verb|file_group| with a line that says \verb|</file_group>| after the file definitions.
+
+If you wish to write output at every timestep, be aware that sea ice processes can have a different timestep to ocean processes, with the ratio between the two controlled by namelist variable \verb|nn_fsbc| in namelist group \verb|namsbc| of \verb|namelist_cfg| (see Section \ref{sec:mods:subsec:running}).
+I have found that having two different timesteps can confuse the output code of NEMO-\SIcu{} (or the XIOS library that it uses for output), with the result that the time coordinate in files with an output frequency of one timestep is wrong.
+This is not a problem if the two timesteps are the same, which is another reason for running with \verb|nn_fsbc| = 1 as recommended in Section~\ref{sec:mods:subsec:running}.
+
+For experiments running for more than a year of simulation time, I generally split the output files into separate files for each year (that way something useful can be salvaged if the run ends prematurely).
+If you want to do this, you need to edit \verb|file_def_nemo-ice.xml| and \verb|file_def_nemo-oce.xml| to add \verb|split_freq="1y"| to the \verb|file_group| definitions.
+So, for example, the start of the five-day \verb|file_group| in \verb|file_def_nemo-ice.xml| would become
+
+\begingroup
+    \small
+    \begin{verbatim}
+  <file_group id="5d" output_freq="5d" split_freq="1y" output_level="10" enabled=".TRUE.">
+    \end{verbatim}
+\endgroup

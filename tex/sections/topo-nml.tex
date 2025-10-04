@@ -1,0 +1,56 @@
+\section{Namelist Variables Controlling Local Modifications}
+\label{sec:topo-nml}
+
+\subsection{\texorpdfstring{\texttt{namelist\_ice\_ref}}{namelist ice ref}}
+\label{sec:topo-nml:subsec:ice-ref}
+
+The following namelist variables have been added to namelist group \verb|namthd_pnd| in \verb|SI3RACC/Software/mods-trunk/cfgs/SHARED/namelist_ice_ref| to control local modifications to the topographic melt pond scheme:
+
+\begin{description}
+
+    \item[\texttt{ln\_aip\_lid\_frz}]
+        The official code currently has a bug in the freezing of pre-existing pond lids.
+        It uses the ice area where is should use the melt pond area.
+        Setting this variable true will fix this bug.
+        Default: false.
+
+    \item[\texttt{ln\_pnd\_rain}]
+        Set this variable true to add rain to melt ponds.
+        Default: false.
+
+    \item[\texttt{rn\_pnd\_hl\_min}]
+        In the official code, the effective pond area used in the albedo calculation is set to the full pond area if the pond lid is thinner than a hardwired threshold of 0.005~m (0.5~cm).
+        This variable was introduced to allow experimentation with this threshold, but the hardwired value has proved satisfactory.
+        Default: 0.005.
+
+    \item[\texttt{rn\_pnd\_hl\_max}]
+        In the official code, the effective pond area used in the albedo calculation is set to zero if the pond lid is thicker than a hardwired threshold of 0.015~m (1.5~cm).
+        This variable was introduced to allow experimentation with this threshold, but the hardwired value has proved satisfactory.
+        Default: 0.015.
+
+    \item[\texttt{ln\_pnd\_ae\_snw}]
+        Set this variable true to set the effective pond area used in the albedo calculation to zero if the pond depth is less than the snow depth.
+        Default: false.
+
+\end{description}
+
+
+\subsection{\texorpdfstring{\texttt{namelist\_ref}}{namelist ref}}
+\label{sec:topo-nml:subsec:ref}
+
+The following namelist variables have been added to namelist group \verb|namsbc_sas| in \verb|SI3RACC/Software/mods-trunk/cfgs/SHARED/namelist_ref| to control the mixed-layer ocean model.
+This version of \verb|namelist_ref| should only be used with configurations that use the standalone surface scheme and the local modifications in \verb|SI3RACC/Software/mods-trunk/src/SAS/sbcssm.F90| (which is where the mixed-layer model is implemented).
+It should not be used with configurations that use the full ocean model.
+Thus it should not be used with configurations derived from \verb|ORCA2_ICE_PISCES|.
+
+\begin{description}
+
+    \item[\texttt{ln\_mlm}]
+        Set this variable true to activate the mixed-layer model.
+        Default: false.
+
+    \item[\texttt{rn\_mld}]
+        The mixed-layer depth in metres.
+        Default: 20.
+
+\end{description}

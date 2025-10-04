@@ -1,0 +1,97 @@
+\section{Running with Multi-Year Atmospheric Forcing Files}
+\label{sec:forcings}
+
+The runs up to this point have used the climatological atmospheric forcing files provided as part of the package \verb|ORCA2_ICE_v4.2_RC_FULL.tar.gz| (Section~\ref{sec:tutorial:subsec:run-directory}).
+These files have names ending in \verb|.15JUNE2009_fill.nc|.
+They are derived from the Corrected Normal Year Forcing (CNYF) files in version 2 of the CORE dataset (\verb|https://data1.gfdl.noaa.gov/nomads/forms/core.|\linebreak\verb|html|).
+This dataset also includes Corrected Inter-Annual Forcing (CIAF) files for the years 1948 to 2009.
+This section describes how to use these files for time-varying atmospheric forcing of NEMO-\SIcu{}.
+
+Copies of the CIAF files can be found under \verb|SI3RACC/Downloads/COREv2/| \verb|CIAF|.
+Unfortunately, the files as downloaded do not have names in the format required by NEMO-\SIcu{}.
+NEMO-\SIcu{} requires yearly files like these to have names ending in \verb|\_yYYYY.nc| where \verb|YYYY| is the four-digit year.
+A further problem is that NEMO-\SIcu{} requires total precipitation and snow, whilst the CIAF files provide rain and snow.
+These problems are solved by the files in the directory \verb|SI3RACC/Experiments/CIAF4NEMO|.
+This directory contains symbolic links to the downloaded CIAF files with names in the form required by NEMO-\SIcu{}.
+It also contains files \verb|total_precip_yYYYY.nc| containing total precipitation calculated from the CIAF rain and snow.
+If you are interested in how these files were generated, look at the scripts \verb|ciaf4nemo| and \verb|ciaf4nemo.py| in the same directory.
+
+We shall run NEMO-\SIcu{} for three years, forced by the CIAF data for 2000--2002.
+Under \verb|cfgs/UOR_ORCA2_ICE|, start by making a copy of the template run directory:
+
+\begin{verbatim}
+  cp -a EXP00 3
+\end{verbatim}
+
+\noindent{}From here on, we shall take it for granted that you can use different names for the run directories and job scripts if you wish (but not for any of the other files).
+In the run directory, start by removing the climatological atmospheric forcing files:
+
+\begin{verbatim}
+  rm *_fill.nc
+\end{verbatim}
+
+\noindent{}This is not essential, but it guards against references to these files being inadvertently left in the namelist files (if such references remain and the forcing files are missing, NEMO-\SIcu{} will stop with an error).
+Next, create symbolic links to the CIAF files for 2000--2002:
+
+\begin{verbatim}
+  ln -s /storage/silver/cpom/rk901985/SI3RACC/Experiments/CIAF4NEMO/*_y200[0-2].nc .
+\end{verbatim}
+
+\noindent{}Do not miss off the dot at the end.
+
+Now copy all the files under \verb|SI3RACC/Experiments/3| to the run directory.
+The following is a list of the files with their modifications relative to experiment~2 (Section~\ref{sec:mods:subsec:running}):
+
+\begin{description}
+
+    \item[\texttt{namelist\_cfg}]
+        In namelist group \verb|numrun|, the run length has been increased to three years (variable \verb|nn_itend|) and the start date has been set to 2000-01-01 (variable \verb|nn_date0|).
+
+        In namelist group \verb|namsbc_blk|, the climatological forcing files have been replaced by the CIAF forcing files (variables \verb|sn_wndi|, \verb|sn_wndj|, \verb|sn_qsr|, \verb|sn_qlw|, \verb|sn_tair|, \verb|sn_humi|, \verb|sn_prec|, \verb|sn_snow|, and \verb|sn_slp|).
+        See Section 6.2.1 of the NEMO manual for the meaning of the components of the structures used to define input files.
+        See Section 6.4.6 of the NEMO manual for the meaning of the nine atmospheric input fields.
+
+    \item[\texttt{namelist\_ice\_cfg}]
+        Identical to experiment 2.
+
+    \item[\texttt{file\_def\_nemo-oce.xml}]
+        The output files have been split into separate files for each year of the simulation (see the end of Appendix \ref{sec:outputs}).
+        This is necessary so that some of the files can be used later to force the standalone surface scheme (Section \ref{sec:sas}) and the mixed-layer model (Section \ref{sec:mlm}).
+        Splitting the output files is useful in any case for long runs because it prevents the files from becoming too big and ensures that something useful can be salvaged if a run ends prematurely.
+
+        Files have also been added containing monthly means of the variables required to force the standalone surface scheme and the mixed-layer model.
+
+    \item[\texttt{file\_def\_nemo-ice.xml}]
+        The output files have been split into separate files for each year of the simulation (see the end of Appendix \ref{sec:outputs}).
+
+    \item[\texttt{doit3}]
+        Compared to \verb|doit2|, the time limit has been increased to 48 hours and the partition to which the job is submitted has been specified as long.
+        (The default short partition has a maximum time limit of 24 hours.)
+
+\end{description}
+
+Submit the job to the batch using the following command in the run directory:
+
+\begin{verbatim}
+  sbatch ./doit3
+\end{verbatim}
+
+\noindent{}Although the job script specifies a time limit of 48~hours, a run time under 12~hours is more typical.
+
+The main output files for 2000 are the following:
+
+\begin{verbatim}
+  ORCA2_5d_20000101_20021231_icemod_2000-2000.nc
+  ORCA2_5d_20000101_20021231_grid_T_2000-2000.nc
+  ORCA2_5d_20000101_20021231_grid_U_2000-2000.nc
+  ORCA2_5d_20000101_20021231_grid_V_2000-2000.nc
+  ORCA2_5d_20000101_20021231_grid_W_2000-2000.nc
+
+  ORCA2_1m_20000101_20021231_grid_T_2000-2000.nc
+  ORCA2_1m_20000101_20021231_grid_U_2000-2000.nc
+  ORCA2_1m_20000101_20021231_grid_V_2000-2000.nc
+\end{verbatim}
+
+\noindent{}There are similar files for 2001 and 2002.
+The files with names beginning \verb|ORCA2_5d| contain five-day means and correspond to the files listed in Section~\ref{sec:tutorial:subsec:running-custom}.
+The files with names beginning \verb|ORCA2_1m| are the new files of monthly means noted in the description of \verb|file_def_nemo-oce.xml|.

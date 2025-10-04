@@ -1,0 +1,18 @@
+\section{Introduction}
+\label{sec:intro}
+
+This document gives instructions for compiling and running the \SIcu{} sea ice model on the Reading Academic Computing Cluster (RACC).
+By following the instructions in Sections~\ref{sec:download} to \ref{sec:forcings}, the reader will end up with a configuration of \SIcu{} coupled to the NEMO ocean model and forced by multi-year atmospheric forcing files.
+By continuing through Sections~\ref{sec:sas} and \ref{sec:mlm}, the reader will learn how to replace the full ocean model with a simpler mixed-layer ocean model.
+Section~\ref{sec:restarts} (which is independent of Sections~\ref{sec:sas} and \ref{sec:mlm}) describes how to run \SIcu{} with initial conditions taken from restart files saved by a previous run.
+
+Copies of various files to support running \SIcu{} on the RACC have been placed under \verb|/storage/silver/cpom/rk901985/SI3RACC|.
+In what follows, paths beginning \verb|SI3RACC| refer to this directory.
+
+\SIcu{} is part of the NEMO ocean modelling framework.
+The main technical website for NEMO is its GitLab site at \verb|https://forge.nemo-ocean.eu|.
+This supersedes the old Trac site at \verb|http://forge.ipsl.jussieu.fr/nemo|.
+At the GitLab site, the source code of NEMO-\SIcu{} can be browsed and a link can be found to a manual for the ocean part of NEMO \citep{nemo-4.2.0}.
+An up-to-date manual for \SIcu{} has been promised, but at the time of writing has yet to appear.
+Until then, one has to make do with the older, incomplete manual that can be found via the old Trac site \citep{si3-4.0.1}.
+For convenience, copies of both manuals have been placed under \verb|SI3RACC/Downloads/NEMO| as the files \verb|NEMO_manual_4.2.0.pdf| and \verb|SI3_manual.pdf|.

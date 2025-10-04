@@ -1,0 +1,38 @@
+\section{Downloading the Source Code}
+\label{sec:download}
+
+The official NEMO-\SIcu{} source code is managed using the Git revision control system.
+There is public read access to the source code repository.
+To create a local copy of the repository, use the following command:
+
+\begin{verbatim}
+  git clone https://forge.nemo-ocean.eu/nemo/nemo.git
+\end{verbatim}
+
+\noindent{}This will create a directory called \verb|nemo| under the current directory and download the NEMO-\SIcu{} source to it.
+This \verb|nemo| directory will be referred to as the \textit{top-level source directory} in what follows.
+
+The leading edge of NEMO-\SIcu{} development takes place on the so-called \textit{main} branch of its source code repository.
+There are also official release versions from time to time.
+The source code under the top-level source directory initially corresponds to the latest revision of the main branch.
+The instructions in this document have been tested with the main branch as it was on 27/4/2022.
+It is recommended that you switch to this revision before trying out the instructions.
+This can be done by giving the following command in the top-level source directory:
+
+\begin{verbatim}
+  git checkout b9ec6ca14aea39a6101e3fc0cee2e26f69fe88d1
+\end{verbatim}
+
+\noindent{}As can be seen, Git labels revisions (or \textit{commits} as it calls them) with 40-digit hexadecimal strings.
+After giving this command, the source code under the top-level source directory will correspond to the older revision with which the instructions have been tested.
+
+Later, if you wish to return to the head of the main branch, you can do so with the following command:
+
+\begin{verbatim}
+  git checkout main
+\end{verbatim}
+Alternatively, if you wish to switch to the 4.2.0 release version, you can give the command
+
+\begin{verbatim}
+  git checkout 4.2.0
+\end{verbatim}
