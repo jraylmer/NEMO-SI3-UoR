@@ -1,35 +1,50 @@
-\section{Compiling XIOS}
+\section{Downloading and compiling XIOS}
 \label{sec:xios}
 
-This appendix describes how the XIOS library under \verb|SI3RACC/Software/xios-trunk| was compiled.
-It can be used as a starting point should it ever be necessary to recompile XIOS.
+The third-party software XIOS (XML Input/Output Server) is required to run NEMO and must be downloaded and compiled as a prerequisite.\footnote{
+    Strictly speaking, it is only required when running NEMO as a distributed memory job, i.e., in parallel across multiple CPUs, but we almost always do this.
+}
+It handles the reading of input forcing files into the model and the selection and writing of output diagnostics during model runs.
+Currently, there is a version 2 and a version 3 of XIOS, maintained in parallel.
+The latest version of NEMO, version 5, is compatible with both, with XIOS3 supposedly leading to more efficient I/O and hence faster simulation run times.
+Alas, we are yet to get XIOS3 working on RACC2, so for the time being, we stick with XIOS2.
 
-The recommended version of XIOS for use with NEMO-\SIcu{} used to be XIOS~2.5, but since the 4.2.0 release NEMO-\SIcu{} has used features of XIOS that are not in XIOS~2.5.
-It is now recommended to download and compile XIOS from the trunk of its Subversion repository.
-This is what was done.
+The first step is to download the XIOS source code from its Subversion repository.
+We download the trunk as recommended by the NEMO developers.
 
-The first step was to download the XIOS source code from the Subversion repository by giving the following command under \verb|SI3RACC/Software|:
+\begin{enumerate}
 
-\begin{verbatim}
-  svn co http://forge.ipsl.jussieu.fr/ioserver/svn/XIOS/trunk xios-trunk
-\end{verbatim}
-
-\noindent{}At the time of downloading, the Subversion repository was at revision 2331.
-In what follows, \verb|SI3RACC/Software/xios-trunk| will be referred to as the \textit{top-level XIOS source directory}.
-
-XIOS is compiled using the script \verb|make_xios| in the top-level XIOS source directory.
-Platform-specific compiler options are specified in configuration files in the \verb|arch| subdirectory.
-Unlike NEMO-\SIcu{}, which uses just a single configuration file, XIOS uses three files with extensions \verb|.env|, \verb|.fcm|, and \verb|.path|.
-Configuration files for compiling XIOS on the RACC have been created with names beginning \verb|arch-GCC_RACC| and can be found under \verb|SI3RACC/Software/|\linebreak\verb|xios-mods-trunk/arch|.
-Symbolic links to these files were placed in the \verb|arch| subdirectory of the top-level XIOS source directory.
-
-Unlike with NEMO-\SIcu{}, it is not necessary to load any modules before compiling XIOS.
-The necessary module commands are instead included in the \verb|.env| file.
-
-XIOS was compiled using the following command in the top-level XIOS source directory:
+    \item Change to the directory in which you wish to download and compile the XIOS source code.
+        It can be anywhere; in this example we create a directory called \verb|software| under the user's home directory (\verb|$HOME|):
 
 \begin{verbatim}
-  ./make_xios --arch GCC_RACC
+  $ mkdir -p $HOME/software
+  $ cd $HOME/software
 \end{verbatim}
 
-\noindent{}The output from this command has been saved in the file \verb|make_xios-out|.
+    \item Give the following command to download XIOS2 to a new subdirectory called \verb|XIOS2|:
+
+\begin{verbatim}
+  $ svn co http://forge.ipsl.jussieu.fr/ioserver/svn/XIOS2/trunk XIOS2
+\end{verbatim}
+
+    It may take a few minutes to download.
+
+\end{enumerate}
+
+In the top-level XIOS source directory (\verb|$HOME/software/XIOS2|, in this case), there is a script called \verb|make_xios| (no extension) which is used to compile it.
+Platform-specific compiler options and library paths are specified in configuration files in the \verb|arch| subdirectory, all of which must start with \verb|arch-|.
+For each any given platform, there are three such configuration files with extensions \verb|.env|, \verb|.fcm|, and \verb|.path|.
+There are templates for various cases but a custom set of configuration files is required to compile on the RACC2.
+These are provided in the auxiliary resources under \verb|xios/xios2/arch|, called \verb|arch-racc2.env|, \verb|arch-racc2.fcm|, and \verb|arch-racc2.path|.
+
+\begin{enumerate}\setcounter{enumi}{2}
+    \item Copy these three files into your \verb|arch| subdirectory.
+    \item Give the following command from the top-level XIOS source directory to compile XIOS:
+\begin{verbatim}
+  $ ./make_xios --arch racc2
+\end{verbatim}
+\end{enumerate}
+
+In the above command, the value given to the argument \verb|--arch| is the part of the configuration file names without their prefix \verb|arch-| and without their extension, which in this case is just \verb|racc2|.
+Compilation takes approximately 15~minutes to complete, assuming it does so successfully.

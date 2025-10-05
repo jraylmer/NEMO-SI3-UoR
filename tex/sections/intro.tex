@@ -1,18 +1,27 @@
 \section{Introduction}
 \label{sec:intro}
 
-This document gives instructions for compiling and running the \SIcu{} sea ice model on the Reading Academic Computing Cluster (RACC).
-By following the instructions in Sections~\ref{sec:download} to \ref{sec:forcings}, the reader will end up with a configuration of \SIcu{} coupled to the NEMO ocean model and forced by multi-year atmospheric forcing files.
-By continuing through Sections~\ref{sec:sas} and \ref{sec:mlm}, the reader will learn how to replace the full ocean model with a simpler mixed-layer ocean model.
-Section~\ref{sec:restarts} (which is independent of Sections~\ref{sec:sas} and \ref{sec:mlm}) describes how to run \SIcu{} with initial conditions taken from restart files saved by a previous run.
+This document gives instructions for compiling and running the \SIcu{} sea ice model, which is part of the NEMO ocean modelling framework, on the University of Reading Academic Computing Cluster 2 (RACC2).
+It is based on a version originally written by David M. Livings in 2022 for the old RACC, which is now out of service and superseded by RACC2.
+The new cluster has different versions of the required compilers and libraries, and there are now also new major releases of \NEMOSIcu{}.
+This necessitates the present documentation for running the latest versions of \NEMOSIcu{} on RACC2.
 
-Copies of various files to support running \SIcu{} on the RACC have been placed under \verb|/storage/silver/cpom/rk901985/SI3RACC|.
-In what follows, paths beginning \verb|SI3RACC| refer to this directory.
+The source \LaTeX{} files are now maintained in a GitHub repository with the initial commit corresponding to David's original document.
+Other resources such as configuration files for compilations are also provided in this repository (rather that relying on paths to storage volumes on the cluster itself).
+They are referred to throughout as the \textit{auxiliary resources}.
 
-\SIcu{} is part of the NEMO ocean modelling framework.
-The main technical website for NEMO is its GitLab site at \verb|https://forge.nemo-ocean.eu|.
-This supersedes the old Trac site at \verb|http://forge.ipsl.jussieu.fr/nemo|.
-At the GitLab site, the source code of NEMO-\SIcu{} can be browsed and a link can be found to a manual for the ocean part of NEMO \citep{nemo-4.2.0}.
-An up-to-date manual for \SIcu{} has been promised, but at the time of writing has yet to appear.
-Until then, one has to make do with the older, incomplete manual that can be found via the old Trac site \citep{si3-4.0.1}.
-For convenience, copies of both manuals have been placed under \verb|SI3RACC/Downloads/NEMO| as the files \verb|NEMO_manual_4.2.0.pdf| and \verb|SI3_manual.pdf|.
+By following the instructions in sections~\ref{sec:xios}--\ref{sec:tutorial}, the reader will end up with a configuration of \SIcu{} coupled to the NEMO ocean model and forced by standard climatological atmospheric forcing.
+Updated explanations of how to use multi-year atmospheric forcing, replace the full ocean model with the standalone surface scheme (SAS) or mixed-layer model, and how to use restart files, will be added back to this document later.
+
+The main technical website for NEMO is its GitLab site at:
+
+\begin{center}
+    \url{https://forge.nemo-ocean.eu}
+\end{center}
+
+Here, the source code of \NEMOSIcu{} can be browsed and a link can be found to a manual for the ocean part of NEMO \citep{nemo-5.0.0}, which corresponds to version 5.0.
+Currently, the latest available \SIcu{} manual is that for version 4.2 \citep{si3-4.2.0}, but the release notes for version 5.0 can be found at:
+
+\begin{center}
+    \url{https://forge.nemo-ocean.eu/nemo/nemo/-/releases/5.0}
+\end{center}
