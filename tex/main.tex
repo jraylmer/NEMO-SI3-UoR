@@ -1,6 +1,7 @@
 \documentclass[a4paper]{article}
 
 \usepackage[toc,page]{appendix}
+\usepackage{doi}
 \usepackage[T1]{fontenc}
 \usepackage[round]{natbib}
 \usepackage{parskip}
@@ -13,7 +14,7 @@
 
 \title{Compiling and Running \texorpdfstring{\SIcu}{SI3} on RACC2}
 \author{Jake R. Aylmer}
-\date{7 October 2025}
+\date{December 2025}
 
 \makeatletter
 \hypersetup{pdfauthor={\@author}, pdftitle={\@title}}
@@ -31,14 +32,15 @@
     \input{sections/download}
     \input{sections/tutor}
     %\input{sections/mods}
-    %\input{sections/forcings}
+    \input{sections/forcings}
     %\input{sections/sas}
     %\input{sections/mlm}
     %\input{sections/restarts}
 
-    %\appendix
+    \clearpage
+    \appendix
     %\input{sections/topo-nml}
-    %\input{sections/outputs}
+    \input{sections/outputs}
 
     \bibliographystyle{plainnat}
     \bibliography{refs}

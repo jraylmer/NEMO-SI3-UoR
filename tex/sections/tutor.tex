@@ -258,7 +258,7 @@ More informative is the log file from \NEMOSIcu{}, which is always called \verb|
 Look through this for any errors (try searching for the string `E R R' with spaces between the letters).
 The output fields are the following netCDF files (use \verb|$ ls ORCA2*.nc| to check):
 
-\begingroup\small
+\begingroup\footnotesize
 \begin{verbatim}
   ORCA2_1m_00010101_00011231_diaptr2D.nc
   ORCA2_1m_00010101_00011231_diaptr3D.nc
@@ -272,4 +272,5 @@ The output fields are the following netCDF files (use \verb|$ ls ORCA2*.nc| to c
 \end{verbatim}
 \endgroup
 
-The file ending \verb|_icemod.nc| contains five-day means of sea ice variables; the others contain ocean variables.
+The file ending \verb|_icemod.nc| contains five-day means of sea ice variables.
+Those ending \verb|_scalar.nc| contain globally integrated diagnostics and trends, and the others contain ocean variables.

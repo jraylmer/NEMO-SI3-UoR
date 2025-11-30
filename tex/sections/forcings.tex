@@ -1,97 +1,253 @@
-\section{Running with Multi-Year Atmospheric Forcing Files}
+\section{Using multi-year atmospheric forcing}
 \label{sec:forcings}
 
-The runs up to this point have used the climatological atmospheric forcing files provided as part of the package \verb|ORCA2_ICE_v4.2_RC_FULL.tar.gz| (Section~\ref{sec:tutorial:subsec:run-directory}).
-These files have names ending in \verb|.15JUNE2009_fill.nc|.
-They are derived from the Corrected Normal Year Forcing (CNYF) files in version 2 of the CORE dataset (\verb|https://data1.gfdl.noaa.gov/nomads/forms/core.|\linebreak\verb|html|).
-This dataset also includes Corrected Inter-Annual Forcing (CIAF) files for the years 1948 to 2009.
-This section describes how to use these files for time-varying atmospheric forcing of NEMO-\SIcu{}.
+In the previous section, we used climatological atmospheric forcing from the standard input package \verb|ORCA2_ICE| provided for the NEMO testing and validation suite (SETTE).
+This section describes how to setup \NEMOSIcu{} to run with multi-year atmospheric forcing, which requires some namelist changes.
+We start in section~\ref{sec:forcings:subsec:core} with interannual forcing from the CORE (Common \mbox{Ocean--ice} Reference Experiments) dataset, which is also where the climatological forcing originates (and so the file and variable formats are similar).
+This gives the basic steps to change the atmospheric forcing.
+Then in section~\ref{sec:forcings:subsec:jra-55-do} we switch to \mbox{JRA-55-do}, a more recent forcing based on the \mbox{JRA-55} reanalysis, for which a few additional namelist changes are needed to ensure NEMO interprets the fields correctly.
+It is assumed that the reader has completed section~\ref{sec:tutorial} first.
 
-Copies of the CIAF files can be found under \verb|SI3RACC/Downloads/COREv2/| \verb|CIAF|.
-Unfortunately, the files as downloaded do not have names in the format required by NEMO-\SIcu{}.
-NEMO-\SIcu{} requires yearly files like these to have names ending in \verb|\_yYYYY.nc| where \verb|YYYY| is the four-digit year.
-A further problem is that NEMO-\SIcu{} requires total precipitation and snow, whilst the CIAF files provide rain and snow.
-These problems are solved by the files in the directory \verb|SI3RACC/Experiments/CIAF4NEMO|.
-This directory contains symbolic links to the downloaded CIAF files with names in the form required by NEMO-\SIcu{}.
-It also contains files \verb|total_precip_yYYYY.nc| containing total precipitation calculated from the CIAF rain and snow.
-If you are interested in how these files were generated, look at the scripts \verb|ciaf4nemo| and \verb|ciaf4nemo.py| in the same directory.
 
-We shall run NEMO-\SIcu{} for three years, forced by the CIAF data for 2000--2002.
-Under \verb|cfgs/UOR_ORCA2_ICE|, start by making a copy of the template run directory:
+\subsection{CORE Forcing}
+\label{sec:forcings:subsec:core}
+
+The climatological atmospheric forcing files used thus far have names ending in \verb|.15JUNE2009_fill.nc|, which reside as symbolic links in the \verb|EXP00| and \verb|EXP01| directories from section~\ref{sec:tutorial}.
+They are derived from the Corrected Normal Year Forcing (CNYF) dataset in version 2 of CORE:
+
+\begin{center}
+    \url{https://data1.gfdl.noaa.gov/nomads/forms/core.html}
+\end{center}
+
+Here, we switch to the Corrected Interannual Atmospheric Forcing (CIAF) dataset, also part of CORE.
+The raw data is available at:
 
 \begin{verbatim}
-  cp -a EXP00 3
+  /storage/research/cpom1/share/COREv2/CIAFv2
 \end{verbatim}
 
-\noindent{}From here on, we shall take it for granted that you can use different names for the run directories and job scripts if you wish (but not for any of the other files).
-In the run directory, start by removing the climatological atmospheric forcing files:
+with subdirectories for each variable, in which there is one file per year.
+Unfortunately, the files as downloaded do not have names in the format required by \NEMOSIcu{}; specifically, it requires yearly files like these to have names ending in \verb|_yYYYY.nc| where \verb|YYYY| is the four-digit year.
+A further problem is that \NEMOSIcu{} requires total precipitation and snow, whilst the CIAF files provide rain and snow.
+These problems are solved by the files in the directory:
 
 \begin{verbatim}
-  rm *_fill.nc
+  /storage/research/cpom1/share/NEMO/inputs/COREv2/CIAFv2
 \end{verbatim}
 
-\noindent{}This is not essential, but it guards against references to these files being inadvertently left in the namelist files (if such references remain and the forcing files are missing, NEMO-\SIcu{} will stop with an error).
-Next, create symbolic links to the CIAF files for 2000--2002:
+This directory contains symbolic links to the CIAF files with names in the format required by \NEMOSIcu{}.
+It also contains files \verb|total_precip_yYYYY.nc| with total precipitation calculated from the CIAF rain and snow.
+
+We shall prepare a 3-year run forced by the CIAF data for 2000--2002.
+
+\begin{enumerate}
+
+    \item Under \verb|cfgs/UOR_ORCA2_ICE|, start by making a copy of the template run directory:
 
 \begin{verbatim}
-  ln -s /storage/silver/cpom/rk901985/SI3RACC/Experiments/CIAF4NEMO/*_y200[0-2].nc .
+  $ cp -a ./EXP00 ./EXP02
 \end{verbatim}
 
-\noindent{}Do not miss off the dot at the end.
-
-Now copy all the files under \verb|SI3RACC/Experiments/3| to the run directory.
-The following is a list of the files with their modifications relative to experiment~2 (Section~\ref{sec:mods:subsec:running}):
-
-\begin{description}
-
-    \item[\texttt{namelist\_cfg}]
-        In namelist group \verb|numrun|, the run length has been increased to three years (variable \verb|nn_itend|) and the start date has been set to 2000-01-01 (variable \verb|nn_date0|).
-
-        In namelist group \verb|namsbc_blk|, the climatological forcing files have been replaced by the CIAF forcing files (variables \verb|sn_wndi|, \verb|sn_wndj|, \verb|sn_qsr|, \verb|sn_qlw|, \verb|sn_tair|, \verb|sn_humi|, \verb|sn_prec|, \verb|sn_snow|, and \verb|sn_slp|).
-        See Section 6.2.1 of the NEMO manual for the meaning of the components of the structures used to define input files.
-        See Section 6.4.6 of the NEMO manual for the meaning of the nine atmospheric input fields.
-
-    \item[\texttt{namelist\_ice\_cfg}]
-        Identical to experiment 2.
-
-    \item[\texttt{file\_def\_nemo-oce.xml}]
-        The output files have been split into separate files for each year of the simulation (see the end of Appendix \ref{sec:outputs}).
-        This is necessary so that some of the files can be used later to force the standalone surface scheme (Section \ref{sec:sas}) and the mixed-layer model (Section \ref{sec:mlm}).
-        Splitting the output files is useful in any case for long runs because it prevents the files from becoming too big and ensures that something useful can be salvaged if a run ends prematurely.
-
-        Files have also been added containing monthly means of the variables required to force the standalone surface scheme and the mixed-layer model.
-
-    \item[\texttt{file\_def\_nemo-ice.xml}]
-        The output files have been split into separate files for each year of the simulation (see the end of Appendix \ref{sec:outputs}).
-
-    \item[\texttt{doit3}]
-        Compared to \verb|doit2|, the time limit has been increased to 48 hours and the partition to which the job is submitted has been specified as long.
-        (The default short partition has a maximum time limit of 24 hours.)
-
-\end{description}
-
-Submit the job to the batch using the following command in the run directory:
+    From here on, we shall take it for granted that you can use different names for the run directories and job scripts if you wish (but not for any of the other files).
+    
+    \item In the new run directory, start by removing the climatological atmospheric forcing files:
 
 \begin{verbatim}
-  sbatch ./doit3
+  $ rm ./*_fill.nc
 \end{verbatim}
 
-\noindent{}Although the job script specifies a time limit of 48~hours, a run time under 12~hours is more typical.
+    This is not essential, but it guards against references to these files being inadvertently left in the namelist files (if such references remain and the forcing files are missing, \NEMOSIcu{} will stop with an error).
 
-The main output files for 2000 are the following:
+    \item Next, create symbolic links to the CIAF files for 2000--2002:
 
+\begingroup\small
 \begin{verbatim}
+  $ ln -s /storage/research/cpom1/share/NEMO/inputs/COREv2/CIAFv2/*_y200{0..2}.nc .
+\end{verbatim}
+\endgroup
+
+    Do not miss off the dot at the end.
+\end{enumerate}
+
+Now we need to make some changes to \verb|namelist_cfg|, so open that file.
+
+\begin{enumerate}\setcounter{enumi}{3}
+    \item In namelist group \verb|&namrun|, increase the run length to three years by setting \verb|nn_itend = 8760|, which is the number of time steps in 3 years.
+    
+    \item Set the start date. This is determined by parameter \verb|nn_date0|, which is currently not set in \verb|namelist_cfg|.
+    Open \verb|namelist_ref| and copy the line containing \verb|nn_date0| into the \verb|&namrun| namelist group of \verb|namelist_cfg|, then change its value to \verb|20000101| (you could also just add the value manually to \verb|namelist_cfg|, but it is helpful to copy from \verb|namelist_ref| to keep the proper alignment and comments and avoid misspellings).
+    This will now override the default value \verb|nn_date0 = 00010101| in \verb|namelist_ref|.
+\end{enumerate}
+
+Namelist group \texttt{\&namsbc\_blk} is where we set the atmospheric forcing inputs.
+There is a namelist parameter for each atmospheric variable, such as \verb|sn_tair| for near-surface air temperature, each of which specifies different settings such as the file name, variable name, and frequency, for that variable.
+This is helpfully arranged like a table using comments and alignment (see example below), but each \verb|sn_*| parameter is just a comma-separated list.
+See section~\mbox{7.2.1} of the NEMO manual for the meaning of the components of the structures used to define input files, and section~\mbox{7.4.6} for the meaning of the nine atmospheric input fields.
+For now, for each variable:
+
+\begin{enumerate}\setcounter{enumi}{5}
+    \item Update the \verb|file name| to the corresponding names of the links generated in step 3 above, except for the \verb|_yYYYY.nc| part.
+    \item Change the value under \verb|clim (T/F)| from \verb|.true.| to \verb|.false.|.
+\end{enumerate}
+
+After steps \mbox{6--7}, your \verb|&namsbc_blk| in \verb|namelist_cfg| should look like this:
+
+\begingroup\tiny\centering
+\begin{verbatim}
+!-----------------------------------------------------------------------
+&namsbc_blk    !   namsbc_blk  generic Bulk formula                     (ln_blk =T)
+!-----------------------------------------------------------------------
+   !                    !  bulk algorithm :
+   ln_NCAR    = .true.     ! "NCAR"      algorithm   (Large and Yeager 2008)
+
+   cn_dir = './'  !  root directory for the bulk data location
+   !_______!________________!___________________!____________!_____________!_________!___________!_____________________________!__________!_______________!
+   !       !  file name     ! frequency (hours) ! variable   ! time interp.!  clim   ! 'yearly'/ !          weights filename   ! rotation ! land/sea mask !
+   !       !                !  (if <0  months)  !   name     !   (logical) !  (T/F)  ! 'monthly' !                             ! pairing  !    filename   !
+   sn_wndi = 'u_10'         ,    6.             , 'U_10_MOD' ,   .false.   , .false. , 'yearly'  , 'weights_core2_orca2_bicub' , 'Uwnd'   , ''
+   sn_wndj = 'v_10'         ,    6.             , 'V_10_MOD' ,   .false.   , .false. , 'yearly'  , 'weights_core2_orca2_bicub' , 'Vwnd'   , ''
+   sn_qsr  = 'ncar_rad'     ,   24.             , 'SWDN_MOD' ,   .false.   , .false. , 'yearly'  , 'weights_core2_orca2_bilin' , ''       , ''
+   sn_qlw  = 'ncar_rad'     ,   24.             , 'LWDN_MOD' ,   .false.   , .false. , 'yearly'  , 'weights_core2_orca2_bilin' , ''       , ''
+   sn_tair = 't_10'         ,    6.             , 'T_10_MOD' ,   .false.   , .false. , 'yearly'  , 'weights_core2_orca2_bilin' , ''       , ''
+   sn_humi = 'q_10'         ,    6.             , 'Q_10_MOD' ,   .false.   , .false. , 'yearly'  , 'weights_core2_orca2_bilin' , ''       , ''
+   sn_prec = 'total_precip' ,   -1.             , 'PRC_MOD1' ,   .false.   , .false. , 'yearly'  , 'weights_core2_orca2_bilin' , ''       , ''
+   sn_snow = 'ncar_precip'  ,   -1.             , 'SNOW'     ,   .false.   , .false. , 'yearly'  , 'weights_core2_orca2_bilin' , ''       , ''
+   sn_slp  = 'slp'          ,    6.             , 'SLP'      ,   .false.   , .false. , 'yearly'  , 'weights_core2_orca2_bilin' , ''       , ''
+/
+\end{verbatim}
+\endgroup
+
+We have only had to change the \verb|file name| and \verb|clim| `columns' here, because the CIAF variables all have the same frequencies and variable names as those of the climatology/CNYF data used before. 
+We will discuss the other `columns' in the next section.
+
+\begin{enumerate}\setcounter{enumi}{8}
+    \item Edit the \verb|runjob.sh| script to request a time limit of 1 hour (and change the job name if you like).
+
+    \item This step is optional.
+    It is helpful with longer simulations to split output files into one per year (or more).
+    This prevents the files from becoming too big and ensures something useful can be salvaged if a run ends prematurely.
+    More details about changing the outputs are given in Appendix~\ref{sec:outputs}.
+
+    \begin{enumerate}
+        \item Open \verb|file_def_nemo-oce.xml| and locate the lines starting\linebreak\verb|<file_group id="oce_5d"| and \verb|<file_group id="oce_1m"|.
+        In both, add the attribute \verb|split_freq="1y"| somewhere after the \verb|id| attributes.
+
+        \item Open \verb|file_def_nemo-ice.xml| and locate the line starting\linebreak\verb|<file_group id="ice_5d"|.
+        Add the attribute \verb|split_freq="1y"| somewhere after the \verb|id=| attribute.
+
+    \end{enumerate}
+\end{enumerate}
+
+The job can now be submitted to the batch system.
+The main output files for 2000 will start to be generated shortly after the job starts:
+
+\begingroup\small\begin{verbatim}
   ORCA2_5d_20000101_20021231_icemod_2000-2000.nc
   ORCA2_5d_20000101_20021231_grid_T_2000-2000.nc
   ORCA2_5d_20000101_20021231_grid_U_2000-2000.nc
   ORCA2_5d_20000101_20021231_grid_V_2000-2000.nc
   ORCA2_5d_20000101_20021231_grid_W_2000-2000.nc
+  ORCA2_5d_20000101_20021231_SBC_scalar_2000-2000.nc
+  ORCA2_5d_20000101_20021231_scalar_2000-2000.nc
+\end{verbatim}\endgroup
 
-  ORCA2_1m_20000101_20021231_grid_T_2000-2000.nc
-  ORCA2_1m_20000101_20021231_grid_U_2000-2000.nc
-  ORCA2_1m_20000101_20021231_grid_V_2000-2000.nc
+These files correspond to those listed in section~\ref{sec:tutorial:subsec:running-custom}.
+Similar files for 2001 and 2002 will appear once the simulation gets to those years.
+
+
+\subsection{JRA-55-do}
+\label{sec:forcings:subsec:jra-55-do}
+
+The \mbox{JRA-55-do} dataset is a more recent forcing for \textbf{d}riving \mbox{\textbf{o}cean--sea} ice models derived from the \mbox{JRA-55} atmospheric reanalysis \citep{kobayashi2015jra-55,tsujino2018jra55do}.
+It is intended to replace CORE as the standard forcing for the ocean model intercomparison project (OMIP) protocols \citep{griffies2016omip,tsujino2020evaluation}.
+We have the entire raw dataset available at:
+
+\begin{verbatim}
+  /storage/research/cpom1/share/JRA-55-do/1.6.0/raw
 \end{verbatim}
 
-\noindent{}There are similar files for 2001 and 2002.
-The files with names beginning \verb|ORCA2_5d| contain five-day means and correspond to the files listed in Section~\ref{sec:tutorial:subsec:running-custom}.
-The files with names beginning \verb|ORCA2_1m| are the new files of monthly means noted in the description of \verb|file_def_nemo-oce.xml|.
+with subdirectories for each variable, in which there is one file per year.
+See the \verb|README.txt| at the directory above for more information and web links.
+Again, the file names as downloaded are not in the required form (they need to end with \verb|_yYYYY.nc|), and separate rain/snow are provided.
+So, we will actually use the prepared inputs directory:
+
+\begin{verbatim}
+  /storage/research/cpom1/share/NEMO/inputs/JRA-55-do_1-6-0_IOTF
+\end{verbatim}
+
+We can setup following the same general steps as in section~\ref{sec:forcings:subsec:core}, with a few changes described below.
+
+\textbf{At step 3, replace the directory with that above.}
+Incidentally, the reader may have noticed the \verb|cn_dir| parameter in the \verb|&namsbc_blk| namelist group, which is set to the present working directory by default.
+It can be set to the location of the input files, and then the linking step~3 can be skipped entirely.
+You might prefer this to having many symbolic links in the experiment directory.
+
+\textbf{After step 5, it is recommended to set} \verb|nn_fsbc = 1| in namelist group \verb|&namsbc| of \verb|namelist_cfg| (its default value is \verb|2|).
+This refers to the frequency of call to the surface boundary condition (SBC) module, in units of time steps, i.e., here we are changing it from `every other time step' to `every time step'.
+This is because the \mbox{JRA-55-do} forcing data is 3~hourly, which is the same as the ocean model time step, \verb|rn_Dt|, and NEMO likes to have the effective SBC time step, \verb|nn_fsbc|$\times$\verb|rn_Dt|, as a sub-multiple of the atmospheric forcing frequency.
+
+\textbf{At steps~\mbox{6--7}, additional changes are required} when editing the \verb|sn_*| parameters in \verb|&namsbc_blk|:
+
+\begin{itemize}
+    \item\textit{variable names:}~check the NetCDF metadata or just refer to the example below (conveniently, they match the file name prefixes in this case).
+    \item\textit{frequencies:}~all \mbox{JRA-55-do} atmospheric forcings are 3~hourly.
+    \item\textit{weights file names:}~the input fields are not on the same grid as the model, and therefore need to be interpolated (re-gridded).
+    This can be done offline, but NEMO includes a mechanism for `interpolation on the fly' (IOTF), in which the raw data is read along with a set of interpolation weights, and the calculation is done internally.
+    This is also the case with the CORE data but the weights are already available in the \verb|ORCA2_ICE| SETTE package.
+    The weights for \mbox{JRA-55-do} have been calculated and placed in the input directory.
+\end{itemize}
+
+Below is what the \verb|&namsbc_blk| namelist group should look like for running with \mbox{JRA-55-do}:\footnote{
+    To be more accurate, I also activate time interpolation for the instantaneous fields.
+    So for \texttt{sn\_wndi}, \texttt{sn\_wndj}, \texttt{sn\_tair}, \texttt{sn\_humi}, and \texttt{sn\_slp} I change the \texttt{time interp.} to \texttt{.true.}.
+    This is not likely to make much difference when examining the behaviour of the model on timescales of, say, months or longer.
+}
+
+\begingroup\tiny\centering
+\begin{verbatim}
+!-----------------------------------------------------------------------
+&namsbc_blk    !   namsbc_blk  generic Bulk formula                     (ln_blk =T)
+!-----------------------------------------------------------------------
+   !                    !  bulk algorithm :
+   ln_NCAR    = .true.     ! "NCAR"      algorithm   (Large and Yeager 2008)
+
+   cn_dir = '/storage/research/cpom1/share/NEMO/inputs/JRA-55-do_1-6-0_IOTF/'  !  root directory for the bulk data location
+   !_______!___________!___________________!__________!_____________!_________!___________!____________________________________!__________!_______________!
+   !       ! file name ! frequency (hours) ! variable ! time interp.!  clim   ! 'yearly'/ !          weights filename          ! rotation ! land/sea mask !
+   !       !           !  (if <0  months)  !   name   !  (logical)  !  (T/F)  ! 'monthly' !                                    ! pairing  !    filename   !
+   sn_wndi = 'uas'     ,         3.        , 'uas'    ,   .false.   , .false. , 'yearly'  , 'weights_bicub_JRA-55-do_to_ORCA2' , 'Uwnd'   , ''
+   sn_wndj = 'vas'     ,         3.        , 'vas'    ,   .false.   , .false. , 'yearly'  , 'weights_bicub_JRA-55-do_to_ORCA2' , 'Vwnd'   , ''
+   sn_qsr  = 'rsds'    ,         3.        , 'rsds'   ,   .false.   , .false. , 'yearly'  , 'weights_bilin_JRA-55-do_to_ORCA2' , ''       , ''
+   sn_qlw  = 'rlds'    ,         3.        , 'rlds'   ,   .false.   , .false. , 'yearly'  , 'weights_bilin_JRA-55-do_to_ORCA2' , ''       , ''
+   sn_tair = 'tas'     ,         3.        , 'tas'    ,   .false.   , .false. , 'yearly'  , 'weights_bilin_JRA-55-do_to_ORCA2' , ''       , ''
+   sn_humi = 'huss'    ,         3.        , 'huss'   ,   .false.   , .false. , 'yearly'  , 'weights_bilin_JRA-55-do_to_ORCA2' , ''       , ''
+   sn_prec = 'pr'      ,         3.        , 'pr'     ,   .false.   , .false. , 'yearly'  , 'weights_bilin_JRA-55-do_to_ORCA2' , ''       , ''
+   sn_snow = 'prsn'    ,         3.        , 'prsn'   ,   .false.   , .false. , 'yearly'  , 'weights_bilin_JRA-55-do_to_ORCA2' , ''       , ''
+   sn_slp  = 'psl'     ,         3.        , 'psl'    ,   .false.   , .false. , 'yearly'  , 'weights_bilin_JRA-55-do_to_ORCA2' , ''       , ''
+/
+\end{verbatim}
+\endgroup
+
+This example makes use of the \verb|cn_dir| parameter as mentioned above; if you have instead used the link method (i.e., step~3 of section~\ref{sec:forcings:subsec:core}), then you will also need to link to the weights files in your experiment directory:
+
+\begingroup\small
+\begin{verbatim}
+  $ ln -s /storage/research/cpom1/share/NEMO/inputs/JRA-55-do_1-6-0_IOTF/weights*ORCA2* .
+\end{verbatim}
+\endgroup
+Do not miss off the dot at the end.
+Again, this is not necessary if you set \verb|cn_dir|.
+
+\textbf{Now, continue with the remaining steps \mbox{9--10} from section~\ref{sec:forcings:subsec:core} before submitting the job.}
+
+
+\subsection{Other non-atmospheric inputs}
+\label{sec:forcings:subsec:non-atmosphere-inputs}
+
+There are other inputs to \NEMOSIcu{} beyond atmospheric forcing---for example, temperature and salinity data for restoring schemes and freshwater fluxes from land ice calving and river runoff.
+Data for these are provided in \verb|ORCA2_ICE|.
+In this section, we have only changed the atmospheric forcing and so the other inputs will continue to be read in from the SETTE data as originally setup in section~\ref{sec:tutorial:subsec:run-directory} (step~4).
+If these inputs need to be changed as well, it is just a matter of identifying the relevant namelist groups in \verb|namelist_cfg| and following the same steps to instruct NEMO how to locate and interpret the data.
+For instance, the river runoff inputs can be found under \verb|&namsbc_rnf|, which includes namelist parameters for the data directory (\verb|cn_dir|) and variable structure (\verb|sn_rnf|, etc.), as well as some physical parameters.
+In particular, \mbox{JRA-55-do} provides river runoff, land-ice calving, and sea surface temperature daily data, and a monthly climatology of sea surface salinity.
+It is an exercise for the reader to try updating their run from section~\ref{sec:forcings:subsec:jra-55-do} to use some or all of these fields for freshwater forcing and/or the surface restoring schemes.
