@@ -1,14 +1,14 @@
-\section{Using Restart Files}
+\section{Using restart files}
 \label{sec:restarts}
 
-This section describes how to run NEMO-\SIcu{} with initial conditions taken from restart files saved by a previous run.
-As an example, we shall extend the three-year run of Section~\ref{sec:forcings} for another three years.
+This section describes how to run \NEMOSIcu{} with initial conditions taken from restart files saved by a previous run.
+As an example, we shall extend the three-year run of section~\ref{sec:forcings:subsec:core} for another three years.
 
-If you look in the run directory of experiment 3 of Section~\ref{sec:forcings}, as well as the output files previously listed, you will see several files with names beginning \verb|ORCA2_00017520_restart|.
-These are restart files written at the final timestep, which was timestep 17520.
+If you look in the run directory of section~\ref{sec:forcings:subsec:core} (\verb|EXP02| there), as well as the output files previously listed, you will see several files with names beginning \verb|ORCA2_00008760_restart|.
+These are restart files written at the final timestep, which was timestep 8760.
 
-Start by configuring a new run directory in the same way as for the original experiment in Section~\ref{sec:forcings}, but with links to the CIAF files for 2003--2005 rather than 2000--2002.
-You can call this new directory anything you like, but if simply extending an existing run like this, I adopt the following convention: if the original run directory was called \verb|dir|, I call the run directory for the first extension \verb|dir-1| with \verb|dir-2|, \verb|dir-3|, \ldots{} for any extensions after that.
+Start by configuring a new run directory in the same way as for the original experiment in section~\ref{sec:forcings:subsec:core}, but with links to the CIAF files for \mbox{2003--2005} rather than \mbox{2000--2002} in step~3.
+You can call this new directory anything you like, but in this example let us suppose it is called \verb|EXP02-1|.
 
 Now make the following edits in the new run directory.
 (As noted previously, when adding new variables to \verb|namelist_cfg| or \verb|namelist_ice_cfg| I generally copy and paste the appropriate lines from \verb|namelist_ref| or \verb|namelist_ice_ref| as a starting point.)
@@ -16,47 +16,32 @@ Now make the following edits in the new run directory.
 In \verb|namelist_cfg|, make the following changes and additions in namelist group \verb|namrun|:
 
 \begin{verbatim}
-  nn_it000 = 17521 [the old nn_itend + 1]
-  nn_itend = 35040 [the total number of timesteps in six years]
+  nn_it000 = 8761  ! the old nn_itend + 1
+  nn_itend = 17520 ! the total number of timesteps in 6 years
   ln_rstart = .true.
   nn_rstctl = 2
-  cn_ocerst_in = "ORCA2_00017520_restart"
-  cn_ocerst_indir = "../3" [relative path to the original run directory]
+  cn_ocerst_in = 'ORCA2_00008760_restart'
+  cn_ocerst_indir = '../EXP02' ! relative path to the original run directory
 \end{verbatim}
 
-\noindent{}Look at the comments in \verb|namelist_ref| if you want to know what these variables mean.
+Look at the comments in \verb|namelist_ref| if you want to know what these variables mean.
 
-The following changes also need to be made in namelist groups \verb|namtsd| and \verb|namberg| if they are present in \verb|namelist_cfg|, as is the case for experiment 3.
-The changes can be omitted if these groups are absent, as is the case for experiments derived from the reference configuration \verb|ORCA2_SAS_ICE|, such as those of Sections~\ref{sec:sas} and \ref{sec:mlm}.
-In namelist group \verb|namtsd| delete the following:
-
-\begin{verbatim}
-  ln_tsd_init
-\end{verbatim}
-
-\noindent{}(This is not essential, but doing so will avoid a warning.)
-In namelist group \verb|namberg| make the following additions:
-
-\begin{verbatim}
-  cn_icbrst_in = "ORCA2_00017520_restart_icb"
-  cn_icbrst_indir = "../3" [relative path to the original run directory]
-  nn_test_icebergs = 0
-\end{verbatim}
+This is not essential, but doing so will avoid a warning: in namelist group \verb|&namtsd|, set \verb|ln_tsd_init| to \verb|.false.|.
 
 In \verb|namelist_ice_cfg|, make the following additions in namelist group \verb|nampar|:
 
 \begin{verbatim}
-  cn_icerst_in = "ORCA2_00017520_restart_ice"
-  cn_icerst_indir = "../3" [relative path to the original run directory]
+  cn_icerst_in = 'ORCA2_00008760_restart_ice'
+  cn_icerst_indir = '../EXP02'
 \end{verbatim}
 
-\noindent{}And in namelist group \verb|namini|:
+and in namelist group \verb|namini| add:
 
 \begin{verbatim}
   nn_iceini_file = 2
 \end{verbatim}
 
-\noindent{}Look at the comments in \verb|namelist_ice_ref| if you want to know what these variables mean.
+Look at the comments in \verb|namelist_ice_ref| if you want to know what these variables mean.
 
-For this extension of experiment 3, the job script (which I would call \verb|doit3-1|) can be a copy of \verb|doit3|.
-If the extension covered a different number of years, the time limit in the job script might need adjustment, but that is not the case here.
+For this extension experiment, \verb|EXP02-1|, the job script can be a copy of that for original experiment, \verb|EXP02|.
+If the extension covered a different number of years, the time limit in the job script might need adjustment, but that is not the case in this example.
