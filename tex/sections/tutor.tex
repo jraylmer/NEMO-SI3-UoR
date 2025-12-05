@@ -6,7 +6,7 @@
 
 Compilation of \NEMOSIcu{} is done with the script \verb|makenemo| (no extension) in the top-level source directory.
 Platform-specific compiler options are specified in a configuration file in the \verb|arch| subdirectory.
-This is a similar workflow to XIOS (section~\ref{sec:xios}), but for NEMO there is only one configuration file required; that for compiling on RACC2 can be found in the auxiliary resources under \verb|nemo/arch/arch-racc2.fcm|.
+This is a similar workflow to XIOS (section~\ref{sec:xios}), but for NEMO there is only one configuration file required; that for compiling on RACC2 can be found in the auxiliary resources under \verb|nemo/arch/arch-RACC2.fcm|.
 
 \begin{enumerate}
     \item Make a copy of this file under the \verb|arch| subdirectory of your top-level NEMO source directory.
@@ -16,7 +16,7 @@ For best results, \NEMOSIcu{} should be compiled to use the XIOS library for inp
 Assuming that has been done, your copy of the configuration file for NEMO must be edited so that NEMO knows where to find your compiled XIOS library:
 
 \begin{enumerate}\setcounter{enumi}{1}
-    \item Open your \verb|arch-racc2.fcm| file and, if required, change the value of the parameter \verb|%XIOS_HOME| to the path to your XIOS installation.
+    \item Open your \verb|arch-RACC2.fcm| file and, if required, change the value of the parameter \verb|%XIOS_HOME| to the path to your XIOS installation.
     
     The placeholder for this, \verb|${HOME}/software/XIOS2|, corresponds to the location of XIOS2 used in section~\ref{sec:xios}, so if you used the same path then this step can be skipped.
 \end{enumerate}
@@ -29,7 +29,7 @@ We shall not run this configuration because PISCES turns out to be a resource ho
 However, compiling this standard configuration will act as a check that the build machinery is working properly, as well as introduce the basic compilation command, before we get on to custom configurations in section~\ref{sec:tutorial:subsec:no-pisces}.
 
 Before running the compilation script \verb|makenemo|, it is necessary to prepare the environment by loading software modules.
-For XIOS this was done automatically via the extra configuration file \verb|xios2/arch-racc2.env|; NEMO does not have such an interface with its compilation script so we must do it manually:
+For XIOS this was done automatically via the extra configuration file \verb|arch-RACC2.env|; NEMO does not have such an interface with its compilation script so we must do it manually:
 
 \begin{enumerate}\setcounter{enumi}{2}
     \item Load the required environment modules by giving the command:
@@ -45,7 +45,7 @@ It is recommended to first use \verb|module purge| to clear the environment of a
 \begin{enumerate}\setcounter{enumi}{3}
     \item Compile the \verb|ORCA2_ICE_PISCES| configuration with the following command:
 \begin{verbatim}
-  $ ./makenemo -m racc2 -r ORCA2_ICE_PISCES
+  $ ./makenemo -m RACC2 -r ORCA2_ICE_PISCES
 \end{verbatim}
 \end{enumerate}
 
@@ -82,7 +82,7 @@ The compilation command is (note the following is one single command---do not in
 
 \begingroup
 \begin{verbatim}
-  $ ./makenemo -m racc2 -r ORCA2_ICE_PISCES -n UOR_ORCA2_ICE ...
+  $ ./makenemo -m RACC2 -r ORCA2_ICE_PISCES -n UOR_ORCA2_ICE ...
   ...          -d "OCE ICE NST ABL" del_key key_top
 \end{verbatim}
 \endgroup

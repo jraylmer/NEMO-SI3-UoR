@@ -36,15 +36,15 @@ In the top-level XIOS source directory (\verb|$HOME/software/XIOS2|, in this cas
 Platform-specific compiler options and library paths are specified in configuration files in the \verb|arch| subdirectory, all of which must start with \verb|arch-|.
 For any given platform, there are three such configuration files with extensions \verb|.env|, \verb|.fcm|, and \verb|.path|.
 There are templates for various cases but a custom set of configuration files is required to compile on the RACC2.
-These are provided in the auxiliary resources under \verb|xios/xios2/arch|, called \verb|arch-racc2.env|, \verb|arch-racc2.fcm|, and \verb|arch-racc2.path|.
+These are provided in the auxiliary resources under \verb|xios/arch|, called \verb|arch-RACC2.env|, \verb|arch-RACC2.fcm|, and \verb|arch-RACC2.path|.
 
 \begin{enumerate}\setcounter{enumi}{2}
     \item Copy these three files into your \verb|arch| subdirectory.
     \item Give the following command from the top-level XIOS source directory to compile XIOS:
 \begin{verbatim}
-  $ ./make_xios --arch racc2
+  $ ./make_xios --arch RACC2
 \end{verbatim}
 \end{enumerate}
 
-In the above command, the value given to the argument \verb|--arch| is the part of the configuration file names without their prefix \verb|arch-| and without their extension, which in this case is just \verb|racc2|.
+In the above command, the value given to the argument \verb|--arch| is the part of the configuration file names without their prefix \verb|arch-| and without their extension, which in this case is just \verb|RACC2|.
 Compilation takes approximately 15~minutes to complete, assuming it does so successfully.
