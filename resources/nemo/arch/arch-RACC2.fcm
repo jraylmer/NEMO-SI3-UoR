@@ -1,57 +1,46 @@
-# Compiler options for NEMO on the University of Reading Academic Computing
-# Cluster 2 (RACC2) using OpenMPI.
-#
-# By Jake Aylmer (UoR/CPOM), 6 October 2024
-#
-# Based on arch-linux_gfortran.fcm (NEMO template) and version for UoR RACC
-# obtained from David Livings and David Schroeder (UoR/CPOM).
-#
-# User should copy this file to their nemo/arch directory and change the
-# %XIOS_HOME fcm variable to the path of their XIOS installation.
-#
-# On RACC2, load the mpi/openmpi-x86_64 module before compiling NEMO. It is
-# recommended to unload all other modules first as some may cause path
-# conflicts.
-#
-# Note: on the RACC2, the netcdf and hdf5 modules are installed with Open MPI,
-# so do not need to be loaded separately with module load as was the case with
-# the original RACC. The version of GCC is 8.5.0, which is the default GCC on
-# RACC2. On the original RACC, the default version of GCC was 4.8.5, however
-# David Livings found that a later version (6.4.0) was required for
-# compatibility with XIOS. This is no longer required: just use the
-# mpi/openmpi-x86_64 module for both XIOS and NEMO.
-#
-# See template file nemo/arch/arch-linux_gfortran.fcm for explanation of the
-# various fcm variables (beginning %) below.
+################################################################################
+###                          NEMO Compiler Options                           ###
+###         University of Reading Academic Computing Cluster (RACC2)         ###
+###                      Last updated: 01 December 2025                      ###
+################################################################################
 
-%XIOS_HOME        ${HOME}/software/XIOS2
+# The makenemo build script uses %USER_INC and %USER_LIB for the include and
+# library directories. For clarity here we construct these for NetCDF and XIOS
+# separately, then combine them. We do not need to set those for HDF5 or MPI on
+# RACC2 explicitly. The environment variable XIOS_HOME is set in arch-RACC2.env:
+#
+%NCDF_INC            "$(nc-config --fflags) $(nc-config --cxx4flags)"
+%NCDF_LIB            "$(nc-config --flibs) $(nc-config --cxx4libs)"
+%XIOS_INC            -I${XIOS_HOME}/inc
+%XIOS_LIB            -L${XIOS_HOME}/lib -lxios -lstdc++
 
-%NCDF_INC         -I/usr/include/openmpi-x86_64 -I/usr/lib64/gfortran/modules/openmpi
-%NCDF_LIB         -L/usr/lib64/openmpi/lib -lnetcdf -lnetcdff -lstdc++
+%USER_INC            %XIOS_INC %NCDF_INC
+%USER_LIB            %XIOS_LIB %NCDF_LIB
 
-%HDF5_INC         -I/usr/include/openmpi-x86_64
-%HDF5_LIB         -L/usr/lib64/openmpi/lib -lhdf5_hl -lhdf5 -lhdf5 -lz
+# Pre-processor (%CPP) and flags (%FPPFLAGS):
+%CPP                 cpp
+%FPPFLAGS            -P -traditional -pthread -Dkey_nosignedzero
 
-%XIOS_INC         -I%XIOS_HOME/inc
-%XIOS_LIB         -L%XIOS_HOME/lib -lxios
+# Fortran compiler (%FC) and flags. %FCFLAGS are the fallback flags but the
+# makenemo build script uses %PROD_FCFLAGS by default, otherwise %DEBUG_FCFLAGS
+# with --debug passed to makenemo:
+#
+%FC                  mpifort
+%FCFLAGS             -fdefault-real-8 -funroll-all-loops -fcray-pointer -ffree-line-length-none
+%PROD_FCFLAGS        %FCFLAGS -w -O3
+%DEBUG_FCFLAGS       %FCFLAGS -g -Og -fcheck=all -fbacktrace
 
-# Besides adding the separate include/library paths for HDF5 to USER_INC and
-# USER_LIB below, the following options are unchanged from the compiler options
-# file used on the original RACC:
+# C compiler and flags (only used with AGRIF):
+%CC                  mpicc
+%CFLAGS              -O0
 
-%CPP              cpp -Dkey_nosignedzero
-%FC               mpif90 -c -cpp
-%FCFLAGS          -fdefault-real-8 -O3 -funroll-all-loops -fcray-pointer -ffree-line-length-none
-%FFLAGS           %FCFLAGS
-%LD               mpif90
+# Linker (%LD) and flags passed to it (%LDFLAGS):
+%LD                  mpifort
 %LDFLAGS
-%FPPFLAGS         -P -C -traditional
-%AR               ar
-%ARFLAGS          -rs
-%MK               make
-%USER_INC         %XIOS_INC %NCDF_INC %HDF5_INC
-%USER_LIB         %XIOS_LIB %NCDF_LIB %HDF5_LIB
 
-%CC               gcc
-%CFLAGS           -O0
+# Assembler and flags:
+%AR                  ar
+%ARFLAGS             -rs
 
+# Make utility (make points to the system default):
+%MK                  make

@@ -1,24 +1,43 @@
-# Compiler options for XIOS2 on the University of Reading Academic Computing
-# Cluster 2 (RACC2)
+################################################################################
+###                          XIOS Compiler Options                           ###
+###         University of Reading Academic Computing Cluster (RACC2)         ###
+###                      Last updated: 01 December 2025                      ###
+################################################################################
 
-%CCOMPILER       mpicc
-%FCOMPILER       mpif90
-%LINKER          mpif90
+# C++ compiler and flags. We use the MPI wrapper (and similar for Fortran and
+# the linker, below) so the correct flags for the system MPI installation are
+# always passed to the underlying compilers.
+#
+# Additional flags are then specified with %BASE_CFLAGS, which are always used.
+# Which of the others are used depends on the command line options passed to
+# the make_xios build script:
+#
+#     --prod or no flag: <%BASE_CFLAGS> + <%PROD_CFLAGS>
+#     --dev            : <%BASE_CFLAGS> + <%DEV_CFLAGS>
+#     --debug          : <%BASE_CFLAGS> + <%DEBUG_CFLAGS>
+#
+%CCOMPILER      mpicxx
+%BASE_CFLAGS    -std=c++11 -D__XIOS_EXCEPTION
+%PROD_CFLAGS    -w -O3 -DBOOST_DISABLE_ASSERTS
+%DEV_CFLAGS     -g -O2
+%DEBUG_CFLAGS   -g -Og
 
-%BASE_CFLAGS     -ansi -w -D_GLIBCXX_USE_CXX11_ABI=0 -std=c++11
-%PROD_CFLAGS     -O3 -DBOOST_DISABLE_ASSERTS
-%DEV_CFLAGS      -g -O2
-%DEBUG_CFLAGS    -g
+# Fortran compiler and flags (usage similar to above):
+%FCOMPILER      mpifort
+%BASE_FFLAGS    -D__NONE__ -ffree-line-length-none
+%PROD_FFLAGS    -w -O3
+%DEV_FFLAGS     -g -O2
+%DEBUG_FFLAGS   -g -Og -fcheck=all -fbacktrace
 
-%BASE_FFLAGS     -D__NONE__ -ffree-line-length-none
-%PROD_FFLAGS     -O3
-%DEV_FFLAGS      -g -O2
-%DEBUG_FFLAGS    -g
+# Linker and flags. We must include the C++ standard library explicitly,
+# because we are linking with mpifort:
+%LINKER         mpifort
+%BASE_INC       -D__NONE__
+%BASE_LD        -lstdc++
 
-%BASE_INC        -D__NONE__
-%BASE_LD         -lstdc++
+# Pre-processor and flags for C++ and Fortran:
+%CPP            cpp -pthread
+%FPP            cpp -pthread -P
 
-%CPP             cpp
-%FPP             cpp -P
-%MAKE            gmake
-
+# Make utility ('make' points to the system default):
+%MAKE           make

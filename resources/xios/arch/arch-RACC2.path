@@ -1,18 +1,37 @@
-# Paths for MPI/NetCDF/HDF5 library and include directories for compiling XIOS2
-# on the University of Reading Academic Computing Cluster 2 (RACC2)
-#
-# We are using the mpi{cc,f90} wrappers, so setting the MPI_* variables should
-# not be needed, but do not remove them as that prevents compilation:
+################################################################################
+###                           XIOS Path Variables                            ###
+###         University of Reading Academic Computing Cluster (RACC2)         ###
+###                      Last updated: 01 December 2025                      ###
+################################################################################
 
-NETCDF_INCDIR="-I/usr/include/openmpi-x86_64"
-NETCDF_LIBDIR="-L/usr/lib64/openmpi/lib"
-NETCDF_LIB="-lnetcdf -lnetcdff"
+# We need only set the NetCDF include and library directories, not those for
+# HDF5 or MPI, because they are all the same and the variables are combined in
+# the make_xios build script anyway. We are assuming that all required libraries
+# etc. are returned by nc-config and note that --flibs includes the library
+# directories, so NETCDF_LIBDIR can be left blank as well:
+
+NETCDF_INCDIR="$(nc-config --fflags) $(nc-config --cxx4flags)"
+NETCDF_LIBDIR=""
+NETCDF_LIB="$(nc-config --flibs) $(nc-config --cxx4libs)"
+
+# Although the HDF5 and MPI variables do not need to be set (it would just
+# repeat the above), they must be defined here (as empty strings) otherwise the
+# linker receives wrongly-formatted paths and fails:
+
+HDF5_INCDIR=""
+HDF5_LIBDIR=""
+HDF5_LIB=""
 
 MPI_INCDIR=""
 MPI_LIBDIR=""
 MPI_LIB=""
 
-HDF5_INCDIR="-I/usr/include/openmpi-x86_64"
-HDF5_LIBDIR="-L/usr/lib64/openmpi/lib"
-HDF5_LIB="-lhdf5_hl -lhdf5 -lhdf5 -lz"
+# The Boost C++ library is installed on the RACC2 so we can use that with the
+# flag --use_extern_boost passed to make_xios. It makes no difference except
+# saving some build time and disk space used to extract the packaged version.
+# Without the --use_extern_boost flag make_xios will use the packaged version
+# and override these variables, so this can be done if preferred:
 
+BOOST_INCDIR="-I/usr/include/boost"
+BOOST_LIBDIR="-L/usr/lib64"
+BOOST_LIB=""

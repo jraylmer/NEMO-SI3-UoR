@@ -7,7 +7,11 @@ The third-party software XIOS (XML Input/Output Server) is required to run NEMO 
 It handles the reading of input forcing files into the model and the selection and writing of output diagnostics during model runs.
 Currently, there is a version 2 and a version 3 of XIOS, maintained in parallel.
 The latest version of NEMO, version 5, is compatible with both, with XIOS3 supposedly leading to more efficient I/O and hence faster simulation run times.
-Alas, we are yet to get XIOS3 working on RACC2, so for the time being, we stick with XIOS2.
+These instructions build XIOS2, but the same configuration files in the auxiliary resources mentioned below can also be used to build XIOS3.
+However, some additional steps are required to setup NEMO to run with XIOS3, but current testing indicates no significant benefits of using XIOS3 over XIOS2, at least for the configurations we run.
+So, these extra steps are omitted for now and we stick with XIOS2.\footnote{
+    If you want to setup XIOS3 in advance of any further information in this document, read the NEMO documentation for the the XIOS3 demonstrator test case: \url{https://sites.nemo-ocean.io/user-guide/xios3demo.html}
+}
 
 The first step is to download the XIOS source code from its Subversion repository.
 We download the trunk as recommended by the NEMO developers.
@@ -42,9 +46,11 @@ These are provided in the auxiliary resources under \verb|xios/arch|, called \ve
     \item Copy these three files into your \verb|arch| subdirectory.
     \item Give the following command from the top-level XIOS source directory to compile XIOS:
 \begin{verbatim}
-  $ ./make_xios --arch RACC2
+  $ ./make_xios --arch RACC2 --use_extern_boost --prod
 \end{verbatim}
 \end{enumerate}
 
 In the above command, the value given to the argument \verb|--arch| is the part of the configuration file names without their prefix \verb|arch-| and without their extension, which in this case is just \verb|RACC2|.
-Compilation takes approximately 15~minutes to complete, assuming it does so successfully.
+The flag \verb|--use_extern_boost| refers to a C++ library called Boost that is installed on the RACC2, so we can use that rather than the one packaged with XIOS (it makes no difference but saves some disk space and build time).
+The flag \verb|--prod| means we build in production mode (as opposed to developer or debug mode; this changes the build flags selected from the \verb|.fcm| file.
+In production mode, compilation takes approximately 15~minutes to complete, assuming it does so successfully.
