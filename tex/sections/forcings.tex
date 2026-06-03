@@ -172,7 +172,7 @@ Again, the file names as downloaded are not in the required form (they need to e
 So, we will actually use the prepared inputs directory:
 
 \begin{verbatim}
-  /storage/research/cpom1/share/NEMO/inputs/JRA-55-do_1-6-0_IOTF
+  /storage/research/cpom1/share/NEMO/inputs/JRA-55-do/IOTF
 \end{verbatim}
 
 We can setup following the same general steps as in section~\ref{sec:forcings:subsec:core}, with a few changes described below.
@@ -211,19 +211,19 @@ Below is what the \verb|&namsbc_blk| namelist group should look like for running
    !                    !  bulk algorithm :
    ln_NCAR    = .true.     ! "NCAR"      algorithm   (Large and Yeager 2008)
 
-   cn_dir = '/storage/research/cpom1/share/NEMO/inputs/JRA-55-do_1-6-0_IOTF/'  !  root directory for the bulk data location
-   !_______!___________!___________________!__________!_____________!_________!___________!____________________________________!__________!_______________!
-   !       ! file name ! frequency (hours) ! variable ! time interp.!  clim   ! 'yearly'/ !          weights filename          ! rotation ! land/sea mask !
-   !       !           !  (if <0  months)  !   name   !  (logical)  !  (T/F)  ! 'monthly' !                                    ! pairing  !    filename   !
-   sn_wndi = 'uas'     ,         3.        , 'uas'    ,   .false.   , .false. , 'yearly'  , 'weights_bicub_JRA-55-do_to_ORCA2' , 'Uwnd'   , ''
-   sn_wndj = 'vas'     ,         3.        , 'vas'    ,   .false.   , .false. , 'yearly'  , 'weights_bicub_JRA-55-do_to_ORCA2' , 'Vwnd'   , ''
-   sn_qsr  = 'rsds'    ,         3.        , 'rsds'   ,   .false.   , .false. , 'yearly'  , 'weights_bilin_JRA-55-do_to_ORCA2' , ''       , ''
-   sn_qlw  = 'rlds'    ,         3.        , 'rlds'   ,   .false.   , .false. , 'yearly'  , 'weights_bilin_JRA-55-do_to_ORCA2' , ''       , ''
-   sn_tair = 'tas'     ,         3.        , 'tas'    ,   .false.   , .false. , 'yearly'  , 'weights_bilin_JRA-55-do_to_ORCA2' , ''       , ''
-   sn_humi = 'huss'    ,         3.        , 'huss'   ,   .false.   , .false. , 'yearly'  , 'weights_bilin_JRA-55-do_to_ORCA2' , ''       , ''
-   sn_prec = 'pr'      ,         3.        , 'pr'     ,   .false.   , .false. , 'yearly'  , 'weights_bilin_JRA-55-do_to_ORCA2' , ''       , ''
-   sn_snow = 'prsn'    ,         3.        , 'prsn'   ,   .false.   , .false. , 'yearly'  , 'weights_bilin_JRA-55-do_to_ORCA2' , ''       , ''
-   sn_slp  = 'psl'     ,         3.        , 'psl'    ,   .false.   , .false. , 'yearly'  , 'weights_bilin_JRA-55-do_to_ORCA2' , ''       , ''
+   cn_dir = '/storage/research/cpom1/share/NEMO/inputs/JRA-55-do/IOTF/'  !  root directory for the bulk data location
+   !_______!___________!___________________!__________!_____________!_________!___________!______________________________!__________!_______________!
+   !       ! file name ! frequency (hours) ! variable ! time interp.!  clim   ! 'yearly'/ !       weights filename       ! rotation ! land/sea mask !
+   !       !           !  (if <0  months)  !   name   !  (logical)  !  (T/F)  ! 'monthly' !                              ! pairing  !    filename   !
+   sn_wndi = 'uas'     ,         3.        , 'uas'    ,   .false.   , .false. , 'yearly'  , 'wgt_bic_JRA-55-do_to_ORCA2' , 'Uwnd'   , ''
+   sn_wndj = 'vas'     ,         3.        , 'vas'    ,   .false.   , .false. , 'yearly'  , 'wgt_bic_JRA-55-do_to_ORCA2' , 'Vwnd'   , ''
+   sn_qsr  = 'rsds'    ,         3.        , 'rsds'   ,   .false.   , .false. , 'yearly'  , 'wgt_bil_JRA-55-do_to_ORCA2' , ''       , ''
+   sn_qlw  = 'rlds'    ,         3.        , 'rlds'   ,   .false.   , .false. , 'yearly'  , 'wgt_bil_JRA-55-do_to_ORCA2' , ''       , ''
+   sn_tair = 'tas'     ,         3.        , 'tas'    ,   .false.   , .false. , 'yearly'  , 'wgt_bil_JRA-55-do_to_ORCA2' , ''       , ''
+   sn_humi = 'huss'    ,         3.        , 'huss'   ,   .false.   , .false. , 'yearly'  , 'wgt_bil_JRA-55-do_to_ORCA2' , ''       , ''
+   sn_prec = 'pr'      ,         3.        , 'pr'     ,   .false.   , .false. , 'yearly'  , 'wgt_bil_JRA-55-do_to_ORCA2' , ''       , ''
+   sn_snow = 'prsn'    ,         3.        , 'prsn'   ,   .false.   , .false. , 'yearly'  , 'wgt_bil_JRA-55-do_to_ORCA2' , ''       , ''
+   sn_slp  = 'psl'     ,         3.        , 'psl'    ,   .false.   , .false. , 'yearly'  , 'wgt_bil_JRA-55-do_to_ORCA2' , ''       , ''
 /
 \end{verbatim}
 \endgroup
@@ -232,7 +232,7 @@ This example makes use of the \verb|cn_dir| parameter as mentioned above; if you
 
 \begingroup\small
 \begin{verbatim}
-  $ ln -s /storage/research/cpom1/share/NEMO/inputs/JRA-55-do_1-6-0_IOTF/weights*ORCA2* .
+  $ ln -s /storage/research/cpom1/share/NEMO/inputs/JRA-55-do/IOTF/wgt*ORCA2* .
 \end{verbatim}
 \endgroup
 Do not miss off the dot at the end.
