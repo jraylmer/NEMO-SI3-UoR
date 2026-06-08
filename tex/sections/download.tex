@@ -15,16 +15,16 @@ This \verb|nemo| directory will be referred to as the \textit{top-level source d
 The leading edge of \NEMOSIcu{} development takes place on the so-called \textit{main} branch of its source code repository.
 There are also official release versions from time to time.
 The source code under the top-level source directory initially corresponds to the latest commit to the main branch.
-The instructions in this document have been tested with the 5.0.1 release, although they are likely to work with the main branch as well.
+The instructions in this document have been tested with the 5.0.2 release, although they are likely to work with the main branch or earlier 5.x versions as well.
 It is recommended that you checkout (switch to) this commit before trying out the instructions.
 This can be done by giving the following command in the top-level source directory:
 
 \begin{verbatim}
-  $ git checkout 5.0.1
+  $ git checkout 5.0.2
 \end{verbatim}
 
 After giving this command, the source code under the top-level source directory will correspond to the older revision with which the instructions have been tested.\footnote{
-    Git may warn that you are now in `detached HEAD' state: this is because the 5.0.1 release is a specific commit on the branch called \texttt{branch\_5.0}.
+    Git will warn that you are now in `detached HEAD' state: this is because the 5.0.2 release is a specific commit on the branch called \texttt{branch\_5.0}.
     Unless you are intending to push changes to the remote repository, this warning can simply be ignored.
 }
 Later, if you wish to return to the head of the main (developer) branch, you can do so with the following command:
@@ -33,8 +33,8 @@ Later, if you wish to return to the head of the main (developer) branch, you can
   $ git checkout main
 \end{verbatim}
 
-It is also possible to clone the repository at a different point in its history at the first step; for example, to clone the repository at the point corresponding to release version 5.0.1 into a directory called \verb|nemo_5.0.1|:
+It is also possible to clone the repository at a different point in its history at the first step; for example, to clone the repository at the point corresponding to release version 5.0.2 into a directory called \verb|nemo_5.0.2|:
 
 \begin{verbatim}
-  $ git clone --branch 5.0.1 https://forge.nemo-ocean.eu/nemo/nemo.git nemo_5.0.1
+  $ git clone --branch 5.0.2 https://forge.nemo-ocean.eu/nemo/nemo.git nemo_5.0.2
 \end{verbatim}

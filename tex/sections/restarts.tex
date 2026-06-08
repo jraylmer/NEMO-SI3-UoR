@@ -4,10 +4,10 @@
 This section describes how to run \NEMOSIcu{} with initial conditions taken from restart files saved by a previous run.
 As an example, we shall extend the three-year run of section~\ref{sec:forcings:subsec:core} for another three years.
 
-If you look in the run directory of section~\ref{sec:forcings:subsec:core} (\verb|EXP02| there), as well as the output files previously listed, you will see several files with names beginning \verb|ORCA2_00008760_restart|.
-These are restart files written at the final timestep, which was timestep 8760.
+If you look in the run directory of section~\ref{sec:forcings:subsec:core} (\verb|EXP02| there), as well as the output files previously listed, you will see several files with names beginning \verb|ORCA2_00008760_restart| (assuming the run completed).
+These are restart files written at the final time step, which was time step 8760.
 
-Start by configuring a new run directory in the same way as for the original experiment in section~\ref{sec:forcings:subsec:core}, but with links to the CIAF files for \mbox{2003--2005} rather than \mbox{2000--2002} in step~3.
+Start by configuring a new run directory in the same way as for the original experiment in section~\ref{sec:forcings:subsec:core}.
 You can call this new directory anything you like, but in this example let us suppose it is called \verb|EXP02-1|.
 
 Now make the following edits in the new run directory.
