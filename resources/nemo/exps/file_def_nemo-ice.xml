@@ -1,0 +1,62 @@
+<?xml version="1.0"?>
+
+<!--
+   =================================================================================================
+   Simple/lightweight template file_def_nemo-ice.xml for NEMO-SI3 simulations. It only contains
+   essential outputs at the standard 5-daily and monthly mean frequency, split into one file
+   per model year. Add more outputs as required by browsing field_def_nemo-ice.xml and defining
+   a new <field field_ref=... /> tag where required.
+
+   Replace __OUTPUTDIR__ in the file_definition tag to the directory in which you wish outputs
+   to go (to output in the current directory, remove it and the following '/' completely).
+
+   If you have a reliable (tested) configuration and are only interested in longer timescales
+   (years), consider deactivating the 5-daily outputs (set enabled to ".FALSE." in the
+   corresponding <file_group ...> tag to deactivate all files or in the <file ...> tags to
+   deactiavte case-by-case).
+   =================================================================================================
+-->
+
+<file_definition type="one_file" name="__OUTPUTDIR__/@expname@_@freq@_@startdate@_@enddate@" sync_freq="1mo" min_digits="4">
+
+   <!-- Five-daily (mean) outputs -->
+   <file_group id="ice_5d" output_freq="5d" split_freq="1y" output_level="10" enabled=".TRUE.">
+
+      <file id="file101" name_suffix="_icemod" description="sea ice variables" >
+         <field field_ref="iceconc"      name="siconc"    />
+         <field field_ref="icevolu"      name="sivolu"    />
+         <field field_ref="icethic"      name="sithic"    />
+      </file>
+
+      <file id="file102" name_suffix="_icemod_scalar" description="sea ice scalar variables" >
+         <field field_ref="NH_iceextt"   name="siextentn" />
+         <field field_ref="SH_iceextt"   name="siextents" />
+         <field field_ref="NH_icearea"   name="siarean"   />
+         <field field_ref="SH_icearea"   name="siareas"   />
+         <field field_ref="NH_icevolu"   name="sivoln"    />
+         <field field_ref="SH_icevolu"   name="sivols"    />
+      </file>
+
+   </file_group>
+
+   <!-- Monthly (mean) outputs -->
+   <file_group id="ice_1m" output_freq="1mo" split_freq="1y" output_level="10" enabled=".TRUE.">
+
+      <file id="file104" name_suffix="_icemod" description="sea ice variables" >
+         <field field_ref="iceconc"      name="siconc"    />
+         <field field_ref="icevolu"      name="sivolu"    />
+         <field field_ref="icethic"      name="sithic"    />
+      </file>
+
+      <file id="file105" name_suffix="_icemod_scalar" description="sea ice scalar variables" >
+         <field field_ref="NH_iceextt"   name="siextentn" />
+         <field field_ref="SH_iceextt"   name="siextents" />
+         <field field_ref="NH_icearea"   name="siarean"   />
+         <field field_ref="SH_icearea"   name="siareas"   />
+         <field field_ref="NH_icevolu"   name="sivoln"    />
+         <field field_ref="SH_icevolu"   name="sivols"    />
+      </file>
+
+   </file_group>
+
+</file_definition>
