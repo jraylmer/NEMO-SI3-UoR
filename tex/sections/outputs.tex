@@ -1,4 +1,4 @@
-\section{Configuring \texorpdfstring{\NEMOSIcu{}}{NEMO-SI3} output files}
+\section{Outputs}
 \label{sec:outputs}
 
 It is possible to change the content and output frequency of the \NEMOSIcu{} output files by editing the configuration files \verb|file_def_nemo-oce.xml| and\linebreak\verb|file_def_nemo-ice.xml| in the run directory.
@@ -6,7 +6,7 @@ The former controls ocean output, the latter sea ice output.
 The files are written in XML, which is similar to HTML.
 The full story is in Chapter~12 of the NEMO manual \citep{nemo-5.0.0}, but here is a quick introduction.
 
-I assume that you have got at least as far as running \NEMOSIcu{} for the first time as in section~\ref{sec:tutorial:subsec:running-custom}.
+I assume that you have got at least as far as running \NEMOSIcu{} for the first time as in section~\ref{sec:tutor-running}.
 Take a look at the file \verb|file_def_nemo-ice.xml| in the run directory.
 The main sea ice output file is the file
 
@@ -55,9 +55,9 @@ You could add your own \verb|file| definition here.
 There are also empty \verb|file_groups| for various periods between one timestep and ten years.
 To add \verb|file| definitions to these, you would have to change the \verb|/>| to \verb|>| and end the \verb|file_group| with a line that says \verb|</file_group>| after the file definitions.
 
-If you wish to write output at every time step, be aware that sea ice processes can have a different time step to ocean processes, with the ratio between the two controlled by namelist variable \verb|nn_fsbc| in namelist group \verb|namsbc| of \verb|namelist_cfg| (as mentioned in section~\ref{sec:forcings:subsec:jra-55-do}).
+If you wish to write output at every time step, be aware that sea ice processes can have a different time step to ocean processes, with the ratio between the two controlled by namelist variable \verb|nn_fsbc| in namelist group \verb|namsbc| of \verb|namelist_cfg| (see section~\ref{sec:jra-55-do}).
 I have found that having two different time steps can confuse the output code of \NEMOSIcu{} (or the XIOS library that it uses for output), with the result that the time coordinate in files with an output frequency of one time step is wrong.
-This is not a problem if the two time steps are the same, which is another reason for running with \verb|nn_fsbc| set to \verb|1| as recommended in section~\ref{sec:forcings:subsec:jra-55-do}.
+This is not a problem if the two time steps are the same (which is another reason for running with \verb|nn_fsbc| set to \verb|1| as recommended in section~\ref{sec:jra-55-do}).
 
 For experiments running for more than a year of simulation time, I generally split the output files into separate files for each year (that way something useful can be salvaged if the run ends prematurely).
 If you want to do this, you need to edit \verb|file_def_nemo-ice.xml| and \verb|file_def_nemo-oce.xml| to add \verb|split_freq="1y"| to the \verb|file_group| definitions.
