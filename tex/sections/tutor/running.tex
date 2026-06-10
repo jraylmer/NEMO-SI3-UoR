@@ -219,22 +219,30 @@ The job status can be checked using Slurm commands such as:
   $ squeue -u $USER
 \end{verbatim}
 
-This simulation should take about \mbox{10--15}~minutes to complete.
-When it has completed, there will be a number of output files.
+This simulation should take about 10~minutes to complete.
+When it has, there will be a number of output files.
 The Slurm log file will be called \verb|<x>-<j>.out| where \verb|<x>| is the job name specified in \verb|runjob.sh| parameter \verb|--job-name|, and \verb|<j>| is the Slurm job ID.
 More informative is the log file from \NEMOSIcu{}, which is always called \verb|ocean.output|.
 Look through this for any errors (try searching for the string `E R R' with spaces between the letters).
-The output fields are the following netCDF files (use \verb|$ ls ORCA2*.nc| to check):
+The model output fields are in the following netCDF files:
 
-\begingroup\footnotesize
+\begingroup
 \begin{verbatim}
-  ORCA2_1m_00010101_00011231_diaptr2D.nc    ORCA2_5d_00010101_00011231_grid_W.nc
-  ORCA2_1m_00010101_00011231_diaptr3D.nc    ORCA2_5d_00010101_00011231_icemod.nc
-  ORCA2_5d_00010101_00011231_grid_T.nc      ORCA2_5d_00010101_00011231_SBC_scalar.nc
-  ORCA2_5d_00010101_00011231_grid_U.nc      ORCA2_5d_00010101_00011231_scalar.nc
-  ORCA2_5d_00010101_00011231_grid_V.nc
+  ORCA2_1m_00010101_00011231_icemod_0001-0001.nc
+  ORCA2_1m_00010101_00011231_icemod_scalar_0001-0001.nc
+  ORCA2_1m_00010101_00011231_ocemod_0001-0001.nc
+  ORCA2_5d_00010101_00011231_icemod_0001-0001.nc
+  ORCA2_5d_00010101_00011231_icemod_scalar_0001-0001.nc
+  ORCA2_5d_00010101_00011231_ocemod_0001-0001.nc
 \end{verbatim}
 \endgroup
 
-The file ending \verb|_icemod.nc| contains five-day means of sea ice variables.
-Those ending \verb|_scalar.nc| contain globally integrated diagnostics and trends, and the others contain ocean variables.
+There will also be a list of files with \verb|restart| in the name.
+These are used to continue a new run starting from where this one finished; section~\ref{sec:restarts} describes how to setup and make use of these restart files.
+
+The files in the list above with \verb|1m| in the name are monthly mean variables and those with \verb|5d| are 5-daily means.
+Those with \verb|icemod| are 2D sea ice variables and those with \verb|icemod_scalar| contain sea ice extent, area, and volume totals per hemisphere.
+The files with \verb|ocemod| contain a few basic 2D ocean diagnostics.
+This is all assuming you replaced the original \verb|file_def_nemo-*.xml| files with the lightweight templates from the auxiliary resources in step~9 of section~\ref{sec:tutor-template}.
+If you skipped that step, you will have a longer list of (much) larger output files with different names.
+Section~\ref{sec:outputs} gives an overview of how to customise the frequency and contents of the model outputs.

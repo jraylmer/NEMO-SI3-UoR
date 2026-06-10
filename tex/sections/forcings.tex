@@ -118,37 +118,19 @@ We will discuss the other `columns' in the next section.
 
 \begin{enumerate}\setcounter{enumi}{7}
     \item Edit the \verb|runjob.sh| script to request a time limit of 1 hour (and change the job name if you like).
-
-    \item This step is optional.
-    It is helpful with longer simulations to split output files into one per year (or more).
-    This prevents the files from becoming too big and ensures something useful can be salvaged if a run ends prematurely.
-    More details about changing the outputs are given in section~\ref{sec:outputs}.
-
-    \begin{enumerate}
-        \item Open \verb|file_def_nemo-oce.xml| and locate the lines starting\linebreak\verb|<file_group id="oce_5d"| and \verb|<file_group id="oce_1m"|.
-        In both, add the attribute \verb|split_freq="1y"| somewhere after the \verb|id| attributes.
-
-        \item Open \verb|file_def_nemo-ice.xml| and locate the line starting\linebreak\verb|<file_group id="ice_5d"|.
-        Add the attribute \verb|split_freq="1y"| somewhere after the \verb|id=| attribute.
-
-    \end{enumerate}
 \end{enumerate}
 
 The job can now be submitted to the batch system.
-The main output files for 2000 will start to be generated shortly after the job starts:
+Assuming you are using the unmodified template \verb|file_def_nemo-*.xml| files, the main output files for 2000 will start to be generated shortly after the job starts:
 
 \begingroup\small\begin{verbatim}
   ORCA2_5d_20000101_20021231_icemod_2000-2000.nc
-  ORCA2_5d_20000101_20021231_grid_T_2000-2000.nc
-  ORCA2_5d_20000101_20021231_grid_U_2000-2000.nc
-  ORCA2_5d_20000101_20021231_grid_V_2000-2000.nc
-  ORCA2_5d_20000101_20021231_grid_W_2000-2000.nc
-  ORCA2_5d_20000101_20021231_SBC_scalar_2000-2000.nc
-  ORCA2_5d_20000101_20021231_scalar_2000-2000.nc
+  ORCA2_5d_20000101_20021231_icemod_scalar_2000-2000.nc
+  ORCA2_5d_20000101_20021231_ocemod_2000-2000.nc
 \end{verbatim}\endgroup
 
-These files correspond to those listed in section~\ref{sec:tutor-running}.
-Similar files for 2001 and 2002 will appear once the simulation gets to those years.
+and the monthly-mean equivalent files.
+Similar sets of files for 2001 and 2002, will appear once the simulation gets to those years.
 
 
 \subsection{JRA-55-do atmospheric forcing}
@@ -216,7 +198,7 @@ Below is what the \verb|&namsbc_blk| namelist group should look like for running
 \end{verbatim}
 \endgroup
 
-Now, continue with the remaining steps \mbox{8--9} from section~\ref{sec:core-ciaf} before submitting the job.
+Now, continue with step 8 from section~\ref{sec:core-ciaf} before submitting the job.
 
 
 \subsection{Other non-atmospheric inputs}
