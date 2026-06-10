@@ -7,9 +7,6 @@
    per model year. Add more outputs as required by browsing field_def_nemo-ice.xml and defining
    a new <field field_ref=... /> tag where required.
 
-   Replace __OUTPUTDIR__ in the file_definition tag to the directory in which you wish outputs
-   to go (to output in the current directory, remove it and the following '/' completely).
-
    If you have a reliable (tested) configuration and are only interested in longer timescales
    (years), consider deactivating the 5-daily outputs (set enabled to ".FALSE." in the
    corresponding <file_group ...> tag to deactivate all files or in the <file ...> tags to
@@ -17,7 +14,7 @@
    =================================================================================================
 -->
 
-<file_definition type="one_file" name="__OUTPUTDIR__/@expname@_@freq@_@startdate@_@enddate@" sync_freq="1mo" min_digits="4">
+<file_definition type="one_file" name="@expname@_@freq@_@startdate@_@enddate@" sync_freq="1mo" min_digits="4">
 
    <!-- Five-daily (mean) outputs -->
    <file_group id="ice_5d" output_freq="5d" split_freq="1y" output_level="10" enabled=".TRUE.">
