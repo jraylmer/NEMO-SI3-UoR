@@ -17,7 +17,7 @@
 <file_definition type="one_file" name="@expname@_@freq@_@startdate@_@enddate@" sync_freq="1mo" min_digits="4">
 
    <!-- Five-daily (mean) outputs -->
-   <file_group id="ice_5d" output_freq="5d" split_freq="1y" output_level="10" enabled=".TRUE.">
+   <file_group id="ice_5d" output_freq="5d" split_freq="1y" enabled=".TRUE.">
 
       <file id="file101" name_suffix="_icemod" description="sea ice variables" >
          <field field_ref="iceconc"      name="siconc"    />
@@ -37,15 +37,15 @@
    </file_group>
 
    <!-- Monthly (mean) outputs -->
-   <file_group id="ice_1m" output_freq="1mo" split_freq="1y" output_level="10" enabled=".TRUE.">
+   <file_group id="ice_1mo" output_freq="1mo" split_freq="1y" enabled=".TRUE.">
 
-      <file id="file104" name_suffix="_icemod" description="sea ice variables" >
+      <file id="file103" name_suffix="_icemod" description="sea ice variables" >
          <field field_ref="iceconc"      name="siconc"    />
          <field field_ref="icevolu"      name="sivolu"    />
          <field field_ref="icethic"      name="sithic"    />
       </file>
 
-      <file id="file105" name_suffix="_icemod_scalar" description="sea ice scalar variables" >
+      <file id="file104" name_suffix="_icemod_scalar" description="sea ice scalar variables" >
          <field field_ref="NH_iceextt"   name="siextentn" />
          <field field_ref="SH_iceextt"   name="siextents" />
          <field field_ref="NH_icearea"   name="siarean"   />

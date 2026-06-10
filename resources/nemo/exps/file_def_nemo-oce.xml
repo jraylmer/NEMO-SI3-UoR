@@ -18,7 +18,7 @@
 <file_definition type="one_file" name="@expname@_@freq@_@startdate@_@enddate@" sync_freq="1mo" min_digits="4">
 
    <!-- Five-daily (mean) outputs -->
-   <file_group id="oce_5d" output_freq="5d" split_freq="1y" output_level="10" enabled=".TRUE.">
+   <file_group id="oce_5d" output_freq="5d" split_freq="1y" enabled=".TRUE.">
 
       <file id="file001" name_suffix="_ocemod" description="ocean model variables" >
          <field field_ref="sst" />
@@ -30,7 +30,7 @@
    </file_group>
 
    <!-- Monthly (mean) outputs -->
-   <file_group id="oce_1m" output_freq="1mo" split_freq="1y" output_level="10" enabled=".TRUE.">
+   <file_group id="oce_1mo" output_freq="1mo" split_freq="1y" enabled=".TRUE.">
 
       <file id="file002" name_suffix="_ocemod" description="ocean model variables" >
          <field field_ref="sst" />
