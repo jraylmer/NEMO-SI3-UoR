@@ -159,10 +159,20 @@ $ ln -s /storage/research/cpom1/share/NEMO/inputs/SETTE/ORCA2_ICE_v5.0.0/sali_re
 Note that it is possible to link all the input files as above (\verb|ln -s <path>/*.nc .| where \verb|<path>| is the full path to the SETTE directory) and skip steps 7--8 entirely.
 Although it is perhaps more work to setup initially, making use of the \verb|cn_dir| parameters is tidier in the long run, particularly when switching to multi-year atmospheric forcing (section~\ref{sec:forcings}), for which a large number of symbolic links would need to be present and maintained in the \verb|EXP00| directory.
 
+The next step (\mbox{9}) is optional, but strongly recommended.
+The two files \verb|file_def_nemo-ice.xml| and \verb|file_def_nemo-oce.xml| configure the sea ice and ocean model outputs, respectively, that will be produced during a run.
+The default files are set to output a very large number of diagnostics (particularly for the ocean which include depth-dependent fields).
+This leads to very large output files containing data that are, for the most part, unlikely to be of interest.
+Customising the outputs is described in section~\ref{sec:outputs}, but for now, it is helpful to replace these two files with the lightweight templates that have been placed in the auxiliary resources, which will configure the outputs to a few essential variables:
+
+\begin{enumerate}\setcounter{enumi}{8}
+    \item Copy the files \verb|file_def_nemo-ice.xml| and \verb|file_def_nemo-oce.xml| from the auxiliary resources under \verb|resources/nemo/exps| into your template run directory, replacing the existing files.
+\end{enumerate}
+
 Finally, a job submission script is needed and one is provided in the auxiliary resources:  \verb|nemo/exps/runjob.sh|.
 This is explained in section~\ref{sec:tutor-running}; for now:
 
-\begin{enumerate}\setcounter{enumi}{8}
+\begin{enumerate}\setcounter{enumi}{9}
     \item Make a copy of the \verb|runjob.sh| script into your template run directory.
 \end{enumerate}
 
@@ -191,7 +201,7 @@ Here, we will simply call it \verb|EXP01|.
 
 \end{enumerate}
 
-The script \verb|runjob.sh| added in step~7 of section~\ref{sec:tutor-template} is used to submit a job to run \NEMOSIcu{} on the compute nodes on RACC2.
+The script \verb|runjob.sh| added in step~10 of section~\ref{sec:tutor-template} is used to submit a job to run \NEMOSIcu{} on the compute nodes on RACC2.
 The job is configured to run on eight processors with 32~GB of memory (in total) and a time limit of 30~minutes.
 
 \begin{enumerate}\setcounter{enumi}{2}
