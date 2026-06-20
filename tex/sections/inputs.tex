@@ -1,15 +1,15 @@
-\section{Forcings}
-\label{sec:forcings}
+\section{Inputs and forcings}
+\label{sec:inputs}
 
 In the tutorial (section~\ref{sec:tutorial}), we used climatological atmospheric forcing from the standard input package \verb|ORCA2_ICE| provided for the NEMO testing and validation suite (SETTE).
 Other than setting the directory containing the data, no setup was required because the template namelist packaged with the \verb|ORCA2_ICE| reference configuration is already setup for this data.
-This section describes how to setup \NEMOSIcu{} to run with different atmospheric forcing datasets, starting with the CORE interannual forcing in section~\ref{sec:core-ciaf} and the adjusted reanalysis product \mbox{JRA-55-do} in section~\ref{sec:jra-55-do}.
+This section describes how to setup \NEMOSIcu{} to run with different atmospheric forcing datasets, starting with the CORE interannual forcing in section~\ref{sec:inputs-core-ciaf} and the adjusted reanalysis product \mbox{JRA-55-do} in section~\ref{sec:inputs-jra-55-do}.
 Both require some further namelist changes beyond setting the input directory.
 Instructions for the former are more detailed; for the latter, the basic steps are essentially the same but some of the specific details are different.
 
 
 \subsection{CORE Interannual atmospheric forcing}
-\label{sec:core-ciaf}
+\label{sec:inputs-core-ciaf}
 
 The climatological atmospheric forcing files used thus far have names ending in \verb|.15JUNE2009_fill.nc|, which reside in the SETTE input package.
 They are derived from the Corrected Normal Year Forcing (CNYF) dataset in version 2 of the Coordinated Ocean Reference Experiments (CORE):
@@ -69,7 +69,7 @@ We encountered it already in section \ref{sec:tutor-template} to set the directo
 \end{enumerate}
 There are also namelist parameters for each atmospheric variable, such as \verb|sn_tair| for near-surface air temperature, each of which specifies different settings such as the file name, variable name, and frequency, for that variable.
 These are helpfully arranged like a table using comments and alignment (see example below), but each \verb|sn_*| parameter is just a comma-separated list.
-See section~\mbox{7.2.1} of the NEMO manual for the meaning of the components of the structures used to define input files, and section~\mbox{7.4.6} for the meaning of the nine atmospheric input fields.
+See section~\mbox{7.2.1} of the \citetalias{nemo-manual} for the meaning of the components of the structures used to define input files, and section~\mbox{7.4.6} for the meaning of the nine atmospheric input fields.
 For now, for each variable:
 
 \begin{enumerate}\setcounter{enumi}{4}
@@ -134,7 +134,7 @@ Similar sets of files for 2001 and 2002, will appear once the simulation gets to
 
 
 \subsection{JRA-55-do atmospheric forcing}
-\label{sec:jra-55-do}
+\label{sec:inputs-jra-55-do}
 
 The \mbox{JRA-55-do} dataset is a more recent forcing for \textbf{d}riving \mbox{\textbf{o}cean--sea} ice models derived from the \mbox{JRA-55} atmospheric reanalysis \citep{kobayashi2015jra-55,tsujino2018jra55do}.
 It is intended to replace CORE as the standard forcing for the ocean model intercomparison project (OMIP) protocols \citep{griffies2016omip,tsujino2020evaluation}.
@@ -153,7 +153,7 @@ So, we will actually use the prepared inputs directory:
   /storage/research/cpom1/share/NEMO/inputs/JRA-55-do/IOTF
 \end{verbatim}
 
-We can setup following the same general steps as in section~\ref{sec:core-ciaf}, replacing the directory in step~4 with that above, and a few additional changes described below.
+We can setup following the same general steps as in section~\ref{sec:inputs-core-ciaf}, replacing the directory in step~4 with that above, and a few additional changes described below.
 
 \textbf{After step 3, it is recommended to set} \verb|nn_fsbc = 1| in namelist group \verb|&namsbc| of \verb|namelist_cfg| (its default value is \verb|2|).
 This refers to the frequency of call to the surface boundary condition (SBC) module, in units of time steps, i.e., here we are changing it from `every other time step' to `every time step'.
@@ -198,16 +198,36 @@ Below is what the \verb|&namsbc_blk| namelist group should look like for running
 \end{verbatim}
 \endgroup
 
-Now, continue with step 8 from section~\ref{sec:core-ciaf} before submitting the job.
+Now, continue with step 8 from section~\ref{sec:inputs-core-ciaf} before submitting the job.
 
 
 \subsection{Other non-atmospheric inputs}
-\label{sec:forcings:subsec:non-atmosphere-inputs}
+\label{sec:inputs-other}
 
-There are other inputs to \NEMOSIcu{} beyond atmospheric forcing---for example, temperature and salinity data for restoring schemes and freshwater fluxes from land ice calving and river runoff.
-Data for these are provided in \verb|ORCA2_ICE|.
-In this section, we have only changed the atmospheric forcing and so the other inputs will continue to be read in from the SETTE data as originally setup in section~\ref{sec:tutor-template} (step~4).
+There are other inputs to \NEMOSIcu{} beyond atmospheric forcing---for example, temperature and salinity data for restoring schemes and freshwater fluxes river runoffs.
+Data for these are provided in the \verb|ORCA2_ICE_v5.0.0| package.
+In this section, we have only changed the atmospheric forcing and so the other inputs will continue to be read in from the SETTE data as originally setup in section~\ref{sec:tutor-template}.
 If these inputs need to be changed as well, it is just a matter of identifying the relevant namelist groups in \verb|namelist_cfg| and following the same steps to instruct NEMO how to locate and interpret the data.
 For instance, the river runoff inputs can be found under \verb|&namsbc_rnf|, which includes namelist parameters for the data directory (\verb|cn_dir|) and variable structure (\verb|sn_rnf|, etc.), as well as some physical parameters.
-In particular, \mbox{JRA-55-do} provides river runoff, land-ice calving, and sea surface temperature daily data, and a monthly climatology of sea surface salinity.
-It is an exercise for the reader to try updating their run from section~\ref{sec:jra-55-do} to use some or all of these fields for freshwater forcing and/or the surface restoring schemes.
+In particular, \mbox{JRA-55-do} provides river runoff, sea surface temperature daily data, and a monthly climatology of sea surface salinity.
+It is an exercise for the reader to try updating their run from section~\ref{sec:inputs-jra-55-do} to use some or all of these fields for freshwater forcing and/or the surface restoring schemes.
+
+The reader should be aware that in \verb|UOR_ORCA2_ICE|, the following inputs are being read in addition to the atmospheric forcing, all of which are provided in the SETTE standard input package:
+
+\begin{itemize}
+    \item \textbf{Domain configuration file}: this defines the global grid size, coordinates, depth levels, land mask, bathymetry, and other geometric properties of the ORCA grid: \verb|ORCA_R2_zps_domcfg.nc|
+    \item \textbf{Temperature and salinity fields}: these are used for initialisation of the ocean and/or for restoring: these are the files starting \verb|data_1m_| and are configured in the namelist group \verb|&namtsd|.
+    \item \textbf{Chlorophyll data}: the file \verb|chlorophyll.nc| is used to determine penetration of shortwave radiation into the ocean surface (see \verb|&namtra_qsr| and section~6.4.2 of the \citetalias{nemo-manual}).
+    \item \textbf{Geothermal heat flux}: this is the file \verb|geothermal_heating.nc|, configued in the namelist group \verb|&nambbc|. There is an alternate, updated input for this available in the package called \verb|gh_flux_lucazeau-orca2.nc|, which is based on \citet{lucazeau2019analysis}.
+    It is also possible to use a constant geothermal heat flux, configured via this namelist and requiring no input files.
+    See section~6.4.3 of the \citetalias{nemo-manual} for more information.
+    \item \textbf{River runoffs}: as mentioned above, these freshwater forcings are read in from the file \verb|runoff_core_monthly.nc| and are configured in the namelist group \verb|&namsbc_rnf|.
+    See section~7.3 of the \citetalias{nemo-manual} for more information.
+    \item \textbf{Mixing coefficients}: the files \verb|eddy_viscosity_*.nc| provide spatially-varying lateral mixing coefficients; see section 10.3 of the \citetalias{nemo-manual}.
+    \item \textbf{Internal-wave mixing coefficients}: the file \verb|zdfiwm_forcing_orca2.nc| contains several variables related to internal-wave mixing; see \verb|&namzdf_iwm| and section~11.5 of the \citetalias{nemo-manual}.
+\end{itemize}
+
+These are just the inputs being read into the \verb|UOR_ORCA2_ICE| experiments because this is how the pre-packaged \verb|ORCA2_ICE_PISCES| reference configuration, from which it is derived, uses by default.
+If you look in the data package, there are many other input files that are not in use.
+For example, the file \verb|sdw_ecwaves_orac2.nc| contains surface wave fields that can be used in various ways (\citetalias{nemo-manual} section~7.10), but in our configuration \verb|ln_wave| is \verb|.false.| (i.e., deactivated) by default.
+Conversely, it is possible to deactivate or re-configure certain model components such that the inputs in the above list are not required, but this is for the user to decide in their own applications.

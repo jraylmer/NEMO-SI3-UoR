@@ -6,7 +6,7 @@
 The content and frequency of the \NEMOSIcu{} output files are configured via the files \verb|file_def_nemo-oce.xml| and \verb|file_def_nemo-ice.xml| in the run directory.
 The former controls ocean output, the latter sea ice output.
 The files are written in XML, which is similar to HTML.
-The full story is in Chapter~12 of the NEMO manual \citep{nemo-5.0.0}; this section just covers the basic practicalities.
+The full story is in Chapter~12 of the \citetalias{nemo-manual}; this section just covers the basic practicalities.
 
 We will refer to the completed run of section~\ref{sec:tutor-running} as a starting point.
 In that section, the template \verb|file_def_nemo-*.xml| files from the auxiliary resources replace the default ones.
@@ -96,7 +96,7 @@ In the template \verb|file_def_nemo-ice.xml|, a second \verb|<file_group>| is de
 Note that those two files have different \verb|id| attributes (\verb|file103| and \verb|file104|).
 
 The \verb|split_freq| attribute defines how often output files are divided up in time.
-Here, it is set to \verb|"1y"|, meaning that a new file will be started every year of simulation, which is a good typical default (see the outputs of section~\ref{sec:core-ciaf} for an example).
+Here, it is set to \verb|"1y"|, meaning that a new file will be started every year of simulation, which is a good typical default (see the outputs of section~\ref{sec:inputs-core-ciaf} for an example).
 It can be changed to, for example, \verb|"1mo"| to split every month, or \verb|"1d"| for daily files, perhaps useful if you have larger output files.
 
 The \verb|enabled| attribute can either be set to \verb|".TRUE."| or \verb|".FALSE."| (case insensitive) or omitted entirely.

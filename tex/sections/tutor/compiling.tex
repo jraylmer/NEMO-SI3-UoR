@@ -22,7 +22,7 @@ Assuming that has been done, your copy of the configuration file for NEMO must b
 To compile \NEMOSIcu{} requires selecting a \textit{configuration} of model components (and other pre-compilation options).
 A set of reference configurations is provided under the \verb|cfgs| subdirectory of the top-level source directory.
 To begin, we shall compile the \verb|ORCA2_ICE_PISCES| reference configuration.
-This includes the full NEMO ocean model on the ORCA2 global grid, the \SIcu{} sea ice model, and the PISCES biogeochemical model.
+This includes the full NEMO ocean model on the ORCA2 (nominal resolution 2\textdegree{}) global grid, the \SIcu{} sea ice model, and the PISCES biogeochemical model.
 We shall not run this configuration because PISCES turns out to be a resource hog and is not needed for most sea ice work.
 However, compiling this standard configuration will act as a check that the build machinery is working properly, as well as introduce the basic compilation command, before we get on to custom configurations in section~\ref{sec:tutor-custom}.
 

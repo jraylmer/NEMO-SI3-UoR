@@ -117,7 +117,7 @@ There are some other namelist changes to be made as well, so edit \verb|namelist
 \end{verbatim}
 \endgroup
 
-        Repeat this in the following namelist groups: \verb|&namtsd|, \verb|&namsbc_blk|, \verb|&namtra_qsr|, \verb|&namsbc_rnf|, \verb|&nambbc|, and \verb|&namzdf_iwm|.
+        Repeat this in the following namelist groups: \verb|&namsbc_blk|, \verb|&namtra_qsr|, \verb|&namsbc_rnf|, \verb|&nambbc|, and \verb|&namzdf_iwm|.
 
         You can also do this in namelist groups \verb|&namsbc_wave| and, if you did not delete the entire group in the previous step \verb|&namberg|.
         These processes (surface waves and icebergs, respectively) are not activated in our configuration so it is not strictly necessary to set the input directories.
@@ -148,7 +148,6 @@ Rather than copy them from the SETTE inputs directory, create symbolic links (to
 \begin{verbatim}
 $ ln -s /storage/research/cpom1/share/NEMO/inputs/SETTE/ORCA2_ICE_v5.0.0/eddy_viscosity_*.nc .
 $ ln -s /storage/research/cpom1/share/NEMO/inputs/SETTE/ORCA2_ICE_v5.0.0/ORCA_R2_zps_domcfg.nc .
-$ ln -s /storage/research/cpom1/share/NEMO/inputs/SETTE/ORCA2_ICE_v5.0.0/sali_ref_clim_monthly.nc .
 \end{verbatim}
 \endgroup
 
@@ -157,7 +156,7 @@ $ ln -s /storage/research/cpom1/share/NEMO/inputs/SETTE/ORCA2_ICE_v5.0.0/sali_re
 \end{enumerate}
 
 Note that it is possible to link all the input files as above (\verb|ln -s <path>/*.nc .| where \verb|<path>| is the full path to the SETTE directory) and skip steps 7--8 entirely.
-Although it is perhaps more work to setup initially, making use of the \verb|cn_dir| parameters is tidier in the long run, particularly when switching to multi-year atmospheric forcing (section~\ref{sec:forcings}), for which a large number of symbolic links would need to be present and maintained in the \verb|EXP00| directory.
+Although it is perhaps more work to setup initially, making use of the \verb|cn_dir| parameters is tidier in the long run, particularly when switching to multi-year atmospheric forcing (section~\ref{sec:inputs}), for which a large number of symbolic links would need to be present and maintained in the \verb|EXP00| directory.
 
 The next step (\mbox{9}) is optional, but strongly recommended.
 The two files \verb|file_def_nemo-ice.xml| and \verb|file_def_nemo-oce.xml| configure the sea ice and ocean model outputs, respectively, that will be produced during a run.
@@ -238,7 +237,7 @@ The model output fields are in the following netCDF files:
 \endgroup
 
 There will also be a list of files with \verb|restart| in the name.
-These are used to continue a new run starting from where this one finished; section~\ref{sec:restarts} describes how to setup and make use of these restart files.
+These are used to continue a new run starting from where this one finished; section~\ref{sec:inits-restarts} describes how to setup and make use of these restart files.
 
 The files in the list above with \verb|1m| in the name are monthly mean variables and those with \verb|5d| are 5-daily means.
 Those with \verb|icemod| are 2D sea ice variables and those with \verb|icemod_scalar| contain sea ice extent, area, and volume totals per hemisphere.
