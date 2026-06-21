@@ -7,7 +7,7 @@
 This section describes how to run \NEMOSIcu{} with initial conditions taken from restart files saved by a previous run.
 As an example, we shall extend the three-year run of \refsection{sec:inputs-core-ciaf} for another three years.
 
-If you look in the run directory of \refsection{sec:inputs-core-ciaf} (\dirname{EXP02} there), as well as the output files previously listed, you will see several files with names beginning \filename{ORCA2_00008760_restart} (assuming the run completed).
+If you look in the run directory of \refsection{sec:inputs-core-ciaf} (\dirname{EXP02} there), as well as the output files previously listed, you will see several files with names beginning \linebreak\filename{ORCA2_00008760_restart} (assuming the run completed).
 These are restart files written after the final time step, which was iteration 8760.
 
 Start by configuring a new run directory in the same way as for the original experiment in \refsection{sec:inputs-core-ciaf}.
@@ -18,7 +18,7 @@ Now make the following edits in the new run directory.
 
 In \verb|namelist_cfg|, make the following changes and additions in namelist group \nmlgrp{namrun}:
 
-\begingroup\small
+\begingroup\footnotesize
 \begin{VerbatimNML}[samepage=true]
 \nmlpar{nn_it000}        = \nmlval{8761}  \nmlcomment{the old nn_itend + 1}
 \nmlpar{nn_itend}        = \nmlval{17520} \nmlcomment{the total number of timesteps in 6 years}

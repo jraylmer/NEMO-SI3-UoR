@@ -76,7 +76,7 @@ For this configuration, standard test inputs are available from the NEMO SETTE s
     \url{https://gws-access.jasmin.ac.uk/public/nemo/sette\_inputs/}
 \end{center}
 
-To run \mbox{\texttt{UOR_ORCA2_ICE}}, the required files are those in the package \filename{ORCA2_ICE_v5.0.0.tar.gz} which is unpacked on the shared storage at:
+To run \mbox{\texttt{UOR_ORCA2_ICE}}, the required files are those in the package \linebreak\filename{ORCA2_ICE_v5.0.0.tar.gz} which is unpacked on the shared storage at:
 
 \begin{VerbatimFile}
 /storage/research/cpom1/share/NEMO/inputs/SETTE/ORCA2_ICE_v5.0.0
@@ -101,7 +101,7 @@ There are some other namelist changes to be made as well, so edit \filename{name
         Note the surrounding dots: this is how booleans are written in Fortran.
 
     \item\textbf{Deactivate icebergs.}
-        Although icebergs are deactivated by default in \filename{namelist_ref}, they are activated by the \filename{namelist_cfg} that is packaged with the \mbox{\texttt{ORCA2_ICE_PISCES}} configuration and hence inherited by our custom configuration.
+        Although icebergs are deactivated by default in \linebreak\filename{namelist_ref}, they are activated by the \filename{namelist_cfg} that is packaged with the \mbox{\texttt{ORCA2_ICE_PISCES}} configuration and hence inherited by our custom configuration.
         We generally do not need to activate icebergs so to avoid issues it is best to deactivate them (this minimises generation of additional output files).
 
         Find the parameter \nmlpar{ln_icebergs} in namelist group \nmlgrp{namberg} and change it from \nmltrue{} to \nmlfalse{}.
@@ -142,18 +142,15 @@ Some of the input files do not have an associated parameter to set the input dir
 Rather than copy them from the SETTE inputs directory, create symbolic links (to save disk space):
 
 \begin{enumerate}\setcounter{enumi}{7}
-    \item Link the following SETTE inputs in your \dirname{EXP00} directory:
+    \item Link the following SETTE inputs in your \dirname{EXP00} directory (do not miss off the dot at the end in both cases):
+\end{enumerate}
 
-\begingroup\scriptsize
+\begingroup\tiny
 \begin{VerbatimCMD}
 ln \cmdflag{-s} /storage/research/cpom1/share/NEMO/inputs/SETTE/ORCA2_ICE_v5.0.0/ORCA_R2_zps_domcfg.nc .
 ln \cmdflag{-s} /storage/research/cpom1/share/NEMO/inputs/SETTE/ORCA2_ICE_v5.0.0/eddy_viscosity_3D.nc .
 \end{VerbatimCMD}
 \endgroup
-
-    Do not miss off the dot at the end in each case.
-
-\end{enumerate}
 
 Note that it is possible to link all the input files as above (\cmdline{ln \cmdflag{-s} <path>/*.nc .} where \texttt{<path>} is the full path to the SETTE directory) and skip steps \mbox{7--8} entirely.
 Although it is perhaps more work to setup initially, making use of the \nmlpar{cn_dir} parameters is tidier in the long run, particularly when switching to multi-year atmospheric forcing (\refsection{sec:inputs}), for which a large number of symbolic links would need to be present and maintained in the \dirname{EXP00} directory.
@@ -225,9 +222,10 @@ When it has, there will be a number of output files.
 The Slurm log file will be called \filename{<x>-<j>.out} where \filename{<x>} is the job name specified in \filename{runjob.sh} parameter \texttt{-{}-job-name}, and \filename{<j>} is the Slurm job ID.
 More informative is the log file from \NEMOSIcu{}, which is always called \filename{ocean.output}.
 Look through this for any errors (try searching for the string `E R R' with spaces between the letters).
+
 The model output fields are in the following netCDF files:
 
-\begin{VerbatimFile}
+\begin{VerbatimFile}[samepage=true]
 ORCA2_1m_00010101_00011231_icemod_0001-0001.nc
 ORCA2_1m_00010101_00011231_icemod_scalar_0001-0001.nc
 ORCA2_1m_00010101_00011231_ocemod_0001-0001.nc

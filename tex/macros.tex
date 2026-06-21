@@ -16,27 +16,28 @@
 % ================================================== %
 
 % General/command line:
-\definecolor{colcmdpmt}{rgb}{0.75,0.75,0.75}     % prompt symbol color
-\definecolor{colcmdcmd}{RGB}{0,0,0}              % command color
+\definecolor{colcmdpmt}{gray}{0.6}               % prompt symbol color
+\definecolor{colcmdcmd}{gray}{0}                 % command color
 \definecolor{colcmdflag}{RGB}{0,143,155}         % flag color
 \definecolor{colcmdvar}{RGB}{139,128,0}          % shell variable color 
 \newcommand{\filename}[1]{\mbox{\texttt{#1}}}
 \newcommand{\dirname}[1]{\mbox{\texttt{#1}}}
-\newcommand{\cmdline}[1]{\texttt{#1}}
+\newcommand{\cmdline}[1]{\mbox{\texttt{\textcolor{colcmdpmt}{\$} #1}}}
 \newcommand{\cmdcmd}[1]{\mbox{\textcolor{colcmdcmd}{\texttt{#1}}}}
 \newcommand{\cmdflag}[1]{\mbox{\textcolor{colcmdflag}{\texttt{#1}}}}
 \newcommand{\cmdvar}[1]{\mbox{\textcolor{colcmdvar}{\texttt{\$#1}}}}
 
 % Namelists:
 \definecolor{colnmlcomment}{rgb}{0.2,0.5,0.2}
-\definecolor{colnmlstring}{rgb}{0.5,0.5,0.5}
+\definecolor{colnmlstring}{gray}{0.4}
+\definecolor{colnmlbool}{rgb}{0.5,0,0}
 
 \newcommand{\nmlpar}[1]{\mbox{\texttt{#1}}}
 \newcommand{\nmlgrp}[1]{\mbox{\texttt{\&#1}}}
 \newcommand{\nmlstring}[1]{\mbox{\textcolor{colnmlstring}{\texttt{"#1"}}}}
 \newcommand{\nmlval}[1]{\texttt{#1}}
-\newcommand{\nmltrue}{\texttt{.true.}}
-\newcommand{\nmlfalse}{\texttt{.false.}}
+\newcommand{\nmltrue}{\textcolor{colnmlbool}{\texttt{.true.}}}
+\newcommand{\nmlfalse}{\textcolor{colnmlbool}{\texttt{.false.}}}
 \newcommand{\nmlcomment}[2][!{ }]{\textcolor{colnmlcomment}{\texttt{#1#2}}}
 
 % XML files:
