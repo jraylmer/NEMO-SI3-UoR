@@ -5,16 +5,17 @@ The third-party software XIOS (XML Input/Output Server) is required to run NEMO 
     Strictly speaking, it is only required when running NEMO as a distributed memory job, i.e., in parallel across multiple CPUs, but we almost always do this.
 }
 It handles the reading of input forcing files into the model and the selection and writing of output diagnostics during model runs.
-Currently, there is a version 2 and a version 3 of XIOS, maintained in parallel.
-The latest version of NEMO, version 5, is compatible with both, with XIOS3 supposedly leading to more efficient I/O and hence faster simulation run times.
-These instructions build XIOS2, but the same configuration files in the auxiliary resources mentioned below can also be used to build XIOS3.
-However, some additional steps are required to setup NEMO to run with XIOS3, but current testing indicates no significant benefits of using XIOS3 over XIOS2, at least for the configurations we run.
-So, these extra steps are omitted for now and we stick with XIOS2.\footnote{
+
+Currently, there is a version 2 and a version 3 of XIOS, the latter under active development while the former appears to be being phased out (there are no recent updates).
+The latest version of NEMO, version 5, is compatible with both versions of XIOS, with XIOS3 supposedly leading to more efficient I/O and hence faster simulation run times.
+However, several additional steps are required to setup NEMO to run with XIOS3, as it is still not the default for NEMO.
+Testing indicates no significant benefits of using XIOS3 over XIOS2, at least for the configurations we run.
+For these reasons, these instructions continue to build XIOS2, but the same configuration files in the auxiliary resources mentioned below can also be used to build XIOS3.\footnote{
     If you want to setup XIOS3 in advance of any further information in this document, read the NEMO documentation for the the XIOS3 demonstrator test case: \url{https://sites.nemo-ocean.io/user-guide/xios3demo.html}
 }
 
-The first step is to download the XIOS source code from its Subversion repository.
-We download the trunk as recommended by the NEMO developers.
+The first step is to download the XIOS source code from its repository that is now hosted on GitLab under the Git revision control system (previously, it used SVN).
+There is public read access to this repository.
 
 \begin{enumerate}
 
@@ -28,15 +29,21 @@ We download the trunk as recommended by the NEMO developers.
 
     \item Give the following command to download XIOS2 to a new subdirectory called \verb|XIOS2|:
 
+\begingroup\scriptsize
 \begin{verbatim}
-  $ svn co http://forge.ipsl.jussieu.fr/ioserver/svn/XIOS2/trunk XIOS2
+  $ git clone --branch XIOS2 https://gitlab.in2p3.fr/ipsl/projets/xios-projects/xios.git XIOS2
 \end{verbatim}
-
-    It may take a few minutes to download.
+\endgroup
 
 \end{enumerate}
 
-In the top-level XIOS source directory (\verb|$HOME/software/XIOS2|, in this case), there is a script called \verb|make_xios| (no extension) which is used to compile it.
+The newly-created \verb|XIOS2| directory will be referred to as the \textit{top-level XIOS source directory} in what follows.
+Note the source code under the top-level source directory will correspond to an older commit corresponding to the latest version of XIOS2 with which the instructions have been tested.\footnote{
+    If you want the latest release of XIOS3, use \texttt{-{}-branch xios-3.0.1.0} instead.
+    If you want the latest development version of XIOS3, omit the \texttt{-{}-branch} argument altogether to clone the main branch.
+}
+
+In the top-level XIOS source directory, there is a script called \verb|make_xios| (no extension) which is used to compile it.
 Platform-specific compiler options and library paths are specified in configuration files in the \verb|arch| subdirectory, all of which must start with \verb|arch-|.
 For any given platform, there are three such configuration files with extensions \verb|.env|, \verb|.fcm|, and \verb|.path|.
 There are templates for various cases but a custom set of configuration files is required to compile on the RACC2.
@@ -44,6 +51,11 @@ These are provided in the auxiliary resources under \verb|xios/arch|, called \ve
 
 \begin{enumerate}\setcounter{enumi}{2}
     \item Copy these three files into your \verb|arch| subdirectory.
+\end{enumerate}
+
+Before proceeding, note that the compilation of XIOS2 takes about 15 minutes.
+
+\begin{enumerate}\setcounter{enumi}{3}
     \item Give the following command from the top-level XIOS source directory to compile XIOS:
 \begin{verbatim}
   $ ./make_xios --arch RACC2 --use_extern_boost --prod
@@ -51,6 +63,5 @@ These are provided in the auxiliary resources under \verb|xios/arch|, called \ve
 \end{enumerate}
 
 In the above command, the value given to the argument \verb|--arch| is the part of the configuration file names without their prefix \verb|arch-| and without their extension, which in this case is just \verb|RACC2|.
-The flag \verb|--use_extern_boost| refers to a C++ library called Boost that is installed on the RACC2, so we can use that rather than the one packaged with XIOS (it makes no difference but saves some disk space and build time).
+The flag \verb|--use_extern_boost| refers to a \verb|C++| library called Boost that is installed on the RACC2, so we can use that rather than the one packaged with XIOS (it makes no practical difference but saves some disk space and build time).
 The flag \verb|--prod| means we build in production mode (as opposed to developer or debug mode; this changes the build flags selected from the \verb|.fcm| file.
-In production mode, compilation takes approximately 15~minutes to complete, assuming it does so successfully.

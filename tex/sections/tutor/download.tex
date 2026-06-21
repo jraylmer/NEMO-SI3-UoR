@@ -1,40 +1,40 @@
 \subsection{Downloading NEMO}
 \label{sec:tutor-download}
 
-The official \NEMOSIcu{} source code is managed using the Git revision control system.
-There is public read access to the source code repository.
-To create a local copy of the repository, use the following command after changing to the directory in which you wish to download the code:
+The official NEMO source code is also managed using the Git revision control system and again there is public read access to its remote repository hosted on GitLab.
+To create a local copy, use the following command after changing to the directory in which you wish to download the code:
 
 \begin{verbatim}
   $ git clone https://forge.nemo-ocean.eu/nemo/nemo.git nemo
 \end{verbatim}
 
-This will create a subdirectory called \verb|nemo| and download the \NEMOSIcu{} source to it.
+This will create a subdirectory called \verb|nemo| and download the NEMO source to it.
 This \verb|nemo| directory will be referred to as the \textit{top-level source directory} in what follows.
 
-The leading edge of \NEMOSIcu{} development takes place on the so-called \textit{main} branch of its source code repository.
+The leading edge of NEMO development takes place on the so-called main branch of its source code repository.
 There are also official release versions from time to time.
 The source code under the top-level source directory initially corresponds to the latest commit to the main branch.
-The instructions in this document have been tested with the 5.0.2 release, although they are likely to work with the main branch or earlier 5.x versions as well.
-It is recommended that you checkout (switch to) this commit before trying out the instructions.
-This can be done by giving the following command in the top-level source directory:
+The instructions in this document have been tested with the 5.0.2 release, although they are likely to work with the main branch as well.
+It is recommended that you `checkout' (switch to) this version, which can be done by giving the following command in the top-level source directory:\footnote{
+    Git will warn that you are now in `detached HEAD' state: this is because the 5.0.2 release is a specific commit on the branch called \texttt{branch\_5.0}.
+    Unless for some reason you are intending (and able) to push changes to the remote repository, this warning can simply be ignored.
+}
 
 \begin{verbatim}
   $ git checkout 5.0.2
 \end{verbatim}
 
-After giving this command, the source code under the top-level source directory will correspond to the older revision with which the instructions have been tested.\footnote{
-    Git will warn that you are now in `detached HEAD' state: this is because the 5.0.2 release is a specific commit on the branch called \texttt{branch\_5.0}.
-    Unless you are intending to push changes to the remote repository, this warning can simply be ignored.
-}
-Later, if you wish to return to the head of the main (developer) branch, you can do so with the following command:
+After giving this command, the source code under the top-level source directory will correspond to the older revision with which the instructions have been tested.
+Later, if you wish to return to the head of the main (development) branch, you can do so with the following command:
 
 \begin{verbatim}
   $ git checkout main
 \end{verbatim}
 
-It is also possible to clone the repository at a different point in its history at the first step; for example, to clone the repository at the point corresponding to release version 5.0.2 into a directory called \verb|nemo_5.0.2|:
+Alternatively, you can clone the repository at the point corresponding to release version 5.0.2 straight away (similar to what we did for XIOS in the previous section):
 
+\begingroup\small
 \begin{verbatim}
-  $ git clone --branch 5.0.2 https://forge.nemo-ocean.eu/nemo/nemo.git nemo_5.0.2
+  $ git clone --branch 5.0.2 https://forge.nemo-ocean.eu/nemo/nemo.git nemo
 \end{verbatim}
+\endgroup
