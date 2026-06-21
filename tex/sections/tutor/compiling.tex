@@ -1,43 +1,43 @@
 \subsection{Compiling a reference configuration}
 \label{sec:tutor-reference}
 
-Compilation of \NEMOSIcu{} is done with the script \verb|makenemo| (no extension) in the top-level source directory.
-Platform-specific compiler options are specified in a configuration file in the \verb|arch| subdirectory.
-This is a similar workflow to XIOS (section~\ref{sec:tutor-xios}), but for NEMO there is no \verb|.path| file.
-The \verb|.env| and \verb|.fcm| files for compiling on RACC2 can be found in the auxiliary resources under \verb|nemo/arch|.
+Compilation of \NEMOSIcu{} is done with the script \filename{makenemo} (no extension) in the top-level source directory.
+Platform-specific compiler options are specified in a configuration file in the \dirname{arch} subdirectory.
+This is a similar workflow to XIOS (\refsection{sec:tutor-xios}), but for NEMO there is no \filename{.path} file.
+The \filename{.env} and \filename{.fcm} files for compiling on RACC2 can be found in the auxiliary resources under \dirname{nemo/arch}.
 
 \begin{enumerate}
-    \item Make a copy of the two files under the \verb|arch| subdirectory of your top-level NEMO source directory.
+    \item Make a copy of the two files under the \dirname{arch} subdirectory of your top-level NEMO source directory.
 \end{enumerate}
 
-For best results, \NEMOSIcu{} should be compiled to use the XIOS library for input and output as described in section~\ref{sec:tutor-xios}.
+For best results, \NEMOSIcu{} should be compiled to use the XIOS library for input and output as described in \refsection{sec:tutor-xios}.
 Assuming that has been done, your copy of the configuration file for NEMO must be edited so that NEMO knows where to find your compiled XIOS library:
 
 \begin{enumerate}\setcounter{enumi}{1}
-    \item Open your \verb|arch-RACC2.env| file and, if required, change the value of the environment variable \verb|XIOS_HOME| to the path to your XIOS installation.
+    \item Open your \filename{arch-RACC2.env} file and, if required, change the value of the environment variable \texttt{XIOS_HOME} to the path to your XIOS installation.
 
-    The placeholder for this, \verb|${HOME}/software/XIOS2|, corresponds to the location of XIOS2 used in section~\ref{sec:tutor-xios}, so if you used the same path then this step can be skipped.
+    The placeholder for this, \texttt{\$\{HOME\}/software/XIOS2}, corresponds to the location of XIOS2 used in \refsection{sec:tutor-xios}, so if you used the same path then this step can be skipped.
 \end{enumerate}
 
 To compile \NEMOSIcu{} requires selecting a \textit{configuration} of model components (and other pre-compilation options).
-A set of reference configurations is provided under the \verb|cfgs| subdirectory of the top-level source directory.
-To begin, we shall compile the \verb|ORCA2_ICE_PISCES| reference configuration.
+A set of reference configurations is provided under the \dirname{cfgs} subdirectory of the top-level source directory.
+To begin, we shall compile the \texttt{ORCA2_ICE_PISCES} reference configuration.
 This includes the full NEMO ocean model on the ORCA2 (nominal resolution 2\textdegree{}) global grid, the \SIcu{} sea ice model, and the PISCES biogeochemical model.
 We shall not run this configuration because PISCES turns out to be a resource hog and is not needed for most sea ice work.
-However, compiling this standard configuration will act as a check that the build machinery is working properly, as well as introduce the basic compilation command, before we get on to custom configurations in section~\ref{sec:tutor-custom}.
+However, compiling this standard configuration will act as a check that the build machinery is working properly, as well as introduce the basic compilation command, before we get on to custom configurations in \refsection{sec:tutor-custom}.
 
 \begin{enumerate}\setcounter{enumi}{2}
-    \item Compile the \verb|ORCA2_ICE_PISCES| configuration with the following command:
-\begin{verbatim}
-  $ ./makenemo -m RACC2 -r ORCA2_ICE_PISCES
-\end{verbatim}
+    \item Compile the \texttt{ORCA2_ICE_PISCES} configuration with the following command:
+\begin{VerbatimCMD}
+./makenemo \cmdflag{-m} RACC2 \cmdflag{-r} ORCA2_ICE_PISCES
+\end{VerbatimCMD}
 \end{enumerate}
 
-Compilation will take a few minutes, during which time \verb|makenemo| gives a commentary on what it is doing.
+Compilation will take a few minutes, during which time \filename{makenemo} gives a commentary on what it is doing.
 If all goes well, the final lines should be something like:
 
 \begingroup\small
-\begin{verbatim}
+\begin{Verbatim}[samepage=true]
 ------------------------------------------------------------------------
 Compilation successful
 ------------------------------------------------------------------------
@@ -46,7 +46,7 @@ Compilation successful
 
 ------------------------------------------------------------------------
 Created symbolic link ./nemo to NEMO executable in experiment directory
-${HOME}/nemo/cfgs/ORCA2_ICE_PISCES/EXP00/nemo
+/home/users/ab123456/nemo/cfgs/ORCA2_ICE_PISCES/EXP00/nemo
 ------------------------------------------------------------------------
-\end{verbatim}
+\end{Verbatim}
 \endgroup

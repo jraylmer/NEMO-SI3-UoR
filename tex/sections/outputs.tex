@@ -3,13 +3,13 @@
 
 \subsection{Overview of XML configuration files}
 
-The content and frequency of the \NEMOSIcu{} output files are configured via the files \verb|file_def_nemo-oce.xml| and \verb|file_def_nemo-ice.xml| in the run directory.
+The content and frequency of the \NEMOSIcu{} output files are configured via the files \filename{file_def_nemo-oce.xml} and \filename{file_def_nemo-ice.xml} in the run directory.
 The former controls ocean output, the latter sea ice output.
 The files are written in XML, which is similar to HTML.
 The full story is in Chapter~12 of the \citetalias{nemo-manual}; this section just covers the basic practicalities.
 
-We will refer to the completed run of section~\ref{sec:tutor-running} as a starting point.
-In that section, the template \verb|file_def_nemo-*.xml| files from the auxiliary resources replace the default ones.
+We will refer to the completed run of \refsection{sec:tutor-running} as a starting point.
+In that section, the template \filename{file_def_nemo-*.xml} files from the auxiliary resources replace the default ones.
 The model outputs for that test run are thus deliberately limited: there are 12 different variables at two different frequencies and these come to about 54\,MB in total for the 1-year test run.
 If one does the same simulation but using the original XML files to configure the outputs, the same run yields 156 output variables in total, coming to about 5.4\,\textbf{G}B.
 It is clear how quickly (shared) storage space would be consumed with multiple, longer runs, and yet the majority of those variables are likely not needed.
@@ -19,101 +19,100 @@ That said, those templates are probably \textit{too} limited for typical usage, 
 
 Firstly, note the following general structure and syntax of the XML files:
 
-\begin{verbatim}
-  <file_definition ... >
-     <file_group id="group_id_name" output_freq="5d" ... >
-        <file id="file_id_name" ... >
-           <field field_ref="some_variable_name" ... />
-        </file>
-     </file_group>
-  </file_definition>
-\end{verbatim}
+\begin{VerbatimXML}
+\xmltag{<file_definition ... >}
+   \xmltag{<file_group \xmlattr{id}=\xmlstring{group_id_name} \xmlattr{output_freq}=\xmlstring{5d} ... >}
+      \xmltag{<file \xmlattr{id}=\xmlstring{file_id_name} ... >}
+         \xmltag{<field \xmlattr{field_ref}=\xmlstring{some_variable_name} ... />}
+      \xmltag{</file>}
+   \xmltag{</file_group>}
+\xmltag{</file_definition>}
+\end{VerbatimXML}
 
-where \verb|...| are additional \verb|name="value"| attribute pairs, separated by spaces.
-At the inner-most level is a list of \verb|<field>| tags (just one is shown above), which identifies (and optionally configures) the output variables to go into the file with the \verb|<file>| tags surrounding them.
-Multiple \verb|<file>| tags can be defined (again just one is shown above) within a surrounding \verb|<file_group>| tag, the latter specifying common attributes (notably, the output frequency) to all of the \verb|<file>|s it contains.
-Again, more than one \verb|<file_group>| can be defined in general, and they are all contained within an outer-most \verb|<file_definition>| tag which sets at a more technical level how the files are to be written.
+where \texttt{...} are additional \xmlattr{attribute=}\xmlstring{value} pairs, separated by spaces.
+At the inner-most level is a list of \xmltag{<field>} tags (just one is shown above), which identifies (and optionally configures) the output variables to go into the file with the \xmltag{<file>} tags surrounding them.
+Multiple \xmltag{<file>} tags can be defined (again just one is shown above) within a surrounding \xmltag{<file_group>} tag, the latter specifying common attributes (notably, the output frequency) to all of the \xmltag{<file>}s it contains.
+Again, more than one \xmltag{<file_group>} can be defined in general, and they are all contained within an outer-most \xmltag{<file_definition>} tag which sets at a more technical level how the files are to be written.
 Each tag is described below, starting with the inner-most tags and working outwards.
 
 \subsection{File and field tags}
 \label{sec:outputs-field-tag}
 
 The output file:
-\begin{verbatim}
-  ORCA2_5d_00010101_00011231_icemod_0001-0001.nc
-\end{verbatim}
+\begin{VerbatimFile}
+ORCA2_5d_00010101_00011231_icemod_0001-0001.nc
+\end{VerbatimFile}
 
-contains 5-day means of a few basic sea ice variables, as configured in\linebreak\verb|file_def_nemo-ice.xml| by these lines:
+contains 5-day means of a couple of basic sea ice variables, as configured in \texttt{file_def_nemo-ice.xml} by these lines:
 
 \begingroup\small
-\begin{verbatim}
-  <file id="file101" name_suffix="_icemod" description="sea ice variables">
-     <field field_ref="iceconc"      name="siconc"    />
-     <field field_ref="icevolu"      name="sivolu"    />
-     <field field_ref="icethic"      name="sithic"    />
-  </file>
-\end{verbatim}
+\begin{VerbatimXML}
+\xmltag{<file \xmlattr{id}=\xmlstring{file101} \xmlattr{name_suffix}=\xmlstring{_icemod} \xmlattr{description}=\xmlstring{sea ice variables}>}
+   \xmltag{<field \xmlattr{field_ref}=\xmlstring{iceconc}      \xmlattr{name}=\xmlstring{siconc}    />}
+   \xmltag{<field \xmlattr{field_ref}=\xmlstring{icevolu}      \xmlattr{name}=\xmlstring{sivolu}    />}
+\xmltag{</file>}
+\end{VerbatimXML}
 \endgroup
 
-\textbf{Define additional output variables by adding more \texttt{<field>} tags between the \texttt{<file>...</file>} lines.}
-The file \verb|field_def_nemo-ice.xml|, which should be linked in your experiment directory, catalogues all the available sea ice outputs, and there is similarly a \verb|field_def_nemo-oce.xml| for ocean variables.
+\textbf{Define additional output variables by adding more \xmltag{<field>} tags between the \xmltag{<file>...</file>} lines.}
+The file \filename{field_def_nemo-ice.xml}, which should be linked in your experiment directory, catalogues all the available sea ice outputs, and there is similarly a \filename{field_def_nemo-oce.xml} for ocean variables.
 Refer to these files to identify the variables you want to output.
-When adding a new variable to your \verb|file_def_nemo-ice.xml|, the \verb|field_ref| attribute is set to the \verb|id| attribute of the corresponding variable in \verb|field_def_nemo-ice.xml|.
-The optional \verb|name| attribute in each \verb|<field>| line is the name that the variable will have in the netCDF file.
+When adding a new variable to your \filename{file_def_nemo-ice.xml}, the \xmlattr{field_ref} attribute is set to the \xmlattr{id} attribute of the corresponding variable in \filename{field_def_nemo-ice.xml}.
+The optional \xmlattr{name} attribute in each \xmltag{<field>} line is the name that the variable will have in the netCDF file.
 
-You can define new files by adding a new \verb|<file>...</file>| structure within a file group (see section~\ref{sec:outputs-group-tag}).
-The \verb|id| attributes of all the \verb|<file>| tags (e.g., see first line above where it is set to \verb|"file101"|) must be unique---including files defined in \verb|file_def_nemo-oce.xml|.
-They should have the form \verb|"fileN"| where \verb|N| is an integer between 1 and 999.
-For example, the template \verb|file_def_nemo-ice.xml| has an additional file with \verb|id="file102"| for scalar quantities.
+You can define new files by adding a new \xmltag{<file>...</file>} structure within a file group (see \refsection{sec:outputs-group-tag}).
+The \xmlattr{id} attributes of all the \xmltag{<file>} tags (e.g., see first line above where it is set to \xmlstring{file101}) must be unique---including files defined in \filename{file_def_nemo-oce.xml}.
+They should have the form \xmlstring{fileN} where \texttt{N} is an integer between 1 and 999.
+For example, the template \filename{file_def_nemo-ice.xml} has an additional file with \xmlattr{id}\texttt{\textcolor{colxml}{=}}\xmlstring{file102} for scalar quantities.
 This separation is logical but it is not required that all variables in a file have the same spatial dimensions.
-However, all variables in a file will always have the same time dimension, as this is set at the \verb|<file_group>| level (see section~\ref{sec:outputs-group-tag}).
+However, all variables in a file will always have the same time dimension, as this is set at the \xmltag{<file_group>} level (see \refsection{sec:outputs-group-tag}).
 
-Other optional attributes in the \verb|<file>| tag definition are \verb|name_suffix|, which is inserted into the file name (see section~\ref{sec:outputs-file-tag}), and \verb|description|, which goes into the netCDF metadata.
+Other optional attributes in the \xmltag{<file>} tag definition are \xmlattr{name_suffix}, which is inserted into the file name (see \refsection{sec:outputs-file-tag}), and \xmlattr{description}, which goes into the netCDF metadata.
 
 
 \subsection{File group tag}
 \label{sec:outputs-group-tag}
 
-Output files are grouped within \verb|<file_group>| tags, which serve two key purposes.
-Foremost, they declare the output frequency for each of the \verb|<file>|s it contains.
-The \verb|<file_group>| for the sea ice outputs described in section~\ref{sec:outputs-field-tag} is as follows:
+Output files are grouped within \xmltag{<file_group>} tags, which serve two key purposes.
+Foremost, they declare the output frequency for each of the \xmltag{<file>}s it contains.
+The \xmltag{<file_group>} for the sea ice outputs described in \refsection{sec:outputs-field-tag} is as follows:
 
-\begingroup\footnotesize
-\begin{verbatim}
-  <file_group id="ice_5d" output_freq="5d" split_freq="1y" enabled=".TRUE.">
-     <!-- file101 -->
-     <!-- file102 -->
-  </file_group>
-\end{verbatim}
+\begingroup\small
+\begin{VerbatimXML}
+\xmltag{<file_group \xmlattr{id}=\xmlstring{ice_5d} \xmlattr{output_freq}=\xmlstring{5d} \xmlattr{split_freq}=\xmlstring{1y} \xmlattr{enabled}=\xmlstring{.TRUE.}>}
+   \xmlcomment{ file101 }
+   \xmlcomment{ file102 }
+\xmltag{</file_group>}
+\end{VerbatimXML}
 \endgroup
 
-The \verb|id| attribute of the \verb|<file_group>| tag is required and must be unique.
-The attribute \verb|output_freq| is, obviously, the output frequency of the variables in each of the files within the group.
+The \xmlattr{id} attribute of the \xmltag{<file_group>} tag is required and must be unique.
+The attribute \xmlattr{output_freq} is, obviously, the output frequency of the variables in each of the files within the group.
 Here, it is set to 5-daily.
-You can change it to, for example, daily by replacing the \verb|"5d"| with \verb|"1d"|, or monthly by changing it to \verb|"1mo"|.
-In both cases it would make sense to also update the \verb|id| attribute, although this is not necessary beyond the \verb|id| having to be unique.
-In the template \verb|file_def_nemo-ice.xml|, a second \verb|<file_group>| is declared for monthly outputs, which contains two \verb|<file>|s having the same contents as the corresponding 5-daily files.
-Note that those two files have different \verb|id| attributes (\verb|file103| and \verb|file104|).
+You can change it to, for example, daily by replacing the \xmlstring{5d} with \xmlstring{1d}, or monthly by changing it to \xmlstring{1mo}.
+In both cases it would make sense to also update the \xmlattr{id} attribute, although this is not necessary beyond the \xmlattr{id} having to be unique.
+In the template \filename{file_def_nemo-ice.xml}, a second \xmltag{<file_group>} is declared for monthly outputs, which contains two \xmltag{<file>}s having the same contents as the corresponding 5-daily files.
+Note that those two files have different \xmlattr{id} attributes (\xmlstring{file103} and \xmlstring{file104}).
 
-The \verb|split_freq| attribute defines how often output files are divided up in time.
-Here, it is set to \verb|"1y"|, meaning that a new file will be started every year of simulation, which is a good typical default (see the outputs of section~\ref{sec:inputs-core-ciaf} for an example).
-It can be changed to, for example, \verb|"1mo"| to split every month, or \verb|"1d"| for daily files, perhaps useful if you have larger output files.
+The \xmlattr{split_freq} attribute defines how often output files are divided up in time.
+Here, it is set to \xmlstring{1y}, meaning that a new file will be started every year of simulation, which is a good typical default (see the outputs of \refsection{sec:inputs-core-ciaf} for an example).
+It can be changed to, for example, \xmlstring{1mo} to split every month, or \xmlstring{1d} for daily files, perhaps useful if you have larger output files.
 
-The \verb|enabled| attribute can either be set to \verb|".TRUE."| or \verb|".FALSE."| (case insensitive) or omitted entirely.
-If you change it to \verb|.FALSE.| and then run the simulation, you will find the files within the group are no longer output.
-This attribute can also be added to each \verb|<file>|, which then overrides the corresponding state in its \verb|<file_group>|, allowing one to individually enable or disable file outputs.
-When the attribute is defined in both cases, note it is inherited `inwards' with priority taken by the value in the \verb|<file>| tag:
+The \xmlattr{enabled} attribute can either be set to \xmlstring{.TRUE.} or \xmlstring{.FALSE.} (case insensitive) or omitted entirely.
+If you change it to \xmlstring{.FALSE.} and then run the simulation, you will find the files within the group are no longer output.
+This attribute can also be added to each \xmltag{<file>}, which then overrides the corresponding state in its \xmltag{<file_group>}, allowing one to individually enable or disable file outputs.
+When the attribute is defined in both cases, note it is inherited `inwards' with priority taken by the value in the \xmltag{<file>} tag:
 \begin{center}
     \begin{tabular}{ccc}
-        \multicolumn{2}{c}{\texttt{enabled} in tag:} & File is output? \\
-        \verb|<file_group>| & \verb|<file>|          &                 \\
+        \multicolumn{2}{c}{\xmlattr{enabled} in tag:} & File is output? \\
+        \xmltag{<file_group>} & \xmltag{<file>}       &                 \\
         \hline
-        \verb|".TRUE."|     & Not set                & Yes             \\
-        \verb|".FALSE."|    & Not set                & No              \\
-        \verb|".TRUE."|     & \verb|".TRUE."|        & Yes             \\
-        \verb|".TRUE."|     & \verb|".FALSE."|       & No              \\
-        \verb|".FALSE."|    & \verb|".TRUE."|        & Yes             \\
-        \verb|".FALSE."|    & \verb|".FALSE."|       & No
+        \xmlstring{.TRUE.}    & Not set               & Yes             \\
+        \xmlstring{.FALSE.}   & Not set               & No              \\
+        \xmlstring{.TRUE.}    & \xmlstring{.TRUE.}    & Yes             \\
+        \xmlstring{.TRUE.}    & \xmlstring{.FALSE.}   & No              \\
+        \xmlstring{.FALSE.}   & \xmlstring{.TRUE.}    & Yes             \\
+        \xmlstring{.FALSE.}   & \xmlstring{.FALSE.}   & No
     \end{tabular}
 \end{center}
 
@@ -122,18 +121,18 @@ When the attribute is defined in both cases, note it is inherited `inwards' with
 \subsection{File definition tag}
 \label{sec:outputs-file-tag}
 
-The outer \verb|<file_definition>| tag contains some pre-defined attributes that generally don't need to be changed, except the \verb|name| attribute which sets the file name format.
-The default uses some macros (surrounded by @) that extract information about the run from within NEMO and/or the inner \verb|<file_group>| tags.
-There are two useful changes that can be made regarding the \verb|name| attribute:
+The outer \xmltag{<file_definition>} tag contains some pre-defined attributes that generally don't need to be changed, except the \xmlattr{name} attribute which sets the file name format.
+The default uses some macros (surrounded by \texttt{@}) that extract information about the run from within NEMO and/or the inner \xmltag{<file_group>} tags.
+There are two useful changes that can be made regarding the \xmlattr{name} attribute:
 
 \begin{itemize}
-    \item Change the namelist parameter \verb|cn_exp| in namelist group \verb|&namrun| of \verb|namelist_cfg|; this will then substitute the \verb|@expname@| macro in the \verb|name| attribute.
+    \item Change the namelist parameter \nmlpar{cn_exp} in namelist group \nmlgrp{namrun} of \filename{namelist_cfg}; this will then substitute the \xmlmacro{expname} macro in the \xmlattr{name} attribute.
     \item Prepend a path to the name to change the output directory to something else, e.g.:
 
 \begingroup\small
-\begin{verbatim}
-   name="/path/to/somewhere/@expname@_@freq@_@startdate@_@enddate@"
-\end{verbatim}
+\begin{VerbatimXML}
+\xmlattr{name}=\xmlstring{/path/to/somewhere/@expname@_@freq@_@startdate@_@enddate@}
+\end{VerbatimXML}
 \endgroup
 
 \end{itemize}

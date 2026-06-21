@@ -5,46 +5,48 @@
 \label{sec:inits-restarts}
 
 This section describes how to run \NEMOSIcu{} with initial conditions taken from restart files saved by a previous run.
-As an example, we shall extend the three-year run of section~\ref{sec:inputs-core-ciaf} for another three years.
+As an example, we shall extend the three-year run of \refsection{sec:inputs-core-ciaf} for another three years.
 
-If you look in the run directory of section~\ref{sec:inputs-core-ciaf} (\verb|EXP02| there), as well as the output files previously listed, you will see several files with names beginning \verb|ORCA2_00008760_restart| (assuming the run completed).
-These are restart files written at the final time step, which was time step 8760.
+If you look in the run directory of \refsection{sec:inputs-core-ciaf} (\dirname{EXP02} there), as well as the output files previously listed, you will see several files with names beginning \filename{ORCA2_00008760_restart} (assuming the run completed).
+These are restart files written after the final time step, which was iteration 8760.
 
-Start by configuring a new run directory in the same way as for the original experiment in section~\ref{sec:inputs-core-ciaf}.
-You can call this new directory anything you like, but in this example let us suppose it is called \verb|EXP02-1|.
+Start by configuring a new run directory in the same way as for the original experiment in \refsection{sec:inputs-core-ciaf}.
+You can call this new directory anything you like, but in this example let us suppose it is called \dirname{EXP02-1}.
 
 Now make the following edits in the new run directory.
-(As noted previously, when adding new variables to \verb|namelist_cfg| or \verb|namelist_ice_cfg| I generally copy and paste the appropriate lines from \verb|namelist_ref| or \verb|namelist_ice_ref| as a starting point.)
+(As noted previously, when adding new variables to \filename{namelist_cfg} or \filename{namelist_ice_cfg} I generally copy and paste the appropriate lines from \filename{namelist_ref} or \filename{namelist_ice_ref} as a starting point.)
 
-In \verb|namelist_cfg|, make the following changes and additions in namelist group \verb|namrun|:
+In \verb|namelist_cfg|, make the following changes and additions in namelist group \nmlgrp{namrun}:
 
-\begin{verbatim}
-  nn_it000 = 8761  ! the old nn_itend + 1
-  nn_itend = 17520 ! the total number of timesteps in 6 years
-  ln_rstart = .true.
-  nn_rstctl = 2
-  cn_ocerst_in = 'ORCA2_00008760_restart'
-  cn_ocerst_indir = '../EXP02' ! relative path to the original run directory
-\end{verbatim}
+\begingroup\small
+\begin{VerbatimNML}[samepage=true]
+\nmlpar{nn_it000}        = \nmlval{8761}  \nmlcomment{the old nn_itend + 1}
+\nmlpar{nn_itend}        = \nmlval{17520} \nmlcomment{the total number of timesteps in 6 years}
+\nmlpar{ln_rstart}       = \nmltrue{}
+\nmlpar{nn_rstctl}       = \nmlval{2}
+\nmlpar{cn_ocerst_in}    = \nmlstring{ORCA2_00008760_restart}
+\nmlpar{cn_ocerst_indir} = \nmlstring{../EXP02} \nmlcomment{(relative) path to the original run directory}
+\end{VerbatimNML}
+\endgroup
 
-Look at the comments in \verb|namelist_ref| if you want to know what these variables mean.
+Look at the comments in \filename{namelist_ref} if you want to know what these variables mean.
 
-This is not essential, but doing so will avoid a warning: in namelist group \verb|&namtsd|, set \verb|ln_tsd_init| to \verb|.false.|.
+This is not essential, but doing so will avoid a warning: in namelist group \nmlgrp{namtsd}, set \nmlpar{ln_tsd_init} to \nmlfalse{}.
 
-In \verb|namelist_ice_cfg|, make the following additions in namelist group \verb|nampar|:
+In \filename{namelist_ice_cfg}, make the following additions in namelist group \nmlgrp{nampar}:
 
-\begin{verbatim}
-  cn_icerst_in = 'ORCA2_00008760_restart_ice'
-  cn_icerst_indir = '../EXP02'
-\end{verbatim}
+\begin{VerbatimNML}[samepage=true]
+\nmlpar{cn_icerst_in}    = \nmlstring{ORCA2_00008760_restart_ice}
+\nmlpar{cn_icerst_indir} = \nmlstring{../EXP02}
+\end{VerbatimNML}
 
-and in namelist group \verb|namini| add:
+and in namelist group \nmlgrp{namini} add:
 
-\begin{verbatim}
-  nn_iceini_file = 2
-\end{verbatim}
+\begin{VerbatimNML}
+\nmlpar{nn_iceini_file} = \nmlval{2}
+\end{VerbatimNML}
 
-Look at the comments in \verb|namelist_ice_ref| if you want to know what these variables mean.
+Look at the comments in \filename{namelist_ice_ref} if you want to know what these variables mean.
 
-For this extension experiment, \verb|EXP02-1|, the job script can be a copy of that for original experiment, \verb|EXP02|.
+For this extension experiment, \dirname{EXP02-1}, the job script can be a copy of that for original experiment, \dirname{EXP02}.
 If the extension covered a different number of years, the time limit in the job script might need adjustment, but that is not the case in this example.

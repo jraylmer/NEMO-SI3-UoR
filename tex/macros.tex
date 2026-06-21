@@ -1,4 +1,66 @@
+% Text macros:
 \newcommand{\SIcu}{SI\textsuperscript{3}}
 \newcommand{\NEMOSIcu}{\mbox{NEMO--SI\textsuperscript{3}}}
 
+% Citation aliases:
 \defcitealias{nemo-manual}{NEMO~manual}
+
+% Cross-referencing macros:
+\newcommand{\refsection}[1]{\hyperref[#1]{section~\ref*{#1}}}
+\newcommand{\refSection}[1]{\hyperref[#1]{Section~\ref*{#1}}}
+\newcommand{\refsubsection}[1]{\hyperref[#1]{subsection~\ref*{#1}}}
+\newcommand{\refSubsection}[1]{\hyperref[#1]{Subsection~\ref*{#1}}}
+
+% -------------------------------------------------- %
+% Code and other monospaced text macros
+% ================================================== %
+
+% General/command line:
+\definecolor{colcmdpmt}{rgb}{0.75,0.75,0.75}     % prompt symbol color
+\definecolor{colcmdcmd}{RGB}{0,0,0}              % command color
+\definecolor{colcmdflag}{RGB}{0,143,155}         % flag color
+\definecolor{colcmdvar}{RGB}{139,128,0}          % shell variable color 
+\newcommand{\filename}[1]{\mbox{\texttt{#1}}}
+\newcommand{\dirname}[1]{\mbox{\texttt{#1}}}
+\newcommand{\cmdline}[1]{\texttt{#1}}
+\newcommand{\cmdcmd}[1]{\mbox{\textcolor{colcmdcmd}{\texttt{#1}}}}
+\newcommand{\cmdflag}[1]{\mbox{\textcolor{colcmdflag}{\texttt{#1}}}}
+\newcommand{\cmdvar}[1]{\mbox{\textcolor{colcmdvar}{\texttt{\$#1}}}}
+
+% Namelists:
+\definecolor{colnmlcomment}{rgb}{0.2,0.5,0.2}
+\definecolor{colnmlstring}{rgb}{0.5,0.5,0.5}
+
+\newcommand{\nmlpar}[1]{\mbox{\texttt{#1}}}
+\newcommand{\nmlgrp}[1]{\mbox{\texttt{\&#1}}}
+\newcommand{\nmlstring}[1]{\mbox{\textcolor{colnmlstring}{\texttt{"#1"}}}}
+\newcommand{\nmlval}[1]{\texttt{#1}}
+\newcommand{\nmltrue}{\texttt{.true.}}
+\newcommand{\nmlfalse}{\texttt{.false.}}
+\newcommand{\nmlcomment}[2][!{ }]{\textcolor{colnmlcomment}{\texttt{#1#2}}}
+
+% XML files:
+\definecolor{colxml}{rgb}{0,0,0}
+\definecolor{colxmltag}{rgb}{0,0,0}
+\definecolor{colxmlattr}{rgb}{0,0,0}
+\definecolor{colxmlcomment}{rgb}{0,0,0.5}
+\definecolor{colxmlstring}{rgb}{0.5,0,0}
+
+\newcommand{\xml}[1]{\textcolor{colxml}{\texttt{#1}}}
+\newcommand{\xmltag}[1]{\textcolor{colxmltag}{\texttt{#1}}}
+\newcommand{\xmlattr}[1]{\textcolor{colxmlattr}{\texttt{#1}}}
+\newcommand{\xmlcomment}[1]{\textcolor{colxmlcomment}{\texttt{<!--#1-->}}}
+\newcommand{\xmlstring}[1]{\textcolor{colxmlstring}{\texttt{"#1"}}}
+\newcommand{\xmlmacro}[1]{\textcolor{colxml}{\texttt{@#1@}}}
+
+% Environments for blocks of code:
+\DefineVerbatimEnvironment{VerbatimFile}{Verbatim}{commandchars=\\\{\}}
+\DefineVerbatimEnvironment{VerbatimNML}{Verbatim}{commandchars=\\\{\}}
+
+\DefineVerbatimEnvironment{VerbatimCMD}{Verbatim}{%
+formatcom={\renewcommand{\FancyVerbFormatLine}{\textcolor{colcmdpmt}{\$}{ }}},commandchars=\\\{\},
+}
+
+\DefineVerbatimEnvironment{VerbatimXML}{Verbatim}{%
+  formatcom=\color{colxml},commandchars=\\\{\}%
+}

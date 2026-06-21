@@ -4,12 +4,12 @@
 The official NEMO source code is also managed using the Git revision control system and again there is public read access to its remote repository hosted on GitLab.
 To create a local copy, use the following command after changing to the directory in which you wish to download the code:
 
-\begin{verbatim}
-  $ git clone https://forge.nemo-ocean.eu/nemo/nemo.git nemo
-\end{verbatim}
+\begin{VerbatimCMD}
+git clone https://forge.nemo-ocean.eu/nemo/nemo.git nemo
+\end{VerbatimCMD}
 
-This will create a subdirectory called \verb|nemo| and download the NEMO source to it.
-This \verb|nemo| directory will be referred to as the \textit{top-level source directory} in what follows.
+This will create a subdirectory called \dirname{nemo} and download the NEMO source to it.
+This \dirname{nemo} directory will be referred to as the \textit{top-level source directory} in what follows.
 
 The leading edge of NEMO development takes place on the so-called main branch of its source code repository.
 There are also official release versions from time to time.
@@ -20,21 +20,21 @@ It is recommended that you `checkout' (switch to) this version, which can be don
     Unless for some reason you are intending (and able) to push changes to the remote repository, this warning can simply be ignored.
 }
 
-\begin{verbatim}
-  $ git checkout 5.0.2
-\end{verbatim}
+\begin{VerbatimCMD}
+git checkout 5.0.2
+\end{VerbatimCMD}
 
 After giving this command, the source code under the top-level source directory will correspond to the older revision with which the instructions have been tested.
 Later, if you wish to return to the head of the main (development) branch, you can do so with the following command:
 
-\begin{verbatim}
-  $ git checkout main
-\end{verbatim}
+\begin{VerbatimCMD}
+git checkout main
+\end{VerbatimCMD}
 
 Alternatively, you can clone the repository at the point corresponding to release version 5.0.2 straight away (similar to what we did for XIOS in the previous section):
 
 \begingroup\small
-\begin{verbatim}
-  $ git clone --branch 5.0.2 https://forge.nemo-ocean.eu/nemo/nemo.git nemo
-\end{verbatim}
+\begin{VerbatimCMD}
+git clone \cmdflag{--branch} 5.0.2 https://forge.nemo-ocean.eu/nemo/nemo.git nemo
+\end{VerbatimCMD}
 \endgroup

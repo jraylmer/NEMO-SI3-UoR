@@ -1,72 +1,72 @@
 \subsection{Compiling and running a custom configuration}
 \label{sec:tutor-custom}
 
-As noted in section \ref{sec:tutor-reference}, it is not recommended to run \NEMOSIcu{} with the PISCES biogeochemical model.
-It is possible to create custom configurations of \NEMOSIcu{} based on the reference configurations, and we shall create one by omitting PISCES from \verb|ORCA2_ICE_PISCES|.
+As noted in \refsection{sec:tutor-reference}, it is not recommended to run \NEMOSIcu{} with the PISCES biogeochemical model.
+It is possible to create custom configurations of \NEMOSIcu{} based on the reference configurations, and we shall create one by omitting PISCES from \mbox{\texttt{ORCA2_ICE_PISCES}}.
 We need a name for our configuration.
-An obvious choice is \verb|ORCA2_ICE|, but it is helpful to distinguish between custom and the reference configurations (e.g., to avoid a possible future name clash with a new reference configuration).
-The following instructions will call the new configuration \verb|UOR_ORCA2_ICE|.
+An obvious choice is \mbox{\texttt{ORCA2_ICE}}, but it is helpful to distinguish between custom and the reference configurations (e.g., to avoid a possible future name clash with a new reference configuration).
+The following instructions will call the new configuration \mbox{\texttt{UOR_ORCA2_ICE}}.
 
 To compile the custom configuration, use the following command:
 
 \begingroup\scriptsize
-\begin{verbatim}
-  $ ./makenemo -m RACC2 -r ORCA2_ICE_PISCES -n UOR_ORCA2_ICE -d "OCE ICE NST ABL" --del_key key_top
-\end{verbatim}
+\begin{VerbatimCMD}
+./makenemo \cmdflag{-m} RACC2 \cmdflag{-r} ORCA2_ICE_PISCES \cmdflag{-n} UOR_ORCA2_ICE \cmdflag{-d} "OCE ICE NST ABL" \cmdflag{--del_key} key_top
+\end{VerbatimCMD}
 \endgroup
 
 Give this command, and whilst it is running you can read the following explanation of what it means.
 
-The \verb|-m| and \verb|-r| flags are the same as before, specifying the \textbf{m}achine architecture file and \textbf{r}eference configuration respectively.
-Now we have added the \verb|-n| flag, which specifies the name of the \textbf{n}ew configuration.
+The \cmdflag{-m} and \cmdflag{-r} flags are the same as before, specifying the \textbf{m}achine architecture file and \textbf{r}eference configuration respectively.
+Now we have added the \cmdflag{-n} flag, which specifies the name of the \textbf{n}ew configuration.
 
-Configurations are made up of sub-components that correspond to subdirectories of the \verb|src| subdirectory of the top-level source directory.
-The sub-components of the reference configurations are listed in the file \verb|cfgs/ref_cfgs.txt|.
-For \verb|ORCA2_ICE_PISCES| they are \verb|OCE|, \verb|TOP|, \verb|ICE|, \verb|NST|, and \verb|ABL|.
+Configurations are made up of sub-components that correspond to subdirectories of the \dirname{src} subdirectory of the top-level source directory.
+The sub-components of the reference configurations are listed in the file \dirname{cfgs/\filename{ref_cfgs.txt}}.
+For \mbox{\texttt{ORCA2_ICE_PISCES}} they are \texttt{OCE}, \texttt{TOP}, \texttt{ICE}, \texttt{NST}, and \texttt{ABL}.
 TOP stands for `Tracers in Ocean Paradigm' and is the part of NEMO containing PISCES.
 This is the sub-component that we wish to omit.
-The \verb|-d| option is used to specify the sub-components to be used in the new configuration.
-The command above specifies all the sub-components in \verb|ORCA2_ICE_PISCES| except for \verb|TOP|.
+The \cmdflag{-d} option is used to specify the sub-components to be used in the new configuration.
+The command above specifies all the sub-components in \mbox{\texttt{ORCA2_ICE_PISCES}} except for \texttt{TOP}.
 
 Finer-grained control over which parts of NEMO are compiled is provided by a set of preprocessor keys, which control whether certain sections of individual source files are included or omitted.
-The keys for \verb|ORCA2_ICE_PISCES| are listed in the file \verb|cfgs/ORCA2_ICE_PISCES/cpp_ORCA2_ICE_PISCES.fcm|.
-They include \verb|key_si3|, which includes the \SIcu{} code (we want to keep this), and \verb|key_top|, which includes the TOP code (we want to get rid of this).
-The arguments \verb|--del_key key_top| to the above command delete \verb|key_top| when creating the keys for \verb|UOR_ORCA2_ICE| from those for \verb|ORCA2_ICE_PISCES|.
+The keys for \mbox{\texttt{ORCA2_ICE_PISCES}} are listed in the file \dirname{cfgs/ORCA2_ICE_PISCES/\filename{cpp_ORCA2_ICE_PISCES.fcm}}.
+They include \mbox{\texttt{key_si3}}, which includes the \SIcu{} code (we want to keep this), and \mbox{\texttt{key_top}}, which includes the TOP code (we want to get rid of this).
+The arguments \texttt{\cmdflag{-{}-del_key} key_top} to the above command delete \texttt{key_top} when creating the keys for \mbox{\texttt{UOR_ORCA2_ICE}} from those for \mbox{\texttt{ORCA2_ICE_PISCES}}.
 
 
 \subsubsection{Preparing a template run directory}
 \label{sec:tutor-template}
 
-Compiling the custom configuration \verb|UOR_ORCA2_ICE| will result in a new directory \verb|cfgs/UOR_ORCA2_ICE| under the top-level source directory.
-This directory has various subdirectories, of which the most important is \verb|EXP00|.
-This contains a symbolic link called \verb|nemo| to the \NEMOSIcu{} executable and various configuration files.
-The files with names beginning \verb|namelist_| are Fortran namelist files that specify run-time options.
-The namelist files with names ending \verb|_ref| contain the defaults and should not be edited.
-Instead, changes to the defaults should be made in the namelist files with names ending \verb|_cfg|.
+Compiling the custom configuration \mbox{\texttt{UOR_ORCA2_ICE}} will result in a new directory \dirname{cfgs/UOR_ORCA2_ICE} under the top-level source directory.
+This directory has various subdirectories, of which the most important is \dirname{EXP00}.
+This contains a symbolic link called \filename{nemo} to the \NEMOSIcu{} executable and various configuration files.
+The files with names beginning \filename{namelist_} are Fortran namelist files that specify run-time options.
+The namelist files with names ending \filename{_ref} contain the defaults and should not be edited.
+Instead, changes to the defaults should be made in the namelist files with names ending \filename{_cfg}.
 Settings in these files will override the defaults.
-The other configuration files all have names ending \verb|.xml|.
+The other configuration files all have names ending \filename{.xml}.
 These are XML files used to configure XIOS.
-In particular, the XML files with names beginning \verb|file_| can be edited to change what is included in the output files from \NEMOSIcu{}.
+In particular, the XML files with names beginning \filename{file_} can be edited to change what is included in the output files from \NEMOSIcu{}.
 
-It would be possible to run \NEMOSIcu{} in \verb|EXP00|, but since it is common to run the same executable multiple times with different configuration settings, it is better to keep \verb|EXP00| as a template from which additional run directories can be created as needed.
-Before our new \verb|EXP00| can be used in this manner, some further work is needed.
+It would be possible to run \NEMOSIcu{} in \dirname{EXP00}, but since it is common to run the same executable multiple times with different configuration settings, it is better to keep \dirname{EXP00} as a template from which additional run directories can be created as needed.
+Before our new \dirname{EXP00} can be used in this manner, some further work is needed.
 
 \begin{enumerate}
-    \item The rest of this section assumes that the reader is working in\newline\verb|cfgs/UOR_ORCA2_ICE/EXP00|, so change to this directory.
+    \item The rest of this section assumes that the reader is working in \linebreak\dirname{cfgs/UOR_ORCA2_ICE/EXP00}, so change to this directory.
 \end{enumerate}
 
-Because \verb|UOR_ORCA2_ICE| was created from \verb|ORCA2_ICE_PISCES|, its \verb|EXP00| directory contains some redundant configuration files that are only relevant to PISCES.
+Because \mbox{\texttt{UOR_ORCA2_ICE}} was created from \mbox{\texttt{ORCA2_ICE_PISCES}}, its \dirname{EXP00} directory contains some redundant configuration files that are only relevant to PISCES.
 Deleting the following six files will reduce clutter:
 
-\begin{verbatim}
+\begin{VerbatimFile}
 namelist_pisces_cfg        namelist_top_ref
 namelist_pisces_ref        field_def_nemo-pisces.xml
 namelist_top_cfg           file_def_nemo-pisces.xml
-\end{verbatim}
+\end{VerbatimFile}
 
 \begin{enumerate}\setcounter{enumi}{1}
-    \item Delete the above files (e.g., using \verb|rm ./*pisces* ./*_top_*|).
-    \item In \verb|context_nemo.xml|, remove the lines referring to the two \verb|.xml| files above.
+    \item Delete the above files (e.g., using \cmdline{rm ./*pisces* ./*_top_*}).
+    \item In \filename{context_nemo.xml}, remove the lines referring to the two \filename{.xml} files above.
 \end{enumerate}
 
 Most \NEMOSIcu{} configurations require various input files such as atmospheric forcing data, fresh water fluxes, geothermal heating, and so on.
@@ -76,64 +76,64 @@ For this configuration, standard test inputs are available from the NEMO SETTE s
     \url{https://gws-access.jasmin.ac.uk/public/nemo/sette\_inputs/}
 \end{center}
 
-To run \verb|UOR_ORCA2_ICE|, the required files are those in the package \linebreak\verb|ORCA2_ICE_v5.0.0.tar.gz| which is unpacked on the shared storage at:
+To run \mbox{\texttt{UOR_ORCA2_ICE}}, the required files are those in the package \filename{ORCA2_ICE_v5.0.0.tar.gz} which is unpacked on the shared storage at:
 
-\begin{verbatim}
-  /storage/research/cpom1/share/NEMO/inputs/SETTE/ORCA2_ICE_v5.0.0
-\end{verbatim}
+\begin{VerbatimFile}
+/storage/research/cpom1/share/NEMO/inputs/SETTE/ORCA2_ICE_v5.0.0
+\end{VerbatimFile}
 
-You could copy the files to your \verb|EXP00| directory, but that would waste disk space, particularly if the template is to be duplicated many times.
-In most cases, the directory of input files can be specified in \verb|namelist_cfg|.
-There are some other namelist changes to be made as well, so edit \verb|namelist_cfg| as follows:
+You could copy the files to your \dirname{EXP00} directory, but that would waste disk space, particularly if the template is to be duplicated many times.
+In most cases, the directory of input files can be specified in \filename{namelist_cfg}.
+There are some other namelist changes to be made as well, so edit \filename{namelist_cfg} as follows:
 
 \begin{enumerate}\setcounter{enumi}{3}
 
     \item\textbf{Set the simulation to run for one year.}
-        Run lengths are determined by the model timestep, parameter \verb|rn_Dt| in namelist group \verb|&namdom|, and the start and end iteration numbers, parameters \verb|nn_it000| and \verb|nn_itend| respectively in namelist group \verb|&namrun|.
-        The default timestep is 10800~s (3~hours), default \verb|nn_it000 = 1|, and default \verb|nn_itend = 5840|.
+        Run lengths are determined by the model timestep, parameter \nmlpar{rn_Dt} in namelist group \nmlgrp{namdom}, and the start and end iteration numbers, parameters \nmlpar{nn_it000} and \nmlpar{nn_itend} respectively in namelist group \nmlgrp{namrun}.
+        The default timestep is 10800~s (3~hours), default \nmlpar{nn_it000 = \nmlval{1}}, and default \nmlpar{nn_itend = \nmlval{5840}}.
         This corresponds to a total run length of 2~years.
 
-        For our test runs 1~year is sufficient, so change \verb|nn_itend| to \verb|2920|.
+        For our test runs 1~year is sufficient, so change \nmlpar{nn_itend} to \nmlval{2920}.
 
-    \item In namelist group \verb|&namdom|, add the parameter \verb|ln_meshmask = .false.|.
-        It is not currently defined in \verb|namelist_cfg|, but if you open \verb|namelist_ref| you will see it is there and set to \verb|.true.|.
-        By overriding this to \verb|.false.| in \verb|namelist_cfg| we prevent some unnecessary output files when running the job.
+    \item In namelist group \nmlgrp{namdom}, add the parameter \nmlpar{ln_meshmask = \nmlfalse}.
+        It is not currently defined in \filename{namelist_cfg}, but if you open \filename{namelist_ref} you will see it is there and set to \nmltrue{}.
+        By overriding this to \nmlfalse{} in \filename{namelist_cfg} we prevent some unnecessary output files when running the job.
         Note the surrounding dots: this is how booleans are written in Fortran.
 
     \item\textbf{Deactivate icebergs.}
-        Although icebergs are deactivated by default in \verb|namelist_ref|, they are activated by the \verb|namelist_cfg| that is packaged with the \verb|ORCA2_ICE_PISCES| configuration and hence inherited by our custom configuration.
+        Although icebergs are deactivated by default in \filename{namelist_ref}, they are activated by the \filename{namelist_cfg} that is packaged with the \mbox{\texttt{ORCA2_ICE_PISCES}} configuration and hence inherited by our custom configuration.
         We generally do not need to activate icebergs so to avoid issues it is best to deactivate them (this minimises generation of additional output files).
 
-        Find the parameter \verb|ln_icebergs| in namelist group \verb|&namberg| and change it from \verb|.true.| to \verb|.false.|.
+        Find the parameter \nmlpar{ln_icebergs} in namelist group \nmlgrp{namberg} and change it from \nmltrue{} to \nmlfalse{}.
 
-        Alternatively, delete the line containing \verb|ln_icebergs| or the entire namelist group \verb|&namberg|.
+        Alternatively, delete the line containing \nmlpar{ln_icebergs} or the entire namelist group \nmlgrp{namberg}.
 
     \item\textbf{Set the input directories.}
-        Navigate to the namelist group \verb|&namtsd| and edit the parameter \verb|cn_dir| to the directory of the SETTE inputs above, making sure to include a \verb|/| at the end like so:
+        Navigate to the namelist group \nmlgrp{namtsd} and edit the parameter \nmlpar{cn_dir} to the directory of the SETTE inputs above, making sure to include a \texttt{/} at the end like so:
 
 \begingroup\tiny
-\begin{verbatim}
-  cn_dir = '/storage/research/cpom1/share/NEMO/inputs/SETTE/ORCA2_ICE_v5.0.0/'  !  root directory for the T-S data location
-\end{verbatim}
+\begin{VerbatimNML}
+\nmlpar{cn_dir} = \nmlstring{/storage/research/cpom1/share/NEMO/inputs/SETTE/ORCA2_ICE_v5.0.0/}  \nmlcomment{root directory for the T-S data location}
+\end{VerbatimNML}
 \endgroup
 
-        Repeat this in the following namelist groups: \verb|&namsbc_blk|, \verb|&namtra_qsr|, \verb|&namsbc_rnf|, \verb|&nambbc|, and \verb|&namzdf_iwm|.
+        Repeat this in the following namelist groups: \nmlgrp{namsbc_blk}, \nmlgrp{namtra_qsr}, \nmlgrp{namsbc_rnf}, \nmlgrp{nambbc}, and \nmlgrp{namzdf_iwm}.
 
-        You can also do this in namelist groups \verb|&namsbc_wave| and, if you did not delete the entire group in the previous step \verb|&namberg|.
+        You can also do this in namelist groups \nmlgrp{namsbc_wave} and, if you did not delete the entire group in the previous step \nmlgrp{namberg}.
         These processes (surface waves and icebergs, respectively) are not activated in our configuration so it is not strictly necessary to set the input directories.
 
-        The \verb|cn_dir| parameter also needs to be set in namelist group \verb|&namsbc_ssr|.
-        In \verb|namelist_cfg| it is not present, but you can either copy the line containing it from \verb|namelist_ref| and then update the directory path, or just add it manually to the \verb|&namsbc_ssr| (the order of parameters within a namelist group does not matter).
+        The \nmlpar{cn_dir} parameter also needs to be set in namelist group \nmlgrp{namsbc_ssr}.
+        In \filename{namelist_cfg} it is not present, but you can either copy the line containing it from \filename{namelist_ref} and then update the directory path, or just add it manually to the \nmlgrp{namsbc_ssr} (the order of parameters within a namelist group does not matter).
 
-        In namelist group \verb|&namtra_dmp|, the directory for the input file called \verb|resto.nc| is handled in a different way.
-        The full path to the file must be added via the parameter \verb|cn_resto|.
-        This is not set in \verb|namelist_cfg|, but if you check in \verb|namelist_ref| you will see it is there.
-        Copy the line with that parameter from \verb|namelist_ref| into \verb|namelist_cfg| and set it to the full path to the \verb|resto.nc| file:
+        In namelist group \nmlgrp{namtra_dmp}, the directory for the input file called \filename{resto.nc} is handled in a different way.
+        The full path to the file must be added via the parameter \nmlpar{cn_resto}.
+        This is not set in \filename{namelist_cfg}, but if you check in \filename{namelist_ref} you will see it is there.
+        Copy the line with that parameter from \filename{namelist_ref} into \filename{namelist_cfg} and set it to the full path to the \nmlpar{resto.nc} file:
 
-\begingroup\small
-\begin{verbatim}
-  cn_resto = '/storage/research/cpom1/share/NEMO/inputs/SETTE/ORCA2_ICE_v5.0.0/resto.nc'
-\end{verbatim}
+\begingroup\scriptsize
+\begin{VerbatimNML}
+\nmlpar{cn_resto} = \nmlstring{/storage/research/cpom1/share/NEMO/inputs/SETTE/ORCA2_ICE_v5.0.0/resto.nc}
+\end{VerbatimNML}
 \endgroup
 
 \end{enumerate}
@@ -142,108 +142,106 @@ Some of the input files do not have an associated parameter to set the input dir
 Rather than copy them from the SETTE inputs directory, create symbolic links (to save disk space):
 
 \begin{enumerate}\setcounter{enumi}{7}
-    \item Link the following SETTE inputs in your \verb|EXP00| directory:
+    \item Link the following SETTE inputs in your \dirname{EXP00} directory:
 
 \begingroup\scriptsize
-\begin{verbatim}
-$ ln -s /storage/research/cpom1/share/NEMO/inputs/SETTE/ORCA2_ICE_v5.0.0/ORCA_R2_zps_domcfg.nc .
-$ ln -s /storage/research/cpom1/share/NEMO/inputs/SETTE/ORCA2_ICE_v5.0.0/eddy_viscosity_3D.nc .
-\end{verbatim}
+\begin{VerbatimCMD}
+ln \cmdflag{-s} /storage/research/cpom1/share/NEMO/inputs/SETTE/ORCA2_ICE_v5.0.0/ORCA_R2_zps_domcfg.nc .
+ln \cmdflag{-s} /storage/research/cpom1/share/NEMO/inputs/SETTE/ORCA2_ICE_v5.0.0/eddy_viscosity_3D.nc .
+\end{VerbatimCMD}
 \endgroup
 
     Do not miss off the dot at the end in each case.
 
 \end{enumerate}
 
-Note that it is possible to link all the input files as above (\verb|ln -s <path>/*.nc .| where \verb|<path>| is the full path to the SETTE directory) and skip steps 7--8 entirely.
-Although it is perhaps more work to setup initially, making use of the \verb|cn_dir| parameters is tidier in the long run, particularly when switching to multi-year atmospheric forcing (section~\ref{sec:inputs}), for which a large number of symbolic links would need to be present and maintained in the \verb|EXP00| directory.
+Note that it is possible to link all the input files as above (\cmdline{ln \cmdflag{-s} <path>/*.nc .} where \texttt{<path>} is the full path to the SETTE directory) and skip steps \mbox{7--8} entirely.
+Although it is perhaps more work to setup initially, making use of the \nmlpar{cn_dir} parameters is tidier in the long run, particularly when switching to multi-year atmospheric forcing (\refsection{sec:inputs}), for which a large number of symbolic links would need to be present and maintained in the \dirname{EXP00} directory.
 
-The two files \verb|file_def_nemo-ice.xml| and \verb|file_def_nemo-oce.xml| configure the sea ice and ocean model outputs, respectively, that will be produced during a run.
+The two files \filename{file_def_nemo-ice.xml} and \filename{file_def_nemo-oce.xml} configure the sea ice and ocean model outputs, respectively, that will be produced during a run.
 The default files are set to output a very large number of diagnostics (particularly for the ocean which include depth-dependent fields).
 This leads to very large output files containing data that are, for the most part, unlikely to be of interest.
-Customising the outputs is described in section~\ref{sec:outputs}, but for now, it is helpful to replace these two files with the lightweight templates that have been placed in the auxiliary resources, which will configure the outputs to a few essential variables:\footnote{
-    If you skip this step and use the original versions of these files (not recommended!), you will need to link the SETTE input \texttt{sali\_ref\_clim\_monthly.nc} in your template run directory as this is needed by one of the default model outputs.
-    Alternatively, you can delete the relevant output field from \texttt{file\_def\_nemo-oce.xml} by removing the line with \texttt{field\_ref="sshthster"}.
+Customising the outputs is described in \refsection{sec:outputs}, but for now, it is helpful to replace these two files with the lightweight templates that have been placed in the auxiliary resources, which will configure the outputs to a few essential variables:\footnote{
+    If you skip this step and use the original versions of these files (not recommended!), you will need to link the SETTE input \filename{sali_ref_clim_monthly.nc} in your template run directory as this is needed by one of the default model outputs.
+    Alternatively, you can delete the relevant output field from \filename{file_def_nemo-oce.xml} by removing the line with \xmlattr{field_ref=\xmlstring{sshthster}}.
 }
 
 \begin{enumerate}\setcounter{enumi}{8}
-    \item Copy the files \verb|file_def_nemo-ice.xml| and \verb|file_def_nemo-oce.xml| from the auxiliary resources under \verb|resources/nemo/exps| into your template run directory, replacing the existing files.
+    \item Copy the files \filename{file_def_nemo-ice.xml} and \filename{file_def_nemo-oce.xml} from the auxiliary resources under \dirname{resources/nemo/exps} into your template run directory, replacing the existing files.
 \end{enumerate}
 
-Finally, a job submission script is needed and one is provided in the auxiliary resources:  \verb|nemo/exps/runjob.sh|.
-This is explained in section~\ref{sec:tutor-running}; for now:
+Finally, a job submission script is needed and one is provided in the auxiliary resources:  \dirname{nemo/exps/\filename{runjob.sh}}.
+This is explained in \refsection{sec:tutor-running}; for now:
 
 \begin{enumerate}\setcounter{enumi}{9}
-    \item Make a copy of the \verb|runjob.sh| script into your template run directory.
+    \item Make a copy of the \filename{runjob.sh} script into your template run directory.
 \end{enumerate}
 
 
 \subsubsection{Running the custom configuration}
 \label{sec:tutor-running}
 
-The directory \verb|EXP00| can now be used as a template from which to create a directory in which to run \NEMOSIcu{}.
-This run directory can be called whatever you like, but it must be located under \verb|cfgs/UOR_ORCA2_ICE| under the top-level source directory.
-Here, we will simply call it \verb|EXP01|. 
+The directory \dirname{EXP00} can now be used as a template from which to create a directory in which to run \NEMOSIcu{}.
+This run directory can be called whatever you like, but it must be located under \dirname{cfgs/UOR_ORCA2_ICE} under the top-level source directory.
+Here, we will simply call it \dirname{EXP01}. 
 
 \begin{enumerate}
     \item Create a new run directory by copying the template directory:
 
-\begin{verbatim}
-  $ cp -r ./EXP00 ./EXP01
-\end{verbatim}
+\begin{VerbatimCMD}
+cp \cmdflag{-r} ./EXP00 ./EXP01
+\end{VerbatimCMD}
 
-    Substitute \verb|EXP01| for something else if you prefer.
+    Substitute \dirname{EXP01} for something else if you prefer.
 
     \item Change into the new run directory:
 
-\begin{verbatim}
-  $ cd ./EXP01
-\end{verbatim}
+\begin{VerbatimCMD}
+cd ./EXP01
+\end{VerbatimCMD}
 
 \end{enumerate}
 
-The script \verb|runjob.sh| added in step~10 of section~\ref{sec:tutor-template} is used to submit a job to run \NEMOSIcu{} on the compute nodes on RACC2.
+The script \filename{runjob.sh} added in step~10 of \refsection{sec:tutor-template} is used to submit a job to run \NEMOSIcu{} on the compute nodes on RACC2.
 The job is configured to run on eight processors with 32~GB of memory (in total) and a time limit of 30~minutes.
 
 \begin{enumerate}\setcounter{enumi}{2}
     \item Submit the job to the batch system using the command:
 
-\begin{verbatim}
-  $ sbatch ./runjob.sh
-\end{verbatim}
+\begin{VerbatimCMD}
+sbatch ./runjob.sh
+\end{VerbatimCMD}
 
 \end{enumerate}
 
 The job status can be checked using Slurm commands such as:
 
-\begin{verbatim}
-  $ squeue -u $USER
-\end{verbatim}
+\begin{VerbatimCMD}
+squeue \cmdflag{-u} \cmdvar{USER}
+\end{VerbatimCMD}
 
 This simulation should take about 10~minutes to complete.
 When it has, there will be a number of output files.
-The Slurm log file will be called \verb|<x>-<j>.out| where \verb|<x>| is the job name specified in \verb|runjob.sh| parameter \verb|--job-name|, and \verb|<j>| is the Slurm job ID.
-More informative is the log file from \NEMOSIcu{}, which is always called \verb|ocean.output|.
+The Slurm log file will be called \filename{<x>-<j>.out} where \filename{<x>} is the job name specified in \filename{runjob.sh} parameter \texttt{-{}-job-name}, and \filename{<j>} is the Slurm job ID.
+More informative is the log file from \NEMOSIcu{}, which is always called \filename{ocean.output}.
 Look through this for any errors (try searching for the string `E R R' with spaces between the letters).
 The model output fields are in the following netCDF files:
 
-\begingroup
-\begin{verbatim}
-  ORCA2_1m_00010101_00011231_icemod_0001-0001.nc
-  ORCA2_1m_00010101_00011231_icemod_scalar_0001-0001.nc
-  ORCA2_1m_00010101_00011231_ocemod_0001-0001.nc
-  ORCA2_5d_00010101_00011231_icemod_0001-0001.nc
-  ORCA2_5d_00010101_00011231_icemod_scalar_0001-0001.nc
-  ORCA2_5d_00010101_00011231_ocemod_0001-0001.nc
-\end{verbatim}
-\endgroup
+\begin{VerbatimFile}
+ORCA2_1m_00010101_00011231_icemod_0001-0001.nc
+ORCA2_1m_00010101_00011231_icemod_scalar_0001-0001.nc
+ORCA2_1m_00010101_00011231_ocemod_0001-0001.nc
+ORCA2_5d_00010101_00011231_icemod_0001-0001.nc
+ORCA2_5d_00010101_00011231_icemod_scalar_0001-0001.nc
+ORCA2_5d_00010101_00011231_ocemod_0001-0001.nc
+\end{VerbatimFile}
 
-There will also be a list of files with \verb|restart| in the name.
-These are used to continue a new run starting from where this one finished; section~\ref{sec:inits-restarts} describes how to setup and make use of these restart files.
+There will also be a list of files with \filename{restart} in the name.
+These are used to continue a new run starting from where this one finished; \refsection{sec:inits-restarts} describes how to setup and make use of these restart files.
 
-The files in the list above with \verb|1m| in the name are monthly mean variables and those with \verb|5d| are 5-daily means.
-Those with \verb|icemod| are 2D sea ice variables and those with \verb|icemod_scalar| contain sea ice extent, area, and volume totals per hemisphere.
-The files with \verb|ocemod| contain a few basic 2D ocean diagnostics.
-This is all assuming you replaced the original \verb|file_def_nemo-*.xml| files with the lightweight templates from the auxiliary resources in step~9 of section~\ref{sec:tutor-template}.
+The files in the list above with \filename{1m} in the name are monthly mean variables and those with \filename{5d} are 5-daily means.
+Those with \filename{icemod} are 2D sea ice variables and those with \filename{icemod_scalar} contain sea ice extent, area, and volume totals per hemisphere.
+The files with \filename{ocemod} contain a few basic 2D ocean diagnostics.
+This is all assuming you replaced the original \filename{file_def_nemo-*.xml} files with the lightweight templates from the auxiliary resources in step~9 of \refsection{sec:tutor-template}.
 If you skipped that step, you will have a longer list of (much) larger output files with different names.
-Section~\ref{sec:outputs} gives an overview of how to customise the frequency and contents of the model outputs.
+\refSection{sec:outputs} gives an overview of how to customise the frequency and contents of the model outputs.

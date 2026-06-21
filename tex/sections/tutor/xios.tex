@@ -20,48 +20,48 @@ There is public read access to this repository.
 \begin{enumerate}
 
     \item Change to the directory in which you wish to download and compile the XIOS source code.
-        It can be anywhere; in this example we create a directory called \verb|software| under the user's home directory (\verb|$HOME|):
+        It can be anywhere; in this example we create a directory called \dirname{software} under the user's home directory (\cmdvar{HOME}):
 
-\begin{verbatim}
-  $ mkdir -p $HOME/software
-  $ cd $HOME/software
-\end{verbatim}
+\begin{VerbatimCMD}
+mkdir \cmdflag{-p} \cmdvar{HOME}/software
+cd \cmdvar{HOME}/software
+\end{VerbatimCMD}
 
-    \item Give the following command to download XIOS2 to a new subdirectory called \verb|XIOS2|:
+    \item Give the following command to download XIOS2 to a new subdirectory called \dirname{XIOS2}:
 
 \begingroup\scriptsize
-\begin{verbatim}
-  $ git clone --branch XIOS2 https://gitlab.in2p3.fr/ipsl/projets/xios-projects/xios.git XIOS2
-\end{verbatim}
+\begin{VerbatimCMD}
+git clone \cmdflag{--branch} XIOS2 https://gitlab.in2p3.fr/ipsl/projets/xios-projects/xios.git XIOS2
+\end{VerbatimCMD}
 \endgroup
 
 \end{enumerate}
 
-The newly-created \verb|XIOS2| directory will be referred to as the \textit{top-level XIOS source directory} in what follows.
+The newly-created \dirname{XIOS2} directory will be referred to as the \textit{top-level XIOS source directory} in what follows.
 Note the source code under the top-level source directory will correspond to an older commit corresponding to the latest version of XIOS2 with which the instructions have been tested.\footnote{
-    If you want the latest release of XIOS3, use \texttt{-{}-branch xios-3.0.1.0} instead.
-    If you want the latest development version of XIOS3, omit the \texttt{-{}-branch} argument altogether to clone the main branch.
+    If you want the latest release of XIOS3, use \cmdline{\cmdflag{-{}-branch} xios-3.0.1.0} instead.
+    If you want the latest development version of XIOS3, omit the \cmdflag{-{}-branch} argument altogether to clone the main branch.
 }
 
-In the top-level XIOS source directory, there is a script called \verb|make_xios| (no extension) which is used to compile it.
-Platform-specific compiler options and library paths are specified in configuration files in the \verb|arch| subdirectory, all of which must start with \verb|arch-|.
-For any given platform, there are three such configuration files with extensions \verb|.env|, \verb|.fcm|, and \verb|.path|.
+In the top-level XIOS source directory, there is a script called \filename{make_xios} (no extension) which is used to compile it.
+Platform-specific compiler options and library paths are specified in configuration files in the \dirname{arch} subdirectory, all of which must start with \filename{arch-}.
+For any given platform, there are three such configuration files with extensions \filename{.env}, \filename{.fcm}, and \filename{.path}.
 There are templates for various cases but a custom set of configuration files is required to compile on the RACC2.
-These are provided in the auxiliary resources under \verb|xios/arch|, called \verb|arch-RACC2.env|, \verb|arch-RACC2.fcm|, and \verb|arch-RACC2.path|.
+These are provided in the auxiliary resources under \filename{xios/arch}, called \filename{arch-RACC2.env}, \filename{arch-RACC2.fcm}, and \filename{arch-RACC2.path}.
 
 \begin{enumerate}\setcounter{enumi}{2}
-    \item Copy these three files into your \verb|arch| subdirectory.
+    \item Copy these three files into your \dirname{arch} subdirectory.
 \end{enumerate}
 
 Before proceeding, note that the compilation of XIOS2 takes about 15 minutes.
 
 \begin{enumerate}\setcounter{enumi}{3}
     \item Give the following command from the top-level XIOS source directory to compile XIOS:
-\begin{verbatim}
-  $ ./make_xios --arch RACC2 --use_extern_boost --prod
-\end{verbatim}
+\begin{VerbatimCMD}
+./make_xios \cmdflag{--arch} RACC2 \cmdflag{--use_extern_boost --prod}
+\end{VerbatimCMD}
 \end{enumerate}
 
-In the above command, the value given to the argument \verb|--arch| is the part of the configuration file names without their prefix \verb|arch-| and without their extension, which in this case is just \verb|RACC2|.
-The flag \verb|--use_extern_boost| refers to a \verb|C++| library called Boost that is installed on the RACC2, so we can use that rather than the one packaged with XIOS (it makes no practical difference but saves some disk space and build time).
-The flag \verb|--prod| means we build in production mode (as opposed to developer or debug mode; this changes the build flags selected from the \verb|.fcm| file.
+In the above command, the value given to the argument \cmdflag{-{}-arch} is the part of the configuration file names without their prefix \filename{arch-} and without their extension, which in this case is just \filename{RACC2}.
+The flag \cmdflag{-{}-use_extern_boost} refers to a \texttt{C++} library called Boost that is installed on the RACC2, so we can use that rather than the one packaged with XIOS (it makes no practical difference but saves some disk space and build time).
+The flag \cmdflag{-{}-prod} means we build in production mode (as opposed to developer or debug mode; this changes the build flags selected from the \filename{.fcm} file.

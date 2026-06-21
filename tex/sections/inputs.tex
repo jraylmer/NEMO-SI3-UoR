@@ -1,9 +1,9 @@
 \section{Inputs and forcings}
 \label{sec:inputs}
 
-In the tutorial (section~\ref{sec:tutorial}), we used climatological atmospheric forcing from the standard input package \verb|ORCA2_ICE| provided for the NEMO testing and validation suite (SETTE).
-Other than setting the directory containing the data, no setup was required because the template namelist packaged with the \verb|ORCA2_ICE| reference configuration is already setup for this data.
-This section describes how to setup \NEMOSIcu{} to run with different atmospheric forcing datasets, starting with the CORE interannual forcing in section~\ref{sec:inputs-core-ciaf} and the adjusted reanalysis product \mbox{JRA-55-do} in section~\ref{sec:inputs-jra-55-do}.
+In the tutorial (\refsection{sec:tutorial}), we used climatological atmospheric forcing from the standard input package \filename{ORCA2_ICE_v5.0.0} provided for the NEMO testing and validation suite (SETTE).
+Other than setting the directory containing the data, no setup was required because the template namelist packaged with the \mbox{\texttt{ORCA2_ICE_PISCES}} reference configuration is already setup for this data.
+This section describes how to setup \NEMOSIcu{} to run with different atmospheric forcing datasets, starting with the CORE interannual forcing in \refsection{sec:inputs-core-ciaf} and the adjusted reanalysis product \mbox{JRA-55-do} in \refsection{sec:inputs-jra-55-do}.
 Both require some further namelist changes beyond setting the input directory.
 Instructions for the former are more detailed; for the latter, the basic steps are essentially the same but some of the specific details are different.
 
@@ -11,7 +11,7 @@ Instructions for the former are more detailed; for the latter, the basic steps a
 \subsection{CORE Interannual atmospheric forcing}
 \label{sec:inputs-core-ciaf}
 
-The climatological atmospheric forcing files used thus far have names ending in \verb|.15JUNE2009_fill.nc|, which reside in the SETTE input package.
+The climatological atmospheric forcing files used thus far have names ending in \filename{.15JUNE2009_fill.nc}, which reside in the SETTE input package.
 They are derived from the Corrected Normal Year Forcing (CNYF) dataset in version 2 of the Coordinated Ocean Reference Experiments (CORE):
 
 \begin{center}
@@ -21,113 +21,113 @@ They are derived from the Corrected Normal Year Forcing (CNYF) dataset in versio
 Here, we switch to the Corrected Interannual Atmospheric Forcing (CIAF) dataset, also part of CORE.
 The raw data is available at:
 
-\begin{verbatim}
-  /storage/research/cpom1/share/COREv2/CIAFv2
-\end{verbatim}
+\begin{VerbatimFile}
+/storage/research/cpom1/share/COREv2/CIAFv2
+\end{VerbatimFile}
 
 with subdirectories for each variable, in which there is one file per year.
-Unfortunately, the files as downloaded do not have names in the format required by \NEMOSIcu{}; specifically, it requires yearly files like these to have names ending in \verb|_yYYYY.nc| where \verb|YYYY| is the four-digit year.
+Unfortunately, the files as downloaded do not have names in the format required by \NEMOSIcu{}; specifically, it requires yearly files like these to have names ending in \filename{_yYYYY.nc} where \filename{YYYY} is the four-digit year.
 A further problem is that \NEMOSIcu{} requires total precipitation and snow, whilst the CIAF files provide rain and snow.
 These problems are solved by the files in the prepared input directory:
 
-\begin{verbatim}
-  /storage/research/cpom1/share/NEMO/inputs/COREv2/CIAFv2/IOTF
-\end{verbatim}
+\begin{VerbatimFile}
+/storage/research/cpom1/share/NEMO/inputs/COREv2/CIAFv2/IOTF
+\end{VerbatimFile}
 
 This directory contains symbolic links to the CIAF files with names in the format required by \NEMOSIcu{}.
-It also contains files \verb|total_precip_yYYYY.nc| with total precipitation calculated from the CIAF rain and snow.
+It also contains files \filename{total_precip_yYYYY.nc} with total precipitation calculated from the CIAF rain and snow.
 
-We shall prepare a 3-year run forced by the CIAF data for 2000--2002, using the configuration and template experiment setup in the tutorial.
-So it is assumed from here that the reader has completed section~\ref{sec:tutorial}.
+We shall prepare a 3-year run forced by the CIAF data for \mbox{2000--2002}, using the configuration and template experiment setup in the tutorial.
+So it is assumed from here that the reader has completed \refsection{sec:tutorial}.
 
 \begin{enumerate}
 
-    \item Under \verb|cfgs/UOR_ORCA2_ICE|, start by making a copy of the template run directory:
+    \item Under \dirname{cfgs/UOR_ORCA2_ICE}, start by making a copy of the template run directory:
 
-\begin{verbatim}
-  $ cp -r ./EXP00 ./EXP02
-\end{verbatim}
+\begin{VerbatimCMD}
+cp \cmdflag{-r} ./EXP00 ./EXP02
+\end{VerbatimCMD}
 
 \end{enumerate}
 
 From here on, we shall take it for granted that you can use different names for the run directories and job scripts if you wish (but not for any of the other files).
 
-Now we need to make some changes to \verb|namelist_cfg|, so open that file.
+Now we need to make some changes to \filename{namelist_cfg}, so open that file.
 
 \begin{enumerate}\setcounter{enumi}{1}
-    \item In namelist group \verb|&namrun|, increase the run length to three years by setting \verb|nn_itend = 8760|, which is the number of time steps in 3 years.
+    \item In namelist group \nmlgrp{namrun}, increase the run length to three years by setting \nmlpar{nn_itend = \nmlval{8760}}, which is the number of time steps in 3 years.
     
-    \item Set the start date. This is determined by parameter \verb|nn_date0|, which is currently not set in \verb|namelist_cfg|.
-    Open \verb|namelist_ref| and copy the line containing \verb|nn_date0| into the \verb|&namrun| namelist group of \verb|namelist_cfg|, then change its value to \verb|20000101| (you could also just add the value manually to \verb|namelist_cfg|, but it is helpful to copy from \verb|namelist_ref| to keep the proper alignment and comments and avoid misspellings).
-    This will now override the default value \verb|nn_date0 = 00010101| in \verb|namelist_ref|.
+    \item Set the start date. This is determined by parameter \nmlpar{nn_date0}, which is currently not set in \filename{namelist_cfg}.
+    Open \filename{namelist_ref} and copy the line containing \nmlpar{nn_date0} into the \nmlgrp{namrun} namelist group of \filename{namelist_cfg}, then change its value to \nmlval{20000101} (you could also just add the value manually to \filename{namelist_cfg}, but it is helpful to copy from \filename{namelist_ref} to keep the proper alignment and comments and avoid misspellings).
+    This will now override the default value \nmlpar{nn_date0 = \nmlval{00010101}} in \filename{namelist_ref}.
 \end{enumerate}
 
-Namelist group \texttt{\&namsbc\_blk} is where we set the atmospheric forcing inputs.
-We encountered it already in section \ref{sec:tutor-template} to set the directory for the inputs via the \verb|cn_dir| parameter, which we will need to change again here:
+Namelist group \nmlgrp{namsbc_blk} is where we set the atmospheric forcing inputs.
+We encountered it already in \refsection{sec:tutor-template} to set the directory for the inputs via the \nmlpar{cn_dir} parameter, which we will need to change again here:
 \begin{enumerate}\setcounter{enumi}{3}
-    \item Set \verb|cn_dir| in \verb|&namsbc_blk| to the prepared input directory above.
+    \item Set \nmlpar{cn_dir} in \nmlgrp{namsbc_blk} to the prepared input directory above.
 \end{enumerate}
-There are also namelist parameters for each atmospheric variable, such as \verb|sn_tair| for near-surface air temperature, each of which specifies different settings such as the file name, variable name, and frequency, for that variable.
-These are helpfully arranged like a table using comments and alignment (see example below), but each \verb|sn_*| parameter is just a comma-separated list.
+There are also namelist parameters for each atmospheric variable, such as \nmlpar{sn_tair} for near-surface air temperature, each of which specifies different settings such as the file name, variable name, and frequency, for that variable.
+These are helpfully arranged like a table using comments and alignment (see example below), but each \nmlpar{sn_*} parameter is just a comma-separated list.
 See section~\mbox{7.2.1} of the \citetalias{nemo-manual} for the meaning of the components of the structures used to define input files, and section~\mbox{7.4.6} for the meaning of the nine atmospheric input fields.
 For now, for each variable:
 
 \begin{enumerate}\setcounter{enumi}{4}
-    \item Update the \verb|file name| to the corresponding name of the input files except for the \verb|_yYYYY.nc| parts.
-        Generally you need to examine the contents of the inputs directory, but in this case you just remove the \verb|.15JUNE2009_fill| parts; see below.
-    \item Change the value under \verb|clim (T/F)| from \verb|.true.| to \verb|.false.|.
+    \item Update the \texttt{file name} to the corresponding name of the input files except for the \filename{_yYYYY.nc} parts.
+        Generally you need to examine the contents of the inputs directory, but in this case you just remove the \filename{.15JUNE2009_fill} parts; see below.
+    \item Change the value under \texttt{clim (T/F)} from \nmltrue{} to \nmlfalse{}.
 \end{enumerate}
 
 Note that steps 3 and \mbox{5--6} are the key changes that inform NEMO that it is reading time-varying, rather than climatological, atmospheric forcing files.
 
 \begin{enumerate}\setcounter{enumi}{6}
-    \item Change the weights filenames to \verb|wgt_bic_COREv2_to_ORCA2| for \verb|sn_wndi| and \verb|sn_wndj| and \verb|wgt_bil_COREv2_to_ORCA2| for the rest.
+    \item Change the weights filenames to \nmlstring{wgt_bic_COREv2_to_ORCA2} for \nmlpar{sn_wndi} and \nmlpar{sn_wndj} and \nmlstring{wgt_bil_COREv2_to_ORCA2} for the rest.
         These `weights' are used to interpolate the input data from their native grid onto the ORCA2 grid, a capability of NEMO called interpolation on the fly (IOTF).
         The weights in this case are actually the same as those used before that are packaged with SETTE, but the filenames are set differently in the prepared inputs directory.
 \end{enumerate}
 
-After steps \mbox{4--7}, your \verb|&namsbc_blk| in \verb|namelist_cfg| should look something like this:
+After steps \mbox{4--7}, your \nmlgrp{namsbc_blk} in \filename{namelist_cfg} should look something like this:
 
-\begingroup\tiny\centering
-\begin{verbatim}
-!-----------------------------------------------------------------------
-&namsbc_blk    !   namsbc_blk  generic Bulk formula                     (ln_blk =T)
-!-----------------------------------------------------------------------
-   !                    !  bulk algorithm :
-   ln_NCAR    = .true.     ! "NCAR"      algorithm   (Large and Yeager 2008)
+\begingroup\tiny
+\begin{VerbatimNML}[samepage=true]
+\nmlcomment[]{!-----------------------------------------------------------------------}
+\nmlgrp{namsbc_blk}    \nmlcomment[]{!   namsbc_blk  generic Bulk formula                     (ln_blk =T)}
+\nmlcomment[]{!-----------------------------------------------------------------------}
+   \nmlcomment[]{!                    !  bulk algorithm :}
+   \nmlpar{ln_NCAR}    = \nmltrue{}     \nmlcomment{"NCAR"      algorithm   (Large and Yeager 2008)}
 
-   cn_dir = '/storage/research/cpom1/share/NEMO/inputs/COREv2/CIAFv2/IOTF/'  !  root directory for the bulk data location
-   !_______!_______________!___________________!___________!_____________!_________!___________!___________________________!__________!_______________!
-   !       !  file name    ! frequency (hours) ! variable  ! time interp.!  clim   ! 'yearly'/ !      weights filename     ! rotation ! land/sea mask !
-   !       !               !  (if <0  months)  !   name    !   (logical) !  (T/F)  ! 'monthly' !                           ! pairing  !    filename   !
-   sn_wndi = 'u_10'        ,    6.             , 'U_10_MOD',   .false.   , .false. , 'yearly'  , 'wgt_bic_COREv2_to_ORCA2' , 'Uwnd'   , ''
-   sn_wndj = 'v_10'        ,    6.             , 'V_10_MOD',   .false.   , .false. , 'yearly'  , 'wgt_bic_COREv2_to_ORCA2' , 'Vwnd'   , ''
-   sn_qsr  = 'ncar_rad'    ,   24.             , 'SWDN_MOD',   .false.   , .false. , 'yearly'  , 'wgt_bil_COREv2_to_ORCA2' , ''       , ''
-   sn_qlw  = 'ncar_rad'    ,   24.             , 'LWDN_MOD',   .false.   , .false. , 'yearly'  , 'wgt_bil_COREv2_to_ORCA2' , ''       , ''
-   sn_tair = 't_10'        ,    6.             , 'T_10_MOD',   .false.   , .false. , 'yearly'  , 'wgt_bil_COREv2_to_ORCA2' , ''       , ''
-   sn_humi = 'q_10'        ,    6.             , 'Q_10_MOD',   .false.   , .false. , 'yearly'  , 'wgt_bil_COREv2_to_ORCA2' , ''       , ''
-   sn_prec = 'total_precip',   -1.             , 'PRC_MOD1',   .false.   , .false. , 'yearly'  , 'wgt_bil_COREv2_to_ORCA2' , ''       , ''
-   sn_snow = 'ncar_precip' ,   -1.             , 'SNOW'    ,   .false.   , .false. , 'yearly'  , 'wgt_bil_COREv2_to_ORCA2' , ''       , ''
-   sn_slp  = 'slp'         ,    6.             , 'SLP'     ,   .false.   , .false. , 'yearly'  , 'wgt_bil_COREv2_to_ORCA2' , ''       , ''
+   \nmlpar{cn_dir} = \nmlstring{/storage/research/cpom1/share/NEMO/inputs/COREv2/CIAFv2/IOTF/}  \nmlcomment[]{!  root directory for the bulk data location}
+   \nmlcomment[]{!_______!_______________!___________________!___________!_____________!_________!___________!___________________________!__________!_______________!}
+   \nmlcomment[]{!       !  file name    ! frequency (hours) ! variable  ! time interp.!  clim   ! 'yearly'/ !      weights filename     ! rotation ! land/sea mask !}
+   \nmlcomment[]{!       !               !  (if <0  months)  !   name    !   (logical) !  (T/F)  ! 'monthly' !                           ! pairing  !    filename   !}
+   \nmlpar{sn_wndi} = \nmlstring{u_10}        ,    \nmlval{6.}             , \nmlstring{U_10_MOD},   \nmlfalse{}   , \nmlfalse{} , \nmlstring{yearly}  , \nmlstring{wgt_bic_COREv2_to_ORCA2} , \nmlstring{Uwnd}   , \nmlstring{}
+   \nmlpar{sn_wndj} = \nmlstring{v_10}        ,    \nmlval{6.}             , \nmlstring{V_10_MOD},   \nmlfalse{}   , \nmlfalse{} , \nmlstring{yearly}  , \nmlstring{wgt_bic_COREv2_to_ORCA2} , \nmlstring{Vwnd}   , \nmlstring{}
+   \nmlpar{sn_qsr}  = \nmlstring{ncar_rad}    ,   \nmlval{24.}             , \nmlstring{SWDN_MOD},   \nmlfalse{}   , \nmlfalse{} , \nmlstring{yearly}  , \nmlstring{wgt_bil_COREv2_to_ORCA2} , \nmlstring{}       , \nmlstring{}
+   \nmlpar{sn_qlw}  = \nmlstring{ncar_rad}    ,   \nmlpar{24.}             , \nmlstring{LWDN_MOD},   \nmlfalse{}   , \nmlfalse{} , \nmlstring{yearly}  , \nmlstring{wgt_bil_COREv2_to_ORCA2} , \nmlstring{}       , \nmlstring{}
+   \nmlpar{sn_tair} = \nmlstring{t_10}        ,    \nmlval{6.}             , \nmlstring{T_10_MOD},   \nmlfalse{}   , \nmlfalse{} , \nmlstring{yearly}  , \nmlstring{wgt_bil_COREv2_to_ORCA2} , \nmlstring{}       , \nmlstring{}
+   \nmlpar{sn_humi} = \nmlstring{q_10}        ,    \nmlpar{6.}             , \nmlstring{Q_10_MOD},   \nmlfalse{}   , \nmlfalse{} , \nmlstring{yearly}  , \nmlstring{wgt_bil_COREv2_to_ORCA2} , \nmlstring{}       , \nmlstring{}
+   \nmlpar{sn_prec} = \nmlstring{total_precip},   \nmlval{-1.}             , \nmlstring{PRC_MOD1},   \nmlfalse{}   , \nmlfalse{} , \nmlstring{yearly}  , \nmlstring{wgt_bil_COREv2_to_ORCA2} , \nmlstring{}       , \nmlstring{}
+   \nmlpar{sn_snow} = \nmlstring{ncar_precip} ,   \nmlval{-1.}             , \nmlstring{SNOW}    ,   \nmlfalse{}   , \nmlfalse{} , \nmlstring{yearly}  , \nmlstring{wgt_bil_COREv2_to_ORCA2} , \nmlstring{}       , \nmlstring{}
+   \nmlpar{sn_slp}  = \nmlstring{slp}         ,    \nmlval{6.}             , \nmlstring{SLP}     ,   \nmlfalse{}   , \nmlfalse{} , \nmlstring{yearly}  , \nmlstring{wgt_bil_COREv2_to_ORCA2} , \nmlstring{}       , \nmlstring{}
 /
-\end{verbatim}
+\end{VerbatimNML}
 \endgroup
 
-We have only had to change the \verb|file name|, \verb|clim|, and \verb|weights filename| `columns' here, because the CIAF variables all have the same frequencies and variable names as those of the climatology/CNYF data used before.
+We have only had to change the \texttt{file name}, \texttt{clim}, and \texttt{weights filename} `columns' here, because the CIAF variables all have the same frequencies and variable names as those of the climatology/CNYF data used before.
 We will discuss the other `columns' in the next section.
 
 \begin{enumerate}\setcounter{enumi}{7}
-    \item Edit the \verb|runjob.sh| script to request a time limit of 1 hour (and change the job name if you like).
+    \item Edit the \filename{runjob.sh} script to request a time limit of 1 hour (and change the job name if you like).
 \end{enumerate}
 
 The job can now be submitted to the batch system.
-Assuming you are using the unmodified template \verb|file_def_nemo-*.xml| files, the main output files for 2000 will start to be generated shortly after the job starts:
+Assuming you are using the unmodified template \filename{file_def_nemo-*.xml} files, the main output files for 2000 will start to be generated shortly after the job starts:
 
-\begingroup\small\begin{verbatim}
-  ORCA2_5d_20000101_20021231_icemod_2000-2000.nc
-  ORCA2_5d_20000101_20021231_icemod_scalar_2000-2000.nc
-  ORCA2_5d_20000101_20021231_ocemod_2000-2000.nc
-\end{verbatim}\endgroup
+\begin{VerbatimFile}
+ORCA2_5d_20000101_20021231_icemod_2000-2000.nc
+ORCA2_5d_20000101_20021231_icemod_scalar_2000-2000.nc
+ORCA2_5d_20000101_20021231_ocemod_2000-2000.nc
+\end{VerbatimFile}
 
 and the monthly-mean equivalent files.
 Similar sets of files for 2001 and 2002, will appear once the simulation gets to those years.
@@ -140,26 +140,26 @@ The \mbox{JRA-55-do} dataset is a more recent forcing for \textbf{d}riving \mbox
 It is intended to replace CORE as the standard forcing for the ocean model intercomparison project (OMIP) protocols \citep{griffies2016omip,tsujino2020evaluation}.
 We have the entire raw dataset available at:
 
-\begin{verbatim}
-  /storage/research/cpom1/share/JRA-55-do/1.6.0/raw
-\end{verbatim}
+\begin{VerbatimFile}
+/storage/research/cpom1/share/JRA-55-do/1.6.0/raw
+\end{VerbatimFile}
 
 with subdirectories for each variable, in which there is one file per year.
-See the \verb|README.txt| at the directory above for more information and web links.
-Again, the file names as downloaded are not in the required form (they need to end with \verb|_yYYYY.nc|), and separate rain/snow are provided.
+See the \filename{README.txt} at the directory above for more information and web links.
+Again, the file names as downloaded are not in the required form (they need to end with \filename{_yYYYY.nc}), and separate rain/snow are provided.
 So, we will actually use the prepared inputs directory:
 
-\begin{verbatim}
-  /storage/research/cpom1/share/NEMO/inputs/JRA-55-do/IOTF
-\end{verbatim}
+\begin{VerbatimFile}
+/storage/research/cpom1/share/NEMO/inputs/JRA-55-do/IOTF
+\end{VerbatimFile}
 
-We can setup following the same general steps as in section~\ref{sec:inputs-core-ciaf}, replacing the directory in step~4 with that above, and a few additional changes described below.
+We can setup following the same general steps as in \refsection{sec:inputs-core-ciaf}, replacing the directory in step~4 with that above, and a few additional changes described below.
 
-\textbf{After step 3, it is recommended to set} \verb|nn_fsbc = 1| in namelist group \verb|&namsbc| of \verb|namelist_cfg| (its default value is \verb|2|).
+\textbf{After step 3, it is recommended to set} \nmlpar{nn_fsbc = \nmlval{1}} in namelist group \nmlgrp{namsbc} of \filename{namelist_cfg} (its default value is \nmlval{2}).
 This refers to the frequency of call to the surface boundary condition (SBC) module, in units of time steps, i.e., here we are changing it from `every other time step' to `every time step'.
-This is because the \mbox{JRA-55-do} forcing data is 3~hourly, which is the same as the ocean model time step, \verb|rn_Dt|, and NEMO likes to have the effective SBC time step, \verb|nn_fsbc|$\times$\verb|rn_Dt|, as a sub-multiple of the atmospheric forcing frequency.
+This is because the \mbox{JRA-55-do} forcing data is 3~hourly, which is the same as the ocean model time step, \nmlpar{rn_Dt}, and NEMO likes to have the effective SBC time step, \nmlpar{nn_fsbc}\texttimes{}\nmlpar{rn_Dt}, as a sub-multiple of the atmospheric forcing frequency.
 
-\textbf{At steps~\mbox{5--7}, additional changes are required} when editing the \verb|sn_*| parameters in \verb|&namsbc_blk|:
+\textbf{At steps~\mbox{5--7}, additional changes are required} when editing the \nmlpar{sn_*} parameters in \nmlgrp{namsbc_blk}:
 
 \begin{itemize}
     \item\textit{variable names:}~check the NetCDF metadata or just refer to the example below (conveniently, they match the file name prefixes in this case)
@@ -167,67 +167,69 @@ This is because the \mbox{JRA-55-do} forcing data is 3~hourly, which is the same
     \item\textit{weights file names:}~the weights for interpolation on the fly of the raw \mbox{JRA-55-do} data onto the ORCA2 grid have been calculated and placed in the inputs directory
 \end{itemize}
 
-Below is what the \verb|&namsbc_blk| namelist group should look like for running with \mbox{JRA-55-do}:\footnote{
+Below is what the \nmlgrp{namsbc_blk} namelist group should look like for running with \mbox{JRA-55-do}:\footnote{
     To be more accurate, I also activate time interpolation for the instantaneous fields.
-    So for \texttt{sn\_wndi}, \texttt{sn\_wndj}, \texttt{sn\_tair}, \texttt{sn\_humi}, and \texttt{sn\_slp} I change the \texttt{time interp.} to \texttt{.true.}.
+    So for \nmlpar{sn_wndi}, \nmlpar{sn_wndj}, \nmlpar{sn_tair}, \nmlpar{sn_humi}, and \nmlpar{sn_slp} I change the \texttt{time interp.} to \nmltrue{}.
     This is not likely to make much difference when examining the behaviour of the model on timescales of, say, months or longer.
 }
 
 \begingroup\tiny\centering
-\begin{verbatim}
-!-----------------------------------------------------------------------
-&namsbc_blk    !   namsbc_blk  generic Bulk formula                     (ln_blk =T)
-!-----------------------------------------------------------------------
-   !                    !  bulk algorithm :
-   ln_NCAR    = .true.     ! "NCAR"      algorithm   (Large and Yeager 2008)
+\begin{VerbatimNML}[samepage=true]
+\nmlcomment[]{!-----------------------------------------------------------------------}
+\nmlgrp{namsbc_blk}    \nmlcomment[]{!   namsbc_blk  generic Bulk formula                     (ln_blk =T)}
+\nmlcomment[]{!-----------------------------------------------------------------------}
+   \nmlcomment[]{!                    !  bulk algorithm :}
+   \nmlpar{ln_NCAR}    = \nmltrue{}     \nmlcomment{"NCAR"      algorithm   (Large and Yeager 2008)}
 
-   cn_dir = '/storage/research/cpom1/share/NEMO/inputs/JRA-55-do/IOTF/'  !  root directory for the bulk data location
-   !_______!___________!___________________!__________!_____________!_________!___________!______________________________!__________!_______________!
-   !       ! file name ! frequency (hours) ! variable ! time interp.!  clim   ! 'yearly'/ !       weights filename       ! rotation ! land/sea mask !
-   !       !           !  (if <0  months)  !   name   !  (logical)  !  (T/F)  ! 'monthly' !                              ! pairing  !    filename   !
-   sn_wndi = 'uas'     ,         3.        , 'uas'    ,   .false.   , .false. , 'yearly'  , 'wgt_bic_JRA-55-do_to_ORCA2' , 'Uwnd'   , ''
-   sn_wndj = 'vas'     ,         3.        , 'vas'    ,   .false.   , .false. , 'yearly'  , 'wgt_bic_JRA-55-do_to_ORCA2' , 'Vwnd'   , ''
-   sn_qsr  = 'rsds'    ,         3.        , 'rsds'   ,   .false.   , .false. , 'yearly'  , 'wgt_bil_JRA-55-do_to_ORCA2' , ''       , ''
-   sn_qlw  = 'rlds'    ,         3.        , 'rlds'   ,   .false.   , .false. , 'yearly'  , 'wgt_bil_JRA-55-do_to_ORCA2' , ''       , ''
-   sn_tair = 'tas'     ,         3.        , 'tas'    ,   .false.   , .false. , 'yearly'  , 'wgt_bil_JRA-55-do_to_ORCA2' , ''       , ''
-   sn_humi = 'huss'    ,         3.        , 'huss'   ,   .false.   , .false. , 'yearly'  , 'wgt_bil_JRA-55-do_to_ORCA2' , ''       , ''
-   sn_prec = 'pr'      ,         3.        , 'pr'     ,   .false.   , .false. , 'yearly'  , 'wgt_bil_JRA-55-do_to_ORCA2' , ''       , ''
-   sn_snow = 'prsn'    ,         3.        , 'prsn'   ,   .false.   , .false. , 'yearly'  , 'wgt_bil_JRA-55-do_to_ORCA2' , ''       , ''
-   sn_slp  = 'psl'     ,         3.        , 'psl'    ,   .false.   , .false. , 'yearly'  , 'wgt_bil_JRA-55-do_to_ORCA2' , ''       , ''
+   \nmlpar{cn_dir} = \nmlstring{/storage/research/cpom1/share/NEMO/inputs/JRA-55-do/IOTF/}  \nmlcomment{root directory for the bulk data location}
+   \nmlcomment[]{!_______!___________!___________________!__________!_____________!_________!___________!______________________________!__________!_______________!}
+   \nmlcomment[]{!       ! file name ! frequency (hours) ! variable ! time interp.!  clim   ! 'yearly'/ !       weights filename       ! rotation ! land/sea mask !}
+   \nmlcomment[]{!       !           !  (if <0  months)  !   name   !  (logical)  !  (T/F)  ! 'monthly' !                              ! pairing  !    filename   !}
+   \nmlpar{sn_wndi} = \nmlstring{uas}     ,         \nmlval{3.}        , \nmlstring{uas}    ,   \nmlfalse{}   , \nmlfalse{} , \nmlstring{yearly}  , \nmlstring{wgt_bic_JRA-55-do_to_ORCA2} , \nmlstring{Uwnd}   , \nmlstring{}
+   \nmlpar{sn_wndj} = \nmlstring{vas}     ,         \nmlval{3.}        , \nmlstring{vas}    ,   \nmlfalse{}   , \nmlfalse{} , \nmlstring{yearly}  , \nmlstring{wgt_bic_JRA-55-do_to_ORCA2} , \nmlstring{Vwnd}   , \nmlstring{}
+   \nmlpar{sn_qsr}  = \nmlstring{rsds}    ,         \nmlval{3.}        , \nmlstring{rsds}   ,   \nmlfalse{}   , \nmlfalse{} , \nmlstring{yearly}  , \nmlstring{wgt_bil_JRA-55-do_to_ORCA2} , \nmlstring{}       , \nmlstring{}
+   \nmlpar{sn_qlw}  = \nmlstring{rlds}    ,         \nmlval{3.}        , \nmlstring{rlds}   ,   \nmlfalse{}   , \nmlfalse{} , \nmlstring{yearly}  , \nmlstring{wgt_bil_JRA-55-do_to_ORCA2} , \nmlstring{}       , \nmlstring{}
+   \nmlpar{sn_tair} = \nmlstring{tas}     ,         \nmlval{3.}        , \nmlstring{tas}    ,   \nmlfalse{}   , \nmlfalse{} , \nmlstring{yearly}  , \nmlstring{wgt_bil_JRA-55-do_to_ORCA2} , \nmlstring{}       , \nmlstring{}
+   \nmlpar{sn_humi} = \nmlstring{huss}    ,         \nmlval{3.}        , \nmlstring{huss}   ,   \nmlfalse{}   , \nmlfalse{} , \nmlstring{yearly}  , \nmlstring{wgt_bil_JRA-55-do_to_ORCA2} , \nmlstring{}       , \nmlstring{}
+   \nmlpar{sn_prec} = \nmlstring{pr}      ,         \nmlval{3.}        , \nmlstring{pr}     ,   \nmlfalse{}   , \nmlfalse{} , \nmlstring{yearly}  , \nmlstring{wgt_bil_JRA-55-do_to_ORCA2} , \nmlstring{}       , \nmlstring{}
+   \nmlpar{sn_snow} = \nmlstring{prsn}    ,         \nmlval{3.}        , \nmlstring{prsn}   ,   \nmlfalse{}   , \nmlfalse{} , \nmlstring{yearly}  , \nmlstring{wgt_bil_JRA-55-do_to_ORCA2} , \nmlstring{}       , \nmlstring{}
+   \nmlpar{sn_slp}  = \nmlstring{psl}     ,         \nmlval{3.}        , \nmlstring{psl}    ,   \nmlfalse{}   , \nmlfalse{} , \nmlstring{yearly}  , \nmlstring{wgt_bil_JRA-55-do_to_ORCA2} , \nmlstring{}       , \nmlstring{}
 /
-\end{verbatim}
+\end{VerbatimNML}
 \endgroup
 
-Now, continue with step 8 from section~\ref{sec:inputs-core-ciaf} before submitting the job.
+Now, continue with step~8 from \refsection{sec:inputs-core-ciaf} before submitting the job.
 
 
 \subsection{Other non-atmospheric inputs}
 \label{sec:inputs-other}
 
 There are other inputs to \NEMOSIcu{} beyond atmospheric forcing---for example, temperature and salinity data for restoring schemes and freshwater fluxes river runoffs.
-Data for these are provided in the \verb|ORCA2_ICE_v5.0.0| package.
-In this section, we have only changed the atmospheric forcing and so the other inputs will continue to be read in from the SETTE data as originally setup in section~\ref{sec:tutor-template}.
-If these inputs need to be changed as well, it is just a matter of identifying the relevant namelist groups in \verb|namelist_cfg| and following the same steps to instruct NEMO how to locate and interpret the data.
-For instance, the river runoff inputs can be found under \verb|&namsbc_rnf|, which includes namelist parameters for the data directory (\verb|cn_dir|) and variable structure (\verb|sn_rnf|, etc.), as well as some physical parameters.
+Data for these are provided in the \filename{ORCA2_ICE_v5.0.0} package.
+In this section, we have only changed the atmospheric forcing and so the other inputs will continue to be read in from the SETTE data as originally setup in \refsection{sec:tutor-template}.
+If these inputs need to be changed as well, it is just a matter of identifying the relevant namelist groups in \filename{namelist_cfg} and following the same steps to instruct NEMO how to locate and interpret the data.
+For instance, the river runoff inputs can be found under \nmlgrp{namsbc_rnf}, which includes namelist parameters for the data directory (\nmlpar{cn_dir}) and variable structure (\nmlpar{sn_rnf}, etc.), as well as some physical parameters.
 In particular, \mbox{JRA-55-do} provides river runoff, sea surface temperature daily data, and a monthly climatology of sea surface salinity.
-It is an exercise for the reader to try updating their run from section~\ref{sec:inputs-jra-55-do} to use some or all of these fields for freshwater forcing and/or the surface restoring schemes.
+It is an exercise for the reader to try updating their run from \refsection{sec:inputs-jra-55-do} to use some or all of these fields for freshwater forcing and/or the surface restoring schemes.
 
-The reader should be aware that in \verb|UOR_ORCA2_ICE|, the following inputs are being read in addition to the atmospheric forcing, all of which are provided in the SETTE standard input package:
+The reader should be aware that in \mbox{\texttt{UOR_ORCA2_ICE}}, the following inputs are being read in addition to the atmospheric forcing, all of which are provided in the SETTE standard input package:
 
 \begin{itemize}
-    \item \textbf{Domain configuration file}: this defines the global grid size, coordinates, depth levels, land mask, bathymetry, and other geometric properties of the ORCA grid: \verb|ORCA_R2_zps_domcfg.nc|
-    \item \textbf{Temperature and salinity fields}: these are used for initialisation of the ocean and/or for restoring: these are the files starting \verb|data_1m_| and are configured in the namelist group \verb|&namtsd|.
-    \item \textbf{Chlorophyll data}: the file \verb|chlorophyll.nc| is used to determine penetration of shortwave radiation into the ocean surface (see \verb|&namtra_qsr| and section~6.4.2 of the \citetalias{nemo-manual}).
-    \item \textbf{Geothermal heat flux}: this is the file \verb|geothermal_heating.nc|, configued in the namelist group \verb|&nambbc|. There is an alternate, updated input for this available in the package called \verb|gh_flux_lucazeau-orca2.nc|, which is based on \citet{lucazeau2019analysis}.
-    It is also possible to use a constant geothermal heat flux, configured via this namelist and requiring no input files.
-    See section~6.4.3 of the \citetalias{nemo-manual} for more information.
-    \item \textbf{River runoffs}: as mentioned above, these freshwater forcings are read in from the file \verb|runoff_core_monthly.nc| and are configured in the namelist group \verb|&namsbc_rnf|.
-    See section~7.3 of the \citetalias{nemo-manual} for more information.
-    \item \textbf{Mixing coefficients}: the files \verb|eddy_viscosity_*.nc| provide spatially-varying lateral mixing coefficients; see section 10.3 of the \citetalias{nemo-manual}.
-    \item \textbf{Internal-wave mixing coefficients}: the file \verb|zdfiwm_forcing_orca2.nc| contains several variables related to internal-wave mixing; see \verb|&namzdf_iwm| and section~11.5 of the \citetalias{nemo-manual}.
+    \item \textbf{Domain configuration file}: this defines the global grid size, coordinates, depth levels, land mask, bathymetry, and other geometric properties of the ORCA grid: \filename{ORCA_R2_zps_domcfg.nc}
+    \item \textbf{Temperature and salinity fields}: these are used for initialisation of the ocean and/or for restoring.
+        They are the files starting \filename{data_1m_} and are configured in the namelist group \nmlgrp{namtsd}.
+    \item \textbf{Chlorophyll data}: the file \filename{chlorophyll.nc} is used to determine penetration of shortwave radiation into the ocean surface (see \nmlgrp{namtra_qsr} and section~6.4.2 of the \citetalias{nemo-manual}).
+    \item \textbf{Geothermal heat flux}: this is the file \filename{geothermal_heating.nc}, configued in the namelist group \nmlgrp{nambbc}.
+        There is an alternate, updated input for this available in the package called \filename{gh_flux_lucazeau-orca2.nc}, which is based on \citet{lucazeau2019analysis}.
+        It is also possible to use a constant geothermal heat flux, configured via this namelist and requiring no input files.
+        See section~6.4.3 of the \citetalias{nemo-manual} for more information.
+    \item \textbf{River runoffs}: as mentioned above, these freshwater forcings are read in from the file \filename{runoff_core_monthly.nc} and are configured in the namelist group \nmlgrp{namsbc_rnf}.
+        See section~7.3 of the \citetalias{nemo-manual} for more information.
+    \item \textbf{Mixing coefficients}: the files \filename{eddy_viscosity_*.nc} provide spatially-varying lateral mixing coefficients; see section~10.3 of the \citetalias{nemo-manual}.
+    \item \textbf{Internal-wave mixing coefficients}: the file \filename{zdfiwm_forcing_orca2.nc} contains several variables related to internal-wave mixing; see \nmlgrp{namzdf_iwm} and section~11.5 of the \citetalias{nemo-manual}.
 \end{itemize}
 
-These are just the inputs being read into the \verb|UOR_ORCA2_ICE| experiments because this is how the pre-packaged \verb|ORCA2_ICE_PISCES| reference configuration, from which it is derived, uses by default.
+These are just the inputs being read into the \mbox{\texttt{UOR_ORCA2_ICE}} experiments because this is how the pre-packaged \mbox{\texttt{ORCA2_ICE_PISCES}} reference configuration, from which it is derived, uses by default.
 If you look in the data package, there are many other input files that are not in use.
-For example, the file \verb|sdw_ecwaves_orac2.nc| contains surface wave fields that can be used in various ways (\citetalias{nemo-manual} section~7.10), but in our configuration \verb|ln_wave| is \verb|.false.| (i.e., deactivated) by default.
+For example, the file \filename{sdw_ecwaves_orac2.nc} contains surface wave fields that can be used in various ways (\citetalias{nemo-manual} section~7.10), but in our configuration \nmlpar{ln_wave} is \nmlfalse{} (i.e., deactivated) by default.
 Conversely, it is possible to deactivate or re-configure certain model components such that the inputs in the above list are not required, but this is for the user to decide in their own applications.

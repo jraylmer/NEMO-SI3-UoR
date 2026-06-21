@@ -8,25 +8,25 @@
 \label{sec:grids-eorca1-intro}
 
 This section describes how to set up configurations of the coupled \NEMOSIcu{} model on the eORCA1 (nominal resolution 1\textdegree{}) global grid that will run on the RACC2.
-The reader must have worked through and understood section~\ref{sec:tutorial} at minimum.
+The reader must have worked through and understood \refsection{sec:tutorial} at minimum.
 It will also be helpful to have gained some general experience customising experiments via the namelists and XML files in the ORCA2 configuration before starting.
 
-In section~\ref{sec:tutor-custom}, a custom configuration was created based on the reference configuration \verb|ORCA2_ICE_PISCES| provided with NEMO.
+In \refsection{sec:tutor-custom}, a custom configuration was created based on the reference configuration \mbox{\texttt{ORCA2_ICE_PISCES}} provided with NEMO.
 The point of creating a custom variant of this was just to remove the PISCES biogeochemical model component.
 Otherwise, we have essentially been running that reference configuration along with the standard, default ORCA2 inputs provided by the NEMO SETTE package---except, perhaps, replacing the atmospheric forcing.
 Unfortunately, there are no reference configurations nor `official' sets of input data available based on the other ORCA grids.
 This means we need to provide the required input files and adjust certain aspects of NEMO's numerical procedures ourselves in order to create a working eORCA1 configuration.
 
-We will start by creating an eORCA1 configuration that, besides the grid resolution change, is as similar as possible to the \verb|UOR_ORCA2_ICE| configuration and uses the CORE climatological atmospheric forcing.
-To facilitate this, inputs from the \verb|ORCA2_ICE_v5.0.0| SETTE package have been interpolated onto the eORCA1 grid and placed on the shared storage in a subdirectory \verb|eORCA1| under the path given in section~\ref{sec:tutor-template}.
-So, for most of the required inputs (listed in section~\ref{sec:inputs-other}) it will simply be a case of using a slightly different \verb|cn_dir| in \verb|namelist_cfg| (step~7 in section~\ref{sec:tutor-template}).
-Steps to create this `basic' eORCA1 configuration are given in subsection~\ref{sec:grids-eorca1-basic} below.
-The idea is to isolate the essential namelist changes, relative to \verb|UOR_ORCA2_ICE|, required for eORCA1 configurations and get something running without having to worry too much about updating or configuring specific inputs at first.
+We will start by creating an eORCA1 configuration that, besides the grid resolution change, is as similar as possible to the \mbox{\texttt{UOR_ORCA2_ICE}} configuration and uses the CORE climatological atmospheric forcing.
+To facilitate this, inputs from the \filename{ORCA2_ICE_v5.0.0} SETTE package have been interpolated onto the eORCA1 grid and placed on the shared storage in a subdirectory \dirname{eORCA1} under the path given in \refsection{sec:tutor-template}.
+So, for most of the required inputs (listed in \refsection{sec:inputs-other}) it will simply be a case of using a slightly different \nmlpar{cn_dir} in \filename{namelist_cfg} (step~7 in \refsection{sec:tutor-template}).
+Steps to create this `basic' eORCA1 configuration are given in \refsubsection{sec:grids-eorca1-basic} below.
+The idea is to isolate the essential namelist changes, relative to \mbox{\texttt{UOR_ORCA2_ICE}}, required for eORCA1 configurations and get something running without having to worry too much about updating or configuring specific inputs at first.
 
 We need an eORCA1 domain configuration file and will take this from the data package of \citet{delavergne2024eorca1}.
-This package also includes other input fields that can replace the interpolated SETTE inputs and is described in more detail in subsection~\ref{sec:grids-eorca1-other-inputs}.
-Changing the atmospheric forcing is basically the same as described already in section~\ref{sec:inputs}, but some points to note specific to eORCA1 are given in subsection~\ref{sec:grids-eorca1-atmospheric}.
-Other options for the domain configuration file are briefly discussed in subsection~\ref{sec:grids-eorca1-domcfg}, and some general points to keep in mind when running eORCA1 are given in subsection~\ref{sec:grids-eorca1-misc}.
+This package also includes other input fields that can replace the interpolated SETTE inputs and is described in more detail in \refsubsection{sec:grids-eorca1-other-inputs}.
+Changing the atmospheric forcing is basically the same as described already in \refsection{sec:inputs}, but some points to note specific to eORCA1 are given in \refsubsection{sec:grids-eorca1-atmospheric}.
+Other options for the domain configuration file are briefly discussed in \refsubsection{sec:grids-eorca1-domcfg}, and some general points to keep in mind when running eORCA1 are given in \refsubsection{sec:grids-eorca1-misc}.
 
 
 \subsubsection{Preparing a basic eORCA1 configuration}
@@ -36,40 +36,43 @@ The build stage is exactly the same as before.
 Technically, it is not necessary to (re)compile at all: you can just create a new experiment directory under your existing ORCA2 configuration directory, and make the required run-time and input preparations as described from step~3.
 However, the template run directory for eORCA1 differs substantially and it is logical to separate these from ORCA2 configurations anyway:
 \begin{enumerate}
-    \item Compile a new custom configuration based on the \verb|ORCA2_ICE_PISCES| reference configuration exactly as described at the start of section~\ref{sec:tutor-custom}, but give it a different, meaningful name, such as \verb|UOR_eORCA1_ICE|.
-    \item Once that has completed, follow steps~\mbox{1--3} of section~\ref{sec:tutor-template} to clear out the unneeded PISCES files/lines.
+    \item Compile a new custom configuration based on the \mbox{\texttt{ORCA2_ICE_PISCES}} reference configuration exactly as described at the start of \refsection{sec:tutor-custom}, but give it a different, meaningful name, such as \mbox{\texttt{UOR_eORCA1_ICE}}.
+    \item Once that has completed, follow steps~\mbox{1--3} of \refsection{sec:tutor-template} to clear out the unneeded PISCES files/lines.
 \end{enumerate}
 
-We now make several edits to \verb|namelist_cfg|, so open up that file in your template run directory (\verb|EXP00|).
+We now make several edits to \filename{namelist_cfg}, so open up that file in your template run directory (\dirname{EXP00}).
 
 \begin{enumerate}\setcounter{enumi}{2}
     \item \textbf{Set the simulation to run for one year.}
         We will setup for a 1\,year test run again, but the eORCA1 configuration needs a smaller time step of 2\,hours (set in the next step).
-        So, in namelist group \verb|&namrun| set \verb|nn_itend| to \verb|4380|, the number of 2\,hour timesteps in 1\,year.
+        So, in namelist group \nmlgrp{namrun} set \nmlpar{nn_itend} to \nmlval{4380}, the number of 2\,hour timesteps in 1\,year.
 
-        While in this namelist group, it is sensible to update the experiment name \verb|cn_exp| to, e.g., \verb|'eORCA1'| (it is currently \verb|'ORCA2'|).
+        While in this namelist group, it is sensible to update the experiment name \nmlpar{cn_exp} to, e.g., \nmlstring{eORCA1} (it is currently \nmlstring{ORCA2}).
 
     \item \textbf{Make various edits to the domain namelist}.
-        Make the following namelist changes in \verb|&namdom|:
+        Make the following namelist changes in \nmlgrp{namdom}:
         \begin{itemize}
-            \item Required: set \verb|rn_Dt = 7200.| (2\,hour time step in seconds)
-            \item Recommended: add \verb|ln_shuman = .true.| (discussed below)
-            \item Recommended: add \verb|ln_meshmask = .false.|
+            \item Required: set \nmlpar{rn_Dt = \nmlval{7200.}} (2\,hour time step in seconds)
+            \item Recommended: add \nmlpar{ln_shuman = \nmltrue} (discussed below)
+            \item Recommended: add \nmlpar{ln_meshmask = \nmlfalse}
         \end{itemize}
 
     \item \textbf{Update the name of the domain configuration file}.
-        In \verb|&namcfg|, set \verb|cn_cfg = 'domain_cfg'|.
+        In \nmlgrp{namcfg}, set \nmlpar{cn_cfg = \nmlstring{domain_cfg}}.
         This is the name of the domain configuration file that will be linked in step~12.
 
-    \item \textbf{Set the frequency of SBC call to 1}. In namelist group \verb|&namsbc|, set \verb|nn_fsbc = 1|. This is only a recommended change, but see subsection~\ref{sec:grids-eorca1-atmospheric} for the reasoning.
+    \item \textbf{Set the frequency of SBC call to 1}.
+        In namelist group \nmlgrp{namsbc}, set \nmlpar{nn_fsbc = \nmlval{1}}.
+        This is only a recommended change, but see \refsubsection{sec:grids-eorca1-atmospheric} for the reasoning.
 
-    \item \textbf{Deactivate icebergs}. As before, set \verb|ln_icebergs = .false.| in \verb|&namberg| or delete the entire namelist group.
+    \item \textbf{Deactivate icebergs}.
+        As before, set \nmlpar{ln_icebergs = \nmlfalse} in \nmlgrp{namberg} or delete the entire namelist group.
 
     \item \textbf{Deactivate column damping of temperature and salinity}.
-        In namelist group \verb|&namtra_dmp|, set \verb|ln_tradmp = .false.|.
-        We do not currently have the required input (\verb|resto.nc|) for this to work in eORCA1.\footnote{
+        In namelist group \nmlgrp{namtra_dmp}, set \nmlpar{ln_tradmp = \nmlfalse}.
+        We do not currently have the required input (\filename{resto.nc}) for this to work in eORCA1.\footnote{
             The author could not get some of the 3D SETTE fields, when interpolated onto the eORCA1 grid, to work properly.
-            This includes \texttt{resto.nc} and also \texttt{eddy\_viscosity\_3D.nc}, hence the latter must be used from the \citet{delavergne2024eorca1} package in step~12.}
+            This includes \filename{resto.nc} and also \filename{eddy_viscosity_3D.nc}, hence the latter must be used from the \citet{delavergne2024eorca1} package in step~12.}
 
 \end{enumerate}
 
@@ -77,52 +80,53 @@ Note that the following two steps~\mbox{(9--10)} are the critical namelist chang
 
 \begin{enumerate}\setcounter{enumi}{8}
     \item \textbf{Activate the adaptive--implicit vertical advection scheme}.
-        Go to namelist group \verb|&namzdf| and add the parameter \verb|ln_zad_Aimp = .true.|.
-        As usual you can copy the corresponding line from \verb|namelist_ref| or just add it manually.
+        Go to namelist group \nmlgrp{namzdf} and add the parameter \nmlpar{ln_zad_Aimp = \nmltrue}.
+        As usual you can copy the corresponding line from \filename{namelist_ref} or just add it manually.
 
     \item \textbf{Set forward-in-time integration of barotropic equations with time filtering}.
-        Go to namelist group \verb|&namdyn_spg| and change the parameter \verb|nn_bt_flt| from \verb|3| to \verb|1|.
-        You can alternatively just delete the line, as \verb|1| is the default value set in the reference namelist (i.e., it has been changed to \verb|3| for ORCA2 which we have inherited from the \verb|ORCA2_ICE_PISCES| reference run and are now undoing this change).
+        Go to namelist group \nmlgrp{namdyn_spg} and change the parameter \nmlpar{nn_bt_flt} from \nmlval{3} to \nmlval{1}.
+        You can alternatively just delete the line, as \nmlval{1} is the default value set in the reference namelist (i.e., it has been changed to \nmlval{3} for ORCA2 which we have inherited from the \mbox{\texttt{ORCA2_ICE_PISCES}} reference run and are now undoing this change).
 \end{enumerate}
 
 See sections~2.7 and 4.1.3 of the \citetalias{nemo-manual} for detailed explanations of the two parameters just changed in steps~\mbox{9--10}.
 In short, they allow a longer time step to be used overall and remove spurious oscillations resulting from fast barotropic motions that lead to crashes.
-Setting the parameter \verb|ln_shuman = .true.| in step~4 activates another kind of numerical filter (of internal gravity waves; see section 6.10 of the \citetalias{nemo-manual} and \citeauthor{shuman1971}~\citeyear{shuman1971}).
+Setting the parameter \nmlpar{ln_shuman = \nmltrue} in step~4 activates another kind of numerical filter (of internal gravity waves; see section 6.10 of the \citetalias{nemo-manual} and \citeauthor{shuman1971}~\citeyear{shuman1971}).
 Testing has indicated this is not strictly needed as long as the other two parameters are set, but it is recommended anyway to provide an additional layer of `protection' against instabilities without noticeably affecting the run time.
 
 \begin{enumerate}\setcounter{enumi}{10}
     \item \textbf{Set the input directories}.
-        Follow step~7 of section~\ref{sec:tutor-template}, appending the subdirectory \verb|eORCA1| to the path to the SETTE data given there.
+        Follow step~7 of \refsection{sec:tutor-template}, appending the subdirectory \dirname{eORCA1} to the path to the SETTE data given there.
         Also:
         \begin{itemize}
-            \item there is no need to add the \verb|resto.nc| path as this is no longer in use
-            \item you do need to replace `ORCA2' with `eORCA1' in a few file names in some of the \verb|sn_*| variables:
+            \item there is no need to add the \filename{resto.nc} path as this is no longer in use
+            \item you do need to replace \texttt{ORCA2} with \texttt{eORCA1} in a few file names in some of the \nmlpar{sn_*} variables:
             \begin{itemize}
-                \item change the weights file names in \verb|&namsbc_blk| to \verb|'wgt_bic_COREv2_to_eORCA1'| for \verb|sn_wndi| and \verb|sn_wndj|, and to \verb|'wgt_bil_COREv2_to_eORCA1'| for the rest.
-                \item change the input file names in \verb|&namzdf_iwm| to end in \verb|'_eorca1'| 
+                \item change the weights file names in \nmlgrp{namsbc_blk} to\linebreak\nmlstring{wgt_bic_COREv2_to_eORCA1} for \nmlpar{sn_wndi} and \nmlpar{sn_wndj}, and to \nmlstring{wgt_bil_COREv2_to_eORCA1} for the rest.
+                \item change the input file names in \nmlgrp{namzdf_iwm} to end in \nmlstring{_eorca1} 
             \end{itemize}
-            Check the contents of the \verb|eORCA1| SETTE package subdirectory to be sure of file name spellings. 
+            Check the contents of the \dirname{eORCA1} SETTE package subdirectory to be sure of file name spellings. 
         \end{itemize}
 \end{enumerate}
 
-That completes the necessary edits to \verb|namelist_cfg|, so save and close this file.
+That completes the necessary edits to \filename{namelist_cfg}, so save and close this file.
 
 \begin{enumerate}\setcounter{enumi}{11}
-    \item Working in the template run directory (\verb|EXP00|), link the following required inputs from the \citet{delavergne2024eorca1} package:
+    \item Working in the template run directory (\dirname{EXP00}), link the following required inputs from the \citet{delavergne2024eorca1} package:
 
 \begingroup\tiny
-\begin{verbatim}
-  ln -s /storage/research/cpom1/share/NEMO/inputs/packages/deLavergne2024eORCA1v4.2/input_fields/domain_cfg.nc .
-  ln -s /storage/research/cpom1/share/NEMO/inputs/packages/deLavergne2024eORCA1v4.2/input_fields/eddy_viscosity_3D.nc .
-\end{verbatim}
+\begin{VerbatimCMD}
+ln \cmdflag{-s} /storage/research/cpom1/share/NEMO/inputs/packages/deLavergne2024eORCA1v4.2/input_fields/domain_cfg.nc .
+ln \cmdflag{-s} /storage/research/cpom1/share/NEMO/inputs/packages/deLavergne2024eORCA1v4.2/input_fields/eddy_viscosity_3D.nc .
+\end{VerbatimCMD}
 \endgroup
 
-    \item Copy the template \verb|file_def_nemo-ice.xml| and \verb|file_def_nemo-oce.xml| files from the auxiliary resources into your template run directory, overwriting the existing files.
+    \item Copy the template \filename{file_def_nemo-ice.xml} and \filename{file_def_nemo-oce.xml} files from the auxiliary resources into your template run directory, overwriting the existing files.
 
-    \item Copy the template job submission script \verb|runjob.sh| from the auxiliary resources into your template run directory, and edit it to request 32 CPUs (\verb|--ntasks=32|) and 64\,GB of memory (\verb|--mem=64G|). A runtime of 1\,hour is sufficient for a 1\,year test simulation, so set \verb|--time=01:00:00|.
+    \item Copy the template job submission script \filename{runjob.sh} from the auxiliary resources into your template run directory, and edit it to request 32 CPUs (\texttt{-{}-ntasks=32}) and 64\,GB of memory (\texttt{-{}-mem=64G}).
+        A runtime of 1\,hour is sufficient for a 1\,year test simulation, so set \texttt{-{}-time=01:00:00}.
 \end{enumerate}
 
-You can now run an eORCA1 test simulation by submitting it to the batch system in the usual way (\verb|$ sbatch ./runjob.sh|).
+You can now run an eORCA1 test simulation by submitting it to the batch system in the usual way (\cmdline{sbatch ./runjob.sh}).
 
 
 \subsubsection{Updating the other inputs}
@@ -133,54 +137,56 @@ This data is associated with a study on the tidal mixing scheme in NEMO \citep{d
 It is available on the shared storage at:
 
 \begingroup\footnotesize
-\begin{verbatim}
-  /storage/research/cpom1/share/NEMO/inputs/packages/deLavergne2024eorca1v4.2
-\end{verbatim}
+\begin{VerbatimFile}
+/storage/research/cpom1/share/NEMO/inputs/packages/deLavergne2024eorca1v4.2
+\end{VerbatimFile}
 \endgroup
 
-Under the \verb|input_fields| subdirectory are several NEMO inputs that can replace all of the interpolated SETTE inputs currently acting as a placeholder in the basic eORCA1 configuration prepared in the previous subsection.
-We already used \verb|eddy_viscosity_3D.nc| in subsection~\ref{sec:grids-eorca1-basic}, step~12, because it is not possible to use the interpolated SETTE version of the file of the same name.
+Under the \dirname{input_fields} subdirectory are several NEMO inputs that can replace all of the interpolated SETTE inputs currently acting as a placeholder in the basic eORCA1 configuration prepared in the previous subsection.
+We already used \filename{eddy_viscosity_3D.nc} in \refsubsection{sec:grids-eorca1-basic}, step~12, because it is not possible to use the interpolated SETTE version of the file of the same name.
 It is an exercise for the reader to update the eORCA1 template run directory to use any or all of the following inputs:
 \begin{itemize}
-    \item \verb|geothermal_heat_flux.nc|: geothermal heat flux.
-        This data is on a regular 1\textdegree{} grid and so requires interpolation on the fly with the provided weights file \verb|weights_ghflux_bilinear.nc|.
-        Update \verb|&nambbc| accordingly, setting the data path via \verb|cn_dir| and then the file information: file name, variable name (\verb|'gh_flux'|), and weights file name.
-    \item \verb|merged_ESACCI_BIOMER4V1R1_CHL_REG05.nc|: chlorophyll data for solar radiation penetration.
+    \item \filename{geothermal_heat_flux.nc}: geothermal heat flux.
+        This data is on a regular 1\textdegree{} grid and so requires interpolation on the fly with the provided weights file \filename{weights_ghflux_bilinear.nc}.
+        Update \nmlgrp{nambbc} accordingly, setting the data path via \nmlpar{cn_dir} and then the file information: file name, variable name (\texttt{"gh_flux"}), and weights file name.
+    \item \filename{merged_ESACCI_BIOMER4V1R1_CHL_REG05.nc}: chlorophyll data for solar radiation penetration.
         This data is monthly and provided on a regular 0.5\textdegree{} grid.
-        Again, weights for interpolating to the eORCA1 grid on the fly are provided in \verb|weights_reg05_bilinear.nc|.
-        Make use of this data by updating \verb|&namtra_qsr|.
-        The variable name is \verb|'CHLA'|.
-    \item \verb|runoff-icb_DaiTrenberth_Depoorter.nc|: this file contains, among others, freshwater forcing from coastal runoffs.
+        Again, weights for interpolating to the eORCA1 grid on the fly are provided in \filename{weights_reg05_bilinear.nc}.
+        Make use of this data by updating \nmlgrp{namtra_qsr}.
+        The variable name is \texttt{"CHLA"}.
+    \item \filename{runoff-icb_DaiTrenberth_Depoorter.nc}: this file contains, among others, freshwater forcing from coastal runoffs.
         All variables are monthly and in this case it is already on the eORCA1 grid (so no interpolation weights are needed).
-        Set these fields in \verb|namsbc_rnf| as follows, where the variables correspond to river runoff, icebergs, and a mask for enhanced mixing at river mouths, respectively:
+        Set these fields in \nmlgrp{namsbc_rnf} as follows, where the variables correspond to river runoff, icebergs, and a mask for enhanced mixing at river mouths, respectively:
+\end{itemize}
 
 \begingroup\tiny
-\begin{verbatim}
-!-----------------------------------------------------------------------
-&namsbc_rnf    !   runoffs                                              (ln_rnf =T)
-!-----------------------------------------------------------------------
-   ln_rnf_mouth = .true.    !  specific treatment at rivers mouths
-      rn_hrnf     =  15.e0    !  depth over which enhanced vertical mixing is used    (ln_rnf_mouth=T)
-      rn_avt_rnf  =   1.e-3   !  value of the additional vertical mixing coef. [m2/s] (ln_rnf_mouth=T)
-   rn_rfact    =   1.e0    !  multiplicative factor for runoff
+\begin{VerbatimNML}[samepage=true]
+\nmlcomment[]{!-----------------------------------------------------------------------}
+\nmlgrp{namsbc_rnf}    \nmlcomment[]{!   runoffs                                              (ln_rnf =T)}
+\nmlcomment[]{!-----------------------------------------------------------------------}
+   \nmlpar{ln_rnf_mouth} = \nmltrue{}    \nmlcomment[]{!  specific treatment at rivers mouths}
+      \nmlpar{rn_hrnf}     =  \nmlval{15.e0}    \nmlcomment[]{!  depth over which enhanced vertical mixing is used    (ln_rnf_mouth=T)}
+      \nmlpar{rn_avt_rnf}  =   \nmlval{1.e-3}   \nmlcomment[]{!  value of the additional vertical mixing coef. [m2/s] (ln_rnf_mouth=T)}
+   \nmlpar{rn_rfact}    =   \nmlval{1.e0}    \nmlcomment[]{!  multiplicative factor for runoff}
 
-   cn_dir = '/storage/research/cpom1/share/NEMO/inputs/packages/deLavergne2024eORCA1v4.2/input_fields/'    !  root directory for the location of the runoff files
-   !________!____________________________________!___________________!___________!_____________!_________!___________!__________!__________!_______________!
-   !        !  file name                         ! frequency (hours) ! variable  ! time interp. !  clim  ! 'yearly'/ ! weights  ! rotation ! land/sea mask !
-   !        !                                    !  (if <0  months)  !   name    !   (logical)  !  (T/F) ! 'monthly' ! filename ! pairing  ! filename      !
-   sn_rnf   = 'runoff-icb_DaiTrenberth_Depoorter',        -1         , 'sorunoff',    .true.    , .true. , 'yearly'  , ''       , ''       , ''
-   sn_i_rnf = 'runoff-icb_DaiTrenberth_Depoorter',        -1         , 'Icb_flux',    .true.    , .true. , 'yearly'  , ''       , ''       , ''
-   sn_cnf   = 'runoff-icb_DaiTrenberth_Depoorter',         0         , 'socoefr' ,    .false.   , .true. , 'yearly'  , ''       , ''       , ''
+   \nmlpar{cn_dir} = \nmlstring{/storage/research/cpom1/share/NEMO/inputs/packages/deLavergne2024eORCA1v4.2/input_fields/}    \nmlcomment[]{!  root directory for the location of the runoff files}
+   \nmlcomment[]{!________!____________________________________!___________________!___________!_____________!_________!___________!__________!__________!_______________!}
+   \nmlcomment[]{!        !  file name                         ! frequency (hours) ! variable  ! time interp. !  clim  ! 'yearly'/ ! weights  ! rotation ! land/sea mask !}
+   \nmlcomment[]{!        !                                    !  (if <0  months)  !   name    !   (logical)  !  (T/F) ! 'monthly' ! filename ! pairing  ! filename      !}
+   \nmlpar{sn_rnf}   = \nmlstring{runoff-icb_DaiTrenberth_Depoorter},        \nmlval{-1}         , \nmlstring{sorunoff},    \nmltrue{}    , \nmltrue{} , \nmlstring{yearly}  , \nmlstring{}       , \nmlstring{}       , \nmlstring{}
+   \nmlpar{sn_i_rnf} = \nmlstring{runoff-icb_DaiTrenberth_Depoorter},        \nmlval{-1}         , \nmlstring{Icb_flux},    \nmltrue{}    , \nmltrue{} , \nmlstring{yearly}  , \nmlstring{}       , \nmlstring{}       , \nmlstring{}
+   \nmlpar{sn_cnf}   = \nmlstring{runoff-icb_DaiTrenberth_Depoorter},         \nmlval{0}         , \nmlstring{socoefr} ,    \nmlfalse{}   , \nmltrue{} , \nmlstring{yearly}  , \nmlstring{}       , \nmlstring{}       , \nmlstring{}
 /
-\end{verbatim}
+\end{VerbatimNML}
 \endgroup
 
-    \item \verb|sss_climatology_for_restoring.nc|: monthly climatology of sea surface salinity for surface restoring, on the eORCA1 grid, with variable name \verb|'presalt'|.
-        This input is configured in \verb|&namsbc_ssr|. 
+\begin{itemize}
+    \item \filename{sss_climatology_for_restoring.nc}: monthly climatology of sea surface salinity for surface restoring, on the eORCA1 grid, with variable name \texttt{"presalt"}.
+        This input is configured in \nmlgrp{namsbc_ssr}. 
 
-    \item \verb|zdfiwm_forcing_TRA.nc|: internal-wave mixing data, already on the eORCA1 grid.
+    \item \filename{zdfiwm_forcing_TRA.nc}: internal-wave mixing data, already on the eORCA1 grid.
         These are time-independent.
-        All the variable names are the same as the default values in the namelist, so only the path to the data and the file name need to be set in \verb|&namzdf_iwm|.
+        All the variable names are the same as the default values in the namelist, so only the path to the data and the file name need to be set in \nmlgrp{namzdf_iwm}.
 \end{itemize}
 
 It is not a coincidence that the variable names for the internal-wave mixing data are already set in the default namelist.
@@ -190,46 +196,46 @@ It also contains geothermal heat flux data on a range of grids, also recommended
 Though there is some redundancy, this other package is also available on the shared storage, so you could link directly to these files for the internal wave mixing data and/or geothermal heat flux instead, if you prefer:
 
 \begingroup\small
-\begin{verbatim}
-  /storage/research/cpom1/share/NEMO/inputs/packages/deLavergne2024iwm
-\end{verbatim}
+\begin{VerbatimFile}
+/storage/research/cpom1/share/NEMO/inputs/packages/deLavergne2024iwm
+\end{VerbatimFile}
 \endgroup
 
 Returning to the \citet{delavergne2024eorca1} package, it also provides monthly climatologies of temperature and salinity fields from the World Ocean Atlas (WOA) for initialisation and/or restoring (though we lack the restoring coefficient to do the latter).
-These are under the \verb|initial_conditions| subdirectory in the \verb|deLavergne2024eorca1| package directory and can be used by updating the \verb|&namtsd|.
-The variable names are \verb|'contemp'| for \verb|woce_temp_monthly_init_4p2.nc| and \verb|'presalt'| for \verb|woce_salt_monthly_init_4p2.nc|.
+These are under the \dirname{initial_conditions} subdirectory in the \dirname{deLavergne2024eorca1} package directory and can be used by updating the \nmlgrp{namtsd}.
+The variable names are \texttt{"contemp"} for \filename{woce_temp_monthly_init_4p2.nc} and \texttt{"presalt"} for \filename{woce_salt_monthly_init_4p2.nc}.
 Both fields are already on the eORCA1 grid.
 
-Finally, the package also provides eORCA1 restart files from a 1000\,year control simulation of \NEMOSIcu{} with climatological forcing under the \verb|restart| subdirectory.
-These are compatible with NEMO v5.x and can be setup by following the general steps in section~\ref{sec:inits-restarts}.
-Note that the sea ice restart file, \verb|TRA_10001231_icemod.nc|, is only compatible with runs using 2 ice and 2 snow vertical layers.
-But it is the ocean restart file, \verb|TRA_10001231.nc|, that is most useful here for spin-up purposes.
-Sea ice can be initialised based on the sea surface temperature and salinity in the ocean restart file in that case, provided \verb|ln_iceini = .true.|.
+Finally, the package also provides eORCA1 restart files from a 1000\,year control simulation of \NEMOSIcu{} with climatological forcing under the \dirname{restart} subdirectory.
+These are compatible with NEMO v5.x and can be setup by following the general steps in \refsection{sec:inits-restarts}.
+Note that the sea ice restart file, \filename{TRA_10001231_icemod.nc}, is only compatible with runs using 2 ice and 2 snow vertical layers.
+But it is the ocean restart file, \filename{TRA_10001231.nc}, that is most useful here for spin-up purposes.
+Sea ice can be initialised based on the sea surface temperature and salinity in the ocean restart file in that case, provided \nmlpar{ln_iceini = \nmltrue}.
 
 It is \textit{probably} better to replace all of the interpolated SETTE inputs with data from the de~Lavergne packages, considering that at least two of them are recommended in the \citetalias{nemo-manual} and also that interpolating from a coarse to a finer grid is dubious practice---those are just intended as a placeholder to facilitate initial setup of the eORCA1 configuration.
 That said, these inputs are unlikely to have a significant impact of sea ice anyway.
-As mentioned in section~\ref{sec:inputs-other}, it is also an option to re-configure or deactivate the processes using these data, and it is for the user to decide how to approach this.
+As mentioned in \refsection{sec:inputs-other}, it is also an option to re-configure or deactivate the processes using these data, and it is for the user to decide how to approach this.
 
 
 \subsubsection{Updating the atmospheric forcing}
 \label{sec:grids-eorca1-atmospheric}
 
-The atmospheric forcing can be updated by following the same general steps outlined in section~\ref{sec:inputs}.
+The atmospheric forcing can be updated by following the same general steps outlined in \refsection{sec:inputs}.
 The forcings described in that section use interpolation on the fly (IOTF), meaning that interpolation weights files are read along with the data on its native grid to transform the latter onto the model grid.
 Those weights are, obviously, source and destination grid dependent.
-The weights for interpolation onto the eORCA1 grid have been calculated and placed in the input directories of the atmospheric forcings described in section~\ref{sec:inputs} (CORE CIAF in section~\ref{sec:inputs-core-ciaf} and \mbox{JRA-55-do} in section~\ref{sec:inputs-jra-55-do}).
-So, for eORCA1 simply replace the weights filenames appropriately in each \verb|sn_*| namelist parameter (replace the \verb|'_ORCA2'| part of the weights filename with \verb|'_eORCA1'|).
+The weights for interpolation onto the eORCA1 grid have been calculated and placed in the input directories of the atmospheric forcings described in \refsection{sec:inputs} (CORE CIAF in \refsection{sec:inputs-core-ciaf} and \mbox{JRA-55-do} in \refsection{sec:inputs-jra-55-do}).
+So, for eORCA1 simply replace the weights filenames appropriately in each \nmlpar{sn_*} namelist parameter (replace the \texttt{_ORCA2} part of the weights filename with \texttt{_eORCA1}).
 
-For multi-year simulations, take care to calculate the correct number of iterations (\verb|nn_itend|) for however many years you are running by using the model time step, which is smaller for eORCA1 (hence a larger number of iterations are required per model year).
+For multi-year simulations, take care to calculate the correct number of iterations (\nmlpar{nn_itend}) for however many years you are running by using the model time step, which is smaller for eORCA1 (hence a larger number of iterations are required per model year).
 
-It is generally recommended to set \verb|nn_fsbc = 1|, such that \SIcu{} is called every ocean time step rather than every other time step with the default \verb|nn_fsbc = 2|.
-Keep in mind whether the model time step is consistent with the frequency of the atmospheric forcing, for the issues alluded to in section~\ref{sec:inputs-jra-55-do}.
+It is generally recommended to set \nmlpar{nn_fsbc = \nmlval{1}}, such that \SIcu{} is called every ocean time step rather than every other time step with the default \nmlpar{nn_fsbc = \nmlval{2}}.
+Keep in mind whether the model time step is consistent with the frequency of the atmospheric forcing, for the issues alluded to in \refsection{sec:inputs-jra-55-do}.
 For example, when running with CORE forcing, the highest frequency of that data is 6\,hourly.
-When \verb|nn_fsbc = 1| and the time step is 2\,hours, this works fine because the forcing updates on the time step (specifically, every 3 time steps).
-However, when \verb|nn_fsbc = 2|, the forcing update occurs half-way through every other 4\,hour effective time step of \SIcu{}.
-So, for CORE forcing, it is best to set \verb|nn_fsbc = 1|.
+When \nmlpar{nn_fsbc = \nmlval{1}} and the time step is 2\,hours, this works fine because the forcing updates on the time step (specifically, every 3 time steps).
+However, when \nmlpar{nn_fsbc = \nmlval{2}}, the forcing update occurs half-way through every other 4\,hour effective time step of \SIcu{}.
+So, for CORE forcing, it is best to set \nmlpar{nn_fsbc = \nmlval{1}}.
 
-For similar reasons, when using the 3\,hourly forcing of JRA-55-do it is recommended to set \verb|nn_fsbc = 1| \textit{and} reduce the model time step to 1.5\,hours (\verb|rn_Dt = 5400.|), even though eORCA1 can remain stable with a time step of up to 2\,hours.
+For similar reasons, when using the 3\,hourly forcing of JRA-55-do it is recommended to set \nmlpar{nn_fsbc = \nmlval{1}} \textit{and} reduce the model time step to 1.5\,hours (\nmlpar{rn_Dt = \nmlval{5400.}}), even though eORCA1 can remain stable with a time step of up to 2\,hours.
 
 
 \subsubsection{Other domain configuration files}
@@ -238,27 +244,27 @@ For similar reasons, when using the 3\,hourly forcing of JRA-55-do it is recomme
 Since there is no `official' domain configuration file for eORCA1, it is possible to find many different versions of it produced by different institutions or other research groups.
 Under the directory:
 
-\begin{verbatim}
-  /storage/research/cpom1/share/NEMO/grids/eORCA1
-\end{verbatim}
+\begin{VerbatimFile}
+/storage/research/cpom1/share/NEMO/grids/eORCA1
+\end{VerbatimFile}
 
-are several sub-directories containing eORCA1 domain configuration files obtained from various other sources (see the \verb|README.txt| in each case). 
+are several sub-directories containing eORCA1 domain configuration files obtained from various other sources (see the \filename{README.txt} in each case). 
 It is important to note that they all differ in some respect: for example, some contain different variables and some are even slightly different horizontal dimensions.
 These differences and the reasons for them are a little opaque.
 The instructions in the previous section, and all of the inputs and atmospheric forcing interpolation weights, have been prepared using the version of \citet{delavergne2024eorca1}.
-This version is recommended mainly because it is associated with a published study \citep{delavergne2026effects} and comes from a citable data archive \citep{delavergne2024eorca1} which also contains various other useful inputs (subsection~\ref{sec:grids-eorca1-other-inputs}).
+This version is recommended mainly because it is associated with a published study \citep{delavergne2026effects} and comes from a citable data archive \citep{delavergne2024eorca1} which also contains various other useful inputs (\refsubsection{sec:grids-eorca1-other-inputs}).
 In contrast, the other versions saved under the shared directory above are essentially undocumented, though the reader is of course welcome to explore their origins and/or use them.
 
 Another set of `unofficial' domain configuration files has been shared by one of the NEMO developers and can be accessed at:
 
 \begingroup\small
-\begin{verbatim}
-  /storage/research/cpom1/share/NEMO/inputs/packages/CNRSeORCA1/GRID
-\end{verbatim}
+\begin{VerbatimFile}
+/storage/research/cpom1/share/NEMO/inputs/packages/CNRSeORCA1/GRID
+\end{VerbatimFile}
 \endgroup
 
-The file called \verb|eORCA1.4.2_ModifStraits_domain_cfg.nc| is identical to the one in the \citet{delavergne2024eorca1} package.
-One that may be of interest is \verb|eORCA1.4.2_ModifStraits_domain_isfcav_cfg.nc|.
+The file called \filename{eORCA1.4.2_ModifStraits_domain_cfg.nc} is identical to the one in the \citet{delavergne2024eorca1} package.
+One that may be of interest is \filename{eORCA1.4.2_ModifStraits_domain_isfcav_cfg.nc}.
 This variant is setup to make use of the ice shelf cavity parameterisation by extending the southern-most boundary of the domain to include ocean grid cells under Antarctic ice shelves (see section~8.1 of the \citetalias{nemo-manual} for usage).
 As an aside, this is the origin of the `e' in `eORCA1', i.e., `extended ORCA1'---even though these ocean grid cells are masked (treated as land) in the default domain configuration that we have been using, the grid is (apparently) still referred to as `eORCA1'.
 
@@ -269,16 +275,16 @@ As an aside, this is the origin of the `e' in `eORCA1', i.e., `extended ORCA1'--
 \begin{itemize}
     \item Be conscious of and regularly monitor the volume of your model outputs, which will be significantly larger than for the equivalent outputs in an ORCA2 run.
         The horizontal domain size is obviously larger (331\texttimes{}360 vs. 148\texttimes180), but there are also more than double the number of vertical levels in the ocean (75 vs. 31) if you are saving full ocean fields.
-    \item In section~\ref{sec:grids-eorca1-basic}, step~14, the job is set to run on 32 CPUs.
+    \item In \refsection{sec:grids-eorca1-basic}, step~14, the job is set to run on 32 CPUs.
         Testing has indicated this to be a good balance between computing resources and simulation run time on the RACC2, and it is strongly advised to leave this at 32.
         Adding more CPUs does not decrease the run time that much, indicating it is likely close to optimal already, but delays due to job queuing become more likely.
 
         Also, beware that NEMO is internally working out how to divide the global domain among the CPUs and this does not always result in an efficient decomposition depending on how the land is distributed.
         It is possible that some CPUs end up with only land grid cells, in which case they do nothing and hence those resources are wasted.
-        If you do change the number of CPUs, check your \verb|ocean.output| for warnings about this and reduce your \verb|--ntasks| by however many idle processors are reported.
+        If you do change the number of CPUs, check your \filename{ocean.output} for warnings about this and reduce your \texttt{--ntasks} by however many idle processors are reported.
 
     \item Slightly related to the previous point, you may notice rectangular regions of missing data in your model outputs along Antarctica.
     Do not worry; these are entirely land and are simply parts of the global domain not allocated to a CPU (not idle processors as described above).
-    You can set \verb|ln_mskland = .true.| in \verb|&namrun| which sets all land values to missing, but note this can have a noticeable impact on compute time depending on the number of outputs you have requested.
+    You can set \nmlpar{ln_mskland = \nmltrue} in \nmlgrp{namrun} which sets all land values to missing, but note this can have a noticeable impact on compute time depending on the number of outputs you have requested.
 
 \end{itemize}
