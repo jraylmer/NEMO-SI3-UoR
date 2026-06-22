@@ -8,45 +8,62 @@ This section describes how to run \NEMOSIcu{} with initial conditions taken from
 As an example, we shall extend the three-year run of \refsection{sec:inputs-core-ciaf} for another three years.
 
 If you look in the run directory of \refsection{sec:inputs-core-ciaf} (\dirname{EXP02} there), as well as the output files previously listed, you will see several files with names beginning \linebreak\filename{ORCA2_00008760_restart} (assuming the run completed).
-These are restart files written after the final time step, which was iteration 8760.
+These are restart files written after the final time step, which was iteration \nmlpar{nn_itend = \nmlval{8760}}.
 
 Start by configuring a new run directory in the same way as for the original experiment in \refsection{sec:inputs-core-ciaf}.
 You can call this new directory anything you like, but in this example let us suppose it is called \dirname{EXP02-1}.
+Now make the following edits in the new run directory:
 
-Now make the following edits in the new run directory.
-(As noted previously, when adding new variables to \filename{namelist_cfg} or \filename{namelist_ice_cfg} I generally copy and paste the appropriate lines from \filename{namelist_ref} or \filename{namelist_ice_ref} as a starting point.)
-
-In \verb|namelist_cfg|, make the following changes and additions in namelist group \nmlgrp{namrun}:
+\begin{enumerate}
+    \item In \filename{namelist_cfg}, make the following changes and additions in namelist group \nmlgrp{namrun}.
+        The comments are just added for brief in-line explanations here; it is recommended to copy the corresponding lines from \filename{namelist_ref} into your \filename{namelist_cfg} which have longer comments/explanations:
 
 \begingroup\footnotesize
 \begin{VerbatimNML}[samepage=true]
 \nmlpar{nn_it000}        = \nmlval{8761}  \nmlcomment{the old nn_itend + 1}
 \nmlpar{nn_itend}        = \nmlval{17520} \nmlcomment{the total number of timesteps in 6 years}
 \nmlpar{ln_rstart}       = \nmltrue{}
-\nmlpar{nn_rstctl}       = \nmlval{2}
+\nmlpar{nn_rstctl}       = \nmlval{2} \nmlcomment{use start date from the restart file, not nn_date0}
 \nmlpar{cn_ocerst_in}    = \nmlstring{ORCA2_00008760_restart}
 \nmlpar{cn_ocerst_indir} = \nmlstring{../EXP02} \nmlcomment{(relative) path to the original run directory}
 \end{VerbatimNML}
 \endgroup
 
-Look at the comments in \filename{namelist_ref} if you want to know what these variables mean.
+    \item This is not essential, but doing so will avoid a warning: in namelist group \nmlgrp{namtsd}, set \nmlpar{ln_tsd_init} to \nmlfalse{}.
+    Now save and close \filename{namelist_cfg}.
 
-This is not essential, but doing so will avoid a warning: in namelist group \nmlgrp{namtsd}, set \nmlpar{ln_tsd_init} to \nmlfalse{}.
-
-In \filename{namelist_ice_cfg}, make the following additions in namelist group \nmlgrp{nampar}:
+    \item Now open \filename{namelist_ice_cfg}, make the following additions in namelist group \nmlgrp{nampar}:
 
 \begin{VerbatimNML}[samepage=true]
 \nmlpar{cn_icerst_in}    = \nmlstring{ORCA2_00008760_restart_ice}
 \nmlpar{cn_icerst_indir} = \nmlstring{../EXP02}
 \end{VerbatimNML}
 
-and in namelist group \nmlgrp{namini} add:
+    \item In namelist group \nmlgrp{namini} add:
 
 \begin{VerbatimNML}
 \nmlpar{nn_iceini_file} = \nmlval{2}
 \end{VerbatimNML}
 
-Look at the comments in \filename{namelist_ice_ref} if you want to know what these variables mean.
+\end{enumerate}
 
 For this extension experiment, \dirname{EXP02-1}, the job script can be a copy of that for original experiment, \dirname{EXP02}.
 If the extension covered a different number of years, the time limit in the job script might need adjustment, but that is not the case in this example.
+
+\subsubsection{Some things to note}
+
+\begin{itemize}
+    \item You can set \nmlpar{nn_rstctl} to \nmlval{0} to use a restart file but use the initial date and iteration number as written in the namelist (\nmlpar{nn_date0}, \nmlpar{nn_it000}) rather than what is in the restart file.
+    In other words, this uses the restart files like pure initial conditions (for all ocean/sea ice variables) rather than a continuation of a previous run.
+
+    \item You can control how often restart files are saved from a run using the parameters \nmlpar{nn_stock}, \nmlpar{ln_rstlist}, and \nmlpar{nn_stocklist}.
+    Look in the comments of these parameters in the namelist group \nmlgrp{namrun} of \filename{namelist_ref} to see how these work.
+    By default, restart files are saved at the end of a run (\nmlpar{nn_stock = \nmlval{0}} and \nmlpar{ln_rstlist = \nmlfalse}).
+    If \nmlpar{nn_stock} is a positive integer, then restart files are saved every \nmlpar{nn_stock} iteration numbers.
+    If \nmlpar{ln_rstlist = \nmltrue}, then instead \nmlpar{nn_stocklist} is used as a list of iteration numbers to save restart files at when.
+
+    \item \textbf{If you know you will never need restart files from your simulation, consider setting \nmlpar{nn_stock = \nmlval{-1}} to suppress restart outputs and save disk space.}
+
+    \item Sea ice restarts can only be used when the restart file have the same number of ice thickness categories and ice and snow vertical layers as what is specified in \filename{namelist_ice_ref} (parameters \nmlpar{jpl}, \nmlpar{nlay_i}, and \nmlpar{nlay_s} in \nmlgrp{nampar}).
+    If this is not the case, the sea ice restart will be bypassed and sea ice is initialised according to the settings in namelist group \nmlgrp{namini} of \filename{namelist_ice_ref}.
+\end{itemize}
