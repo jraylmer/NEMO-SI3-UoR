@@ -1,3 +1,4 @@
+\clearpage
 \section{Inputs and forcings}
 \label{sec:inputs}
 
@@ -85,6 +86,8 @@ Note that steps 3 and \mbox{5--6} are the key changes that inform NEMO that it i
         These `weights' are used to interpolate the input data from their native grid onto the ORCA2 grid, a capability of NEMO called interpolation on the fly (IOTF).
         The weights in this case are actually the same as those used before that are packaged with SETTE, but the filenames are set differently in the prepared inputs directory.
 \end{enumerate}
+
+\clearpage
 
 After steps \mbox{4--7}, your \nmlgrp{namsbc_blk} in \filename{namelist_cfg} should look something like this:
 

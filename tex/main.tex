@@ -1,3 +1,5 @@
+\DocumentMetadata{lang=en-UK,pdfstandard=ua-2,tagging=on}
+
 \documentclass[a4paper]{article}
 
 \usepackage[toc,page]{appendix}
@@ -10,19 +12,26 @@
 \usepackage{xcolor}
 \usepackage{hyperref}
 
-\hypersetup{colorlinks=true, linkcolor=blue,%
-            citecolor=blue, urlcolor=blue}
-
 \renewcommand{\familydefault}{\sfdefault}
 
 \input{macros}
 
-\title{Compiling and Running \texorpdfstring{\NEMOSIcu}{NEMO-SI3} on RACC2}
+\hypersetup{colorlinks=true, linkcolor=colref,%
+            citecolor=colcite, urlcolor=colurl}
+
+\title{Compiling and Running \NEMOSIcu{} on RACC2}
 \author{Jake R. Aylmer}
 \date{June 2026}
 
+% Workaround for PDF title: inserting ASCII symbols directly
+% into the source code. Using \texorpdfstring with document
+% tagging otherwise seems to cause those symbols to not be
+% rendered when generated via the \NEMOSIcu macro:
+%
 \makeatletter
-\hypersetup{pdfauthor={\@author}, pdftitle={\@title}}
+\hypersetup{pdfauthor={\@author},%
+            pdftitle={Compiling and Running NEMO–SI³ on RACC2},%
+            pdfdisplaydoctitle=true}
 \makeatother
 
 \begin{document}

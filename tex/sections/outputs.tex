@@ -1,3 +1,4 @@
+\clearpage
 \section{Outputs}
 \label{sec:outputs}
 
@@ -35,6 +36,7 @@ Multiple \xmltag{<file>} tags can be defined (again just one is shown above) wit
 Again, more than one \xmltag{<file_group>} can be defined in general, and they are all contained within an outer-most \xmltag{<file_definition>} tag which sets at a more technical level how the files are to be written.
 Each tag is described below, starting with the inner-most tags and working outwards.
 
+\clearpage
 \subsection{File and field tags}
 \label{sec:outputs-field-tag}
 
@@ -103,6 +105,7 @@ If you change it to \xmlstring{.FALSE.} and then run the simulation, you will fi
 This attribute can also be added to each \xmltag{<file>}, which then overrides the corresponding state in its \xmltag{<file_group>}, allowing one to individually enable or disable file outputs.
 When the attribute is defined in both cases, note it is inherited `inwards' with priority taken by the value in the \xmltag{<file>} tag:
 \begin{center}
+    \tagpdfsetup{table/header-rows={1,2}}
     \begin{tabular}{ccc}
         \multicolumn{2}{c}{\xmlattr{enabled} in tag:} & File is output? \\
         \xmltag{<file_group>} & \xmltag{<file>}       &                 \\
