@@ -101,8 +101,8 @@ After steps \mbox{4--7}, your \nmlgrp{namsbc_blk} in \filename{namelist_cfg} sho
 
    \nmlpar{cn_dir} = \nmlstring{/storage/research/cpom1/share/NEMO/inputs/COREv2/CIAFv2/IOTF/}  \nmlcomment[]{!  root directory for the bulk data location}
    \nmlcomment[]{!_______!_______________!___________________!___________!_____________!_________!___________!___________________________!__________!_______________!}
-   \nmlcomment[]{!       !  file name    ! frequency (hours) ! variable  ! time interp.!  clim   ! 'yearly'/ !      weights filename     ! rotation ! land/sea mask !}
-   \nmlcomment[]{!       !               !  (if <0  months)  !   name    !   (logical) !  (T/F)  ! 'monthly' !                           ! pairing  !    filename   !}
+   \nmlcomment[]{!       !  file name    ! frequency (hours) ! variable  ! time interp.!  clim   ! \textquotesingle{}yearly\textquotesingle{}/ !      weights filename     ! rotation ! land/sea mask !}
+   \nmlcomment[]{!       !               !  (if <0  months)  !   name    !   (logical) !  (T/F)  ! \textquotesingle{}monthly\textquotesingle{} !                           ! pairing  !    filename   !}
    \nmlpar{sn_wndi} = \nmlstring{u_10}        ,    \nmlval{6.}             , \nmlstring{U_10_MOD},   \nmlfalse{}   , \nmlfalse{} , \nmlstring{yearly}  , \nmlstring{wgt_bic_COREv2_to_ORCA2} , \nmlstring{Uwnd}   , \nmlstring{}
    \nmlpar{sn_wndj} = \nmlstring{v_10}        ,    \nmlval{6.}             , \nmlstring{V_10_MOD},   \nmlfalse{}   , \nmlfalse{} , \nmlstring{yearly}  , \nmlstring{wgt_bic_COREv2_to_ORCA2} , \nmlstring{Vwnd}   , \nmlstring{}
    \nmlpar{sn_qsr}  = \nmlstring{ncar_rad}    ,   \nmlval{24.}             , \nmlstring{SWDN_MOD},   \nmlfalse{}   , \nmlfalse{} , \nmlstring{yearly}  , \nmlstring{wgt_bil_COREv2_to_ORCA2} , \nmlstring{}       , \nmlstring{}
@@ -186,8 +186,8 @@ Below is what the \nmlgrp{namsbc_blk} namelist group should look like for runnin
 
    \nmlpar{cn_dir} = \nmlstring{/storage/research/cpom1/share/NEMO/inputs/JRA-55-do/IOTF/}  \nmlcomment{root directory for the bulk data location}
    \nmlcomment[]{!_______!___________!___________________!__________!_____________!_________!___________!______________________________!__________!_______________!}
-   \nmlcomment[]{!       ! file name ! frequency (hours) ! variable ! time interp.!  clim   ! 'yearly'/ !       weights filename       ! rotation ! land/sea mask !}
-   \nmlcomment[]{!       !           !  (if <0  months)  !   name   !  (logical)  !  (T/F)  ! 'monthly' !                              ! pairing  !    filename   !}
+   \nmlcomment[]{!       ! file name ! frequency (hours) ! variable ! time interp.!  clim   ! \textquotesingle{}yearly\textquotesingle{}/ !       weights filename       ! rotation ! land/sea mask !}
+   \nmlcomment[]{!       !           !  (if <0  months)  !   name   !  (logical)  !  (T/F)  ! \textquotesingle{}monthly\textquotesingle{} !                              ! pairing  !    filename   !}
    \nmlpar{sn_wndi} = \nmlstring{uas}     ,         \nmlval{3.}        , \nmlstring{uas}    ,   \nmlfalse{}   , \nmlfalse{} , \nmlstring{yearly}  , \nmlstring{wgt_bic_JRA-55-do_to_ORCA2} , \nmlstring{Uwnd}   , \nmlstring{}
    \nmlpar{sn_wndj} = \nmlstring{vas}     ,         \nmlval{3.}        , \nmlstring{vas}    ,   \nmlfalse{}   , \nmlfalse{} , \nmlstring{yearly}  , \nmlstring{wgt_bic_JRA-55-do_to_ORCA2} , \nmlstring{Vwnd}   , \nmlstring{}
    \nmlpar{sn_qsr}  = \nmlstring{rsds}    ,         \nmlval{3.}        , \nmlstring{rsds}   ,   \nmlfalse{}   , \nmlfalse{} , \nmlstring{yearly}  , \nmlstring{wgt_bil_JRA-55-do_to_ORCA2} , \nmlstring{}       , \nmlstring{}

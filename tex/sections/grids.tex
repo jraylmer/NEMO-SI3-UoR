@@ -173,8 +173,8 @@ It is an exercise for the reader to update the eORCA1 template run directory to 
 
    \nmlpar{cn_dir} = \nmlstring{/storage/research/cpom1/share/NEMO/inputs/packages/deLavergne2024eORCA1v4.2/input_fields/}    \nmlcomment[]{!  root directory for the location of the runoff files}
    \nmlcomment[]{!________!____________________________________!___________________!___________!_____________!_________!___________!__________!__________!_______________!}
-   \nmlcomment[]{!        !  file name                         ! frequency (hours) ! variable  ! time interp. !  clim  ! 'yearly'/ ! weights  ! rotation ! land/sea mask !}
-   \nmlcomment[]{!        !                                    !  (if <0  months)  !   name    !   (logical)  !  (T/F) ! 'monthly' ! filename ! pairing  ! filename      !}
+   \nmlcomment[]{!        !  file name                         ! frequency (hours) ! variable  ! time interp. !  clim  ! \textquotesingle{}yearly\textquotesingle{}/ ! weights  ! rotation ! land/sea mask !}
+   \nmlcomment[]{!        !                                    !  (if <0  months)  !   name    !   (logical)  !  (T/F) ! \textquotesingle{}monthly\textquotesingle{} ! filename ! pairing  ! filename      !}
    \nmlpar{sn_rnf}   = \nmlstring{runoff-icb_DaiTrenberth_Depoorter},        \nmlval{-1}         , \nmlstring{sorunoff},    \nmltrue{}    , \nmltrue{} , \nmlstring{yearly}  , \nmlstring{}       , \nmlstring{}       , \nmlstring{}
    \nmlpar{sn_i_rnf} = \nmlstring{runoff-icb_DaiTrenberth_Depoorter},        \nmlval{-1}         , \nmlstring{Icb_flux},    \nmltrue{}    , \nmltrue{} , \nmlstring{yearly}  , \nmlstring{}       , \nmlstring{}       , \nmlstring{}
    \nmlpar{sn_cnf}   = \nmlstring{runoff-icb_DaiTrenberth_Depoorter},         \nmlval{0}         , \nmlstring{socoefr} ,    \nmlfalse{}   , \nmltrue{} , \nmlstring{yearly}  , \nmlstring{}       , \nmlstring{}       , \nmlstring{}
@@ -283,7 +283,7 @@ As an aside, this is the origin of the `e' in `eORCA1', i.e., `extended ORCA1'--
 
         Also, beware that NEMO is internally working out how to divide the global domain among the CPUs and this does not always result in an efficient decomposition depending on how the land is distributed.
         It is possible that some CPUs end up with only land grid cells, in which case they do nothing and hence those resources are wasted.
-        If you do change the number of CPUs, check your \filename{ocean.output} for warnings about this and reduce your \texttt{--ntasks} by however many idle processors are reported.
+        If you do change the number of CPUs, check your \filename{ocean.output} for warnings about this and reduce your \texttt{-{}-ntasks} by however many idle processors are reported.
 
     \item Slightly related to the previous point, you may notice rectangular regions of missing data in your model outputs along Antarctica.
     Do not worry; these are entirely land and are simply parts of the global domain not allocated to a CPU (not idle processors as described above).
